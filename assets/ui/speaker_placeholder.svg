@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240">
+  <rect width="240" height="240" rx="20" fill="#111923"/>
+  <rect x="4" y="4" width="232" height="232" rx="16" fill="none" stroke="#4a6570" stroke-width="8"/>
+
+  <!-- Neutral silhouette used until character portraits are available. -->
+  <circle cx="120" cy="87" r="42" fill="#7198a2"/>
+  <path d="M48 207c8-49 33-73 72-73s64 24 72 73" fill="#7198a2"/>
+  <circle cx="120" cy="120" r="94" fill="none" stroke="#263a45" stroke-width="4" stroke-dasharray="8 10"/>
+</svg>
