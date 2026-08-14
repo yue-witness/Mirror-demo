@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="../../scripts/Games/IGame.cs" Link="Domain/IGame.cs" />
+    <Compile Include="../../scripts/Games/Bash/BashGame.cs" Link="Domain/BashGame.cs" />
+    <Compile Include="../../scripts/AI/StrategyEngine.cs" Link="Domain/StrategyEngine.cs" />
+    <Compile Include="../../scripts/AI/PlayerProfile.cs" Link="Domain/PlayerProfile.cs" />
+    <Compile Include="../../scripts/AI/PlayerProfileStore.cs" Link="Domain/PlayerProfileStore.cs" />
+    <Compile Include="../../scripts/AI/PlayerModel.cs" Link="Domain/PlayerModel.cs" />
+    <Compile Include="../../scripts/Core/HoverTracker.cs" Link="Domain/HoverTracker.cs" />
+  </ItemGroup>
+</Project>
