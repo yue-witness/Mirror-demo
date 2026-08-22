@@ -1,0 +1,431 @@
+[gd_scene load_steps=12 format=3]
+
+[ext_resource type="Script" path="res://scripts/UI/GameplayHUD.cs" id="1_script"]
+
+[sub_resource type="StyleBoxFlat" id="ChoiceGreen"]
+content_margin_left = 18.0
+content_margin_top = 14.0
+content_margin_right = 18.0
+content_margin_bottom = 14.0
+bg_color = Color(0.83, 0.96, 0.9, 0.9)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.02, 0.63, 0.36, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
+[sub_resource type="StyleBoxFlat" id="ChoiceYellow"]
+content_margin_left = 18.0
+content_margin_top = 14.0
+content_margin_right = 18.0
+content_margin_bottom = 14.0
+bg_color = Color(1, 0.95, 0.73, 0.9)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.72, 0.5, 0.02, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
+[sub_resource type="StyleBoxFlat" id="ChoiceRed"]
+content_margin_left = 18.0
+content_margin_top = 14.0
+content_margin_right = 18.0
+content_margin_bottom = 14.0
+bg_color = Color(1, 0.86, 0.87, 0.9)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.82, 0.18, 0.3, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
+[sub_resource type="StyleBoxFlat" id="ChoiceGreenSelected"]
+content_margin_left = 18.0
+content_margin_top = 14.0
+content_margin_right = 18.0
+content_margin_bottom = 14.0
+bg_color = Color(0.29, 0.86, 0.58, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0, 0.34, 0.2, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+shadow_color = Color(0, 0.28, 0.18, 0.32)
+shadow_size = 14
+
+[sub_resource type="StyleBoxFlat" id="ChoiceYellowSelected"]
+content_margin_left = 18.0
+content_margin_top = 14.0
+content_margin_right = 18.0
+content_margin_bottom = 14.0
+bg_color = Color(1, 0.78, 0.2, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.45, 0.27, 0, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+shadow_color = Color(0.4, 0.25, 0, 0.28)
+shadow_size = 14
+
+[sub_resource type="StyleBoxFlat" id="ChoiceRedSelected"]
+content_margin_left = 18.0
+content_margin_top = 14.0
+content_margin_right = 18.0
+content_margin_bottom = 14.0
+bg_color = Color(1, 0.43, 0.5, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.46, 0.02, 0.12, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+shadow_color = Color(0.38, 0.02, 0.09, 0.3)
+shadow_size = 14
+
+[sub_resource type="StyleBoxFlat" id="HeaderGlass"]
+content_margin_left = 28.0
+content_margin_top = 14.0
+content_margin_right = 28.0
+content_margin_bottom = 14.0
+bg_color = Color(0.97, 0.99, 0.985, 0.92)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.1, 0.68, 0.49, 0.75)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
+[sub_resource type="StyleBoxFlat" id="ChapterGlass"]
+content_margin_left = 64.0
+content_margin_top = 70.0
+content_margin_right = 64.0
+content_margin_bottom = 70.0
+bg_color = Color(0.96, 0.985, 0.98, 0.93)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.1, 0.68, 0.49, 0.85)
+corner_radius_top_left = 36
+corner_radius_top_right = 36
+corner_radius_bottom_right = 36
+corner_radius_bottom_left = 36
+shadow_color = Color(0.02, 0.18, 0.15, 0.2)
+shadow_size = 22
+
+[sub_resource type="StyleBoxFlat" id="OverlayDim"]
+bg_color = Color(0.92, 0.97, 0.96, 0.45)
+
+[node name="GameplayHUD" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="SafeArea" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 56
+theme_override_constants/margin_top = 34
+theme_override_constants/margin_right = 56
+theme_override_constants/margin_bottom = 30
+
+[node name="Layout" type="VBoxContainer" parent="SafeArea"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="Header" type="PanelContainer" parent="SafeArea/Layout"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+theme_override_styles/panel = SubResource("HeaderGlass")
+
+[node name="HeaderRow" type="HBoxContainer" parent="SafeArea/Layout/Header"]
+layout_mode = 2
+
+[node name="PhaseBanner" type="Label" parent="SafeArea/Layout/Header/HeaderRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 26
+text = "BACKGROUND / EXPLANATION"
+vertical_alignment = 1
+
+[node name="HeaderSpacer" type="Control" parent="SafeArea/Layout/Header/HeaderRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PlayTimeLabel" type="Label" parent="SafeArea/Layout/Header/HeaderRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 18
+text = "PLAY TIME · 00:00"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Content" type="HBoxContainer" parent="SafeArea/Layout"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 30
+
+[node name="LeftStatus" type="PanelContainer" parent="SafeArea/Layout/Content"]
+custom_minimum_size = Vector2(330, 0)
+layout_mode = 2
+
+[node name="LeftVBox" type="VBoxContainer" parent="SafeArea/Layout/Content/LeftStatus"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="Title" type="Label" parent="SafeArea/Layout/Content/LeftStatus/LeftVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "CURRENT STATUS"
+
+[node name="Rule" type="ColorRect" parent="SafeArea/Layout/Content/LeftStatus/LeftVBox"]
+custom_minimum_size = Vector2(110, 3)
+layout_mode = 2
+size_flags_horizontal = 0
+color = Color(0.02, 0.72, 0.5, 0.9)
+
+[node name="Details" type="RichTextLabel" parent="SafeArea/Layout/Content/LeftStatus/LeftVBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/normal_font_size = 20
+bbcode_enabled = true
+text = "• Starting units: 15\n\n• Remaining: 8\n\n• Player's turn\n\n• Taking the last unit loses"
+fit_content = false
+scroll_active = false
+
+[node name="Center" type="VBoxContainer" parent="SafeArea/Layout/Content"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 14
+
+[node name="RemainingCard" type="PanelContainer" parent="SafeArea/Layout/Content/Center"]
+custom_minimum_size = Vector2(0, 270)
+layout_mode = 2
+
+[node name="RemainingVBox" type="VBoxContainer" parent="SafeArea/Layout/Content/Center/RemainingCard"]
+layout_mode = 2
+alignment = 1
+
+[node name="RemainingCaption" type="Label" parent="SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.08, 0.39, 0.32, 1)
+theme_override_font_sizes/font_size = 17
+text = "REMAINING"
+horizontal_alignment = 1
+
+[node name="RemainingValue" type="Label" parent="SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 54
+text = "08"
+horizontal_alignment = 1
+
+[node name="SelectionLabel" type="Label" parent="SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "NO SELECTION"
+horizontal_alignment = 1
+
+[node name="DialoguePanel" type="PanelContainer" parent="SafeArea/Layout/Content/Center"]
+custom_minimum_size = Vector2(0, 210)
+layout_mode = 2
+
+[node name="DialogueVBox" type="VBoxContainer" parent="SafeArea/Layout/Content/Center/DialoguePanel"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Speaker" type="Label" parent="SafeArea/Layout/Content/Center/DialoguePanel/DialogueVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.55, 0.08, 0.16, 1)
+theme_override_font_sizes/font_size = 17
+text = "TUTOR"
+
+[node name="Text" type="RichTextLabel" parent="SafeArea/Layout/Content/Center/DialoguePanel/DialogueVBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/normal_font_size = 21
+text = "You can change your choice before confirming. After you confirm, I will act."
+fit_content = false
+scroll_active = false
+autowrap_mode = 2
+
+[node name="ChoiceRow" type="HBoxContainer" parent="SafeArea/Layout/Content/Center"]
+custom_minimum_size = Vector2(0, 90)
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="Choice1" type="Button" parent="SafeArea/Layout/Content/Center/ChoiceRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+text = "1\nTAKE 1"
+theme_override_styles/normal = SubResource("ChoiceGreen")
+theme_override_styles/hover = SubResource("ChoiceGreen")
+theme_override_styles/pressed = SubResource("ChoiceGreenSelected")
+theme_override_styles/hover_pressed = SubResource("ChoiceGreenSelected")
+theme_override_colors/font_pressed_color = Color(0.01, 0.16, 0.1, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.01, 0.16, 0.1, 1)
+
+[node name="Choice2" type="Button" parent="SafeArea/Layout/Content/Center/ChoiceRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+text = "2\nTAKE 2"
+theme_override_styles/normal = SubResource("ChoiceYellow")
+theme_override_styles/hover = SubResource("ChoiceYellow")
+theme_override_styles/pressed = SubResource("ChoiceYellowSelected")
+theme_override_styles/hover_pressed = SubResource("ChoiceYellowSelected")
+theme_override_colors/font_pressed_color = Color(0.2, 0.11, 0, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.2, 0.11, 0, 1)
+
+[node name="Choice3" type="Button" parent="SafeArea/Layout/Content/Center/ChoiceRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+text = "3\nTAKE 3"
+theme_override_styles/normal = SubResource("ChoiceRed")
+theme_override_styles/hover = SubResource("ChoiceRed")
+theme_override_styles/pressed = SubResource("ChoiceRedSelected")
+theme_override_styles/hover_pressed = SubResource("ChoiceRedSelected")
+theme_override_colors/font_pressed_color = Color(0.24, 0.01, 0.07, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.24, 0.01, 0.07, 1)
+
+[node name="ConfirmButton" type="Button" parent="SafeArea/Layout/Content/Center"]
+custom_minimum_size = Vector2(0, 62)
+layout_mode = 2
+disabled = true
+text = "SELECT FIRST"
+
+[node name="ContinueButton" type="Button" parent="SafeArea/Layout/Content/Center"]
+custom_minimum_size = Vector2(0, 62)
+layout_mode = 2
+text = "CONTINUE"
+
+[node name="RightLog" type="PanelContainer" parent="SafeArea/Layout/Content"]
+custom_minimum_size = Vector2(410, 0)
+layout_mode = 2
+
+[node name="RightVBox" type="VBoxContainer" parent="SafeArea/Layout/Content/RightLog"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="Title" type="Label" parent="SafeArea/Layout/Content/RightLog/RightVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "SYSTEM"
+
+[node name="Rule" type="ColorRect" parent="SafeArea/Layout/Content/RightLog/RightVBox"]
+custom_minimum_size = Vector2(110, 3)
+layout_mode = 2
+size_flags_horizontal = 0
+color = Color(0.02, 0.72, 0.5, 0.9)
+
+[node name="Status" type="Label" parent="SafeArea/Layout/Content/RightLog/RightVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.02, 0.45, 0.32, 1)
+theme_override_font_sizes/font_size = 18
+text = "STATUS · WAITING FOR PLAYER"
+autowrap_mode = 2
+
+[node name="Log" type="RichTextLabel" parent="SafeArea/Layout/Content/RightLog/RightVBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/normal_font_size = 19
+bbcode_enabled = true
+text = "[b]SYSTEM[/b]\n\nThe action log will appear here."
+fit_content = false
+scroll_active = false
+autowrap_mode = 2
+
+[node name="Footer" type="HBoxContainer" parent="SafeArea/Layout"]
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+
+[node name="Spacer" type="Control" parent="SafeArea/Layout/Footer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="BackButton" type="Button" parent="SafeArea/Layout/Footer"]
+custom_minimum_size = Vector2(220, 44)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "SAVE & BACK"
+
+[node name="ChapterOverlay" type="Control" parent="."]
+visible = false
+z_index = 30
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Dim" type="Panel" parent="ChapterOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("OverlayDim")
+
+[node name="ChapterGlass" type="PanelContainer" parent="ChapterOverlay"]
+layout_mode = 0
+offset_left = 98.0
+offset_top = 112.0
+offset_right = 1180.0
+offset_bottom = 952.0
+theme_override_styles/panel = SubResource("ChapterGlass")
+
+[node name="ChapterVBox" type="VBoxContainer" parent="ChapterOverlay/ChapterGlass"]
+layout_mode = 2
+alignment = 1
+
+[node name="ChapterNumber" type="Label" parent="ChapterOverlay/ChapterGlass/ChapterVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 74
+text = "Chapter 0"
+
+[node name="ChapterTitle" type="Label" parent="ChapterOverlay/ChapterGlass/ChapterVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "Background"
+
+[node name="LaserRule" type="ColorRect" parent="ChapterOverlay/ChapterGlass/ChapterVBox"]
+custom_minimum_size = Vector2(270, 4)
+layout_mode = 2
+size_flags_horizontal = 0
+color = Color(0.02, 0.75, 0.51, 0.9)

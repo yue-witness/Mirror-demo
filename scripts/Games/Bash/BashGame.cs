@@ -1,43 +1,67 @@
 using System;
 
 /// <summary>
-/// Pure Bash rules. This class deliberately has no Godot dependencies so the
-/// turn sequence and win conditions can be tested outside the scene tree.
+/// Pure rules for the original, misere Bash game. Taking the final unit loses.
+/// The class has no Godot dependency so every rule can be tested in isolation.
 /// </summary>
-public sealed class BashGame : IGame
+public sealed class BashGame
 {
-    public const int DefaultInitialUnits = 15;
     public const int MinimumTake = 1;
     public const int MaximumTake = 3;
 
+    public int InitialUnits { get; private set; }
+
     public int Remaining { get; private set; }
 
-    public bool IsPlayerTurn { get; private set; }
+    public Actor CurrentTurn { get; private set; }
 
-    public bool IsGameOver => Result != GameResult.InProgress;
+    public RoundOutcome Result { get; private set; } = RoundOutcome.Continue;
 
-    public GameResult Result { get; private set; } = GameResult.InProgress;
+    public bool IsGameOver => Result != RoundOutcome.Continue;
 
-    public void StartGame()
-    {
-        Start(DefaultInitialUnits, playerFirst: true);
-    }
-
-    public void Start(int initialUnits = DefaultInitialUnits, bool playerFirst = true)
+    public void Start(int initialUnits, Actor firstActor)
     {
         if (initialUnits < MinimumTake)
         {
             throw new ArgumentOutOfRangeException(
                 nameof(initialUnits),
-                "A Bash round must start with at least one unit.");
+                "A Bash game must start with at least one unit.");
         }
 
+        InitialUnits = initialUnits;
         Remaining = initialUnits;
-        IsPlayerTurn = playerFirst;
-        Result = GameResult.InProgress;
+        CurrentTurn = firstActor;
+        Result = RoundOutcome.Continue;
     }
 
-    public bool IsLegalMove(int amount)
+    public void Restore(
+        int initialUnits,
+        int remaining,
+        Actor currentTurn,
+        RoundOutcome result = RoundOutcome.Continue)
+    {
+        if (initialUnits < MinimumTake
+            || remaining < 0
+            || remaining > initialUnits)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(remaining),
+                "The restored Bash state is outside the legal range.");
+        }
+
+        if (remaining == 0 && result == RoundOutcome.Continue)
+        {
+            throw new InvalidOperationException(
+                "A zero-remaining Bash state must contain a final result.");
+        }
+
+        InitialUnits = initialUnits;
+        Remaining = remaining;
+        CurrentTurn = currentTurn;
+        Result = result;
+    }
+
+    public bool CanTake(int amount)
     {
         return !IsGameOver
             && amount >= MinimumTake
@@ -45,60 +69,35 @@ public sealed class BashGame : IGame
             && amount <= Remaining;
     }
 
-    public void ApplyPlayerMove(int amount)
-    {
-        EnsureMoveIsLegal(amount, expectedPlayerTurn: true, actorName: "player");
-
-        Remaining -= amount;
-
-        if (Remaining == 0)
-        {
-            Result = GameResult.PlayerWin;
-            return;
-        }
-
-        IsPlayerTurn = false;
-    }
-
-    public void ApplyAIMove(int amount)
-    {
-        EnsureMoveIsLegal(amount, expectedPlayerTurn: false, actorName: "AI");
-
-        Remaining -= amount;
-
-        if (Remaining == 0)
-        {
-            Result = GameResult.AIWin;
-            return;
-        }
-
-        IsPlayerTurn = true;
-    }
-
-    public GameResult GetResult()
-    {
-        return Result;
-    }
-
-    private void EnsureMoveIsLegal(
-        int amount,
-        bool expectedPlayerTurn,
-        string actorName)
+    public RoundOutcome ApplyTake(Actor actor, int amount)
     {
         if (IsGameOver)
         {
-            throw new InvalidOperationException("The Bash round has already ended.");
+            throw new InvalidOperationException("The Bash game has already ended.");
         }
 
-        if (IsPlayerTurn != expectedPlayerTurn)
+        if (actor != CurrentTurn)
         {
-            throw new InvalidOperationException($"It is not the {actorName} turn.");
+            throw new InvalidOperationException($"It is not {actor}'s turn.");
         }
 
-        if (!IsLegalMove(amount))
+        if (!CanTake(amount))
         {
             throw new InvalidOperationException(
-                $"The {actorName} cannot take {amount} from {Remaining} remaining units.");
+                $"{actor} cannot take {amount} from {Remaining} remaining units.");
         }
+
+        Remaining -= amount;
+
+        if (Remaining == 0)
+        {
+            Result = actor == Actor.Player
+                ? RoundOutcome.PlayerLose
+                : RoundOutcome.PlayerWin;
+            return Result;
+        }
+
+        CurrentTurn = actor == Actor.Player ? Actor.Tutor : Actor.Player;
+        return RoundOutcome.Continue;
     }
 }

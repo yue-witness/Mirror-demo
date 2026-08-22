@@ -1,42 +1,41 @@
 using System;
+using System.Linq;
 
 /// <summary>
-/// Selects a legal Bash action. On a winning position the AI leaves a multiple
-/// of four; on a losing position it explores one of the legal moves.
+/// A reproducible, fixed Bash opponent. The supplied selector comes from the
+/// session RNG, so a saved seed and cursor replay the complete game.
 /// </summary>
 public sealed class StrategyEngine
 {
-    private readonly Random _random;
-
-    public StrategyEngine(int? randomSeed = null)
-    {
-        _random = randomSeed.HasValue
-            ? new Random(randomSeed.Value)
-            : new Random();
-    }
-
-    public int ChooseBashMove(BashGame game)
+    public int ChooseBashMove(BashGame game, int selector)
     {
         ArgumentNullException.ThrowIfNull(game);
 
         if (game.IsGameOver)
         {
-            throw new InvalidOperationException("The AI cannot move after the round ends.");
+            throw new InvalidOperationException("The Tutor cannot act after settlement.");
         }
 
-        if (game.IsPlayerTurn)
+        if (game.CurrentTurn != Actor.Tutor)
         {
-            throw new InvalidOperationException("The AI cannot move during the player turn.");
+            throw new InvalidOperationException("The Tutor cannot act during the player turn.");
         }
 
-        int maximumLegalTake = Math.Min(BashGame.MaximumTake, game.Remaining);
-        int winningMove = game.Remaining % (BashGame.MaximumTake + 1);
+        int[] legal = Enumerable.Range(BashGame.MinimumTake, BashGame.MaximumTake)
+            .Where(game.CanTake)
+            .ToArray();
 
-        if (winningMove >= BashGame.MinimumTake && winningMove <= maximumLegalTake)
+        // The fixed opponent sometimes takes the optimal misere move and
+        // sometimes follows its seeded exploration order. It remains legal and
+        // reproducible without becoming an unbeatable tutorial gate.
+        int optimalTake = (game.Remaining - 1) % (BashGame.MaximumTake + 1);
+
+        if (selector % 3 == 0 && legal.Contains(optimalTake))
         {
-            return winningMove;
+            return optimalTake;
         }
 
-        return _random.Next(BashGame.MinimumTake, maximumLegalTake + 1);
+        int normalized = Math.Abs(selector == int.MinValue ? int.MaxValue : selector);
+        return legal[normalized % legal.Length];
     }
 }

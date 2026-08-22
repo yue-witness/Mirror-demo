@@ -1,0 +1,8 @@
+{
+  "minimumTake": 1,
+  "maximumTake": 3,
+  "minimumInitialUnits": 20,
+  "maximumInitialUnits": 30,
+  "requiredPlayerWins": 2,
+  "requiredConsecutiveDraws": 2
+}

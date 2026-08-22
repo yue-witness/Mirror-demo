@@ -1,0 +1,164 @@
+[gd_scene format=3 uid="uid://ct3nulc7aith0"]
+
+[ext_resource type="Script" uid="uid://b0o2qlaj428b7" path="res://scripts/UI/TitleScreen.cs" id="1_script"]
+
+[sub_resource type="StyleBoxFlat" id="TitleGlass"]
+content_margin_left = 64.0
+content_margin_top = 52.0
+content_margin_right = 64.0
+content_margin_bottom = 52.0
+bg_color = Color(0.96, 0.985, 0.98, 0.9)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.08, 0.68, 0.48, 0.8)
+corner_radius_top_left = 36
+corner_radius_top_right = 36
+corner_radius_bottom_right = 36
+corner_radius_bottom_left = 36
+shadow_color = Color(0.02, 0.18, 0.15, 0.2)
+shadow_size = 22
+
+[sub_resource type="StyleBoxFlat" id="ConfirmDim"]
+bg_color = Color(0.82, 0.9, 0.89, 0.68)
+
+[node name="TitleScreen" type="Control" unique_id=1899964472]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="MenuGlass" type="PanelContainer" parent="." unique_id=2099335832]
+layout_mode = 0
+offset_left = 96.0
+offset_top = 112.0
+offset_right = 1180.0
+offset_bottom = 952.0
+theme_override_styles/panel = SubResource("TitleGlass")
+
+[node name="MenuVBox" type="VBoxContainer" parent="MenuGlass" unique_id=898816819]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Eyebrow" type="Label" parent="MenuGlass/MenuVBox" unique_id=715938548]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.05, 0.48, 0.36, 1)
+theme_override_font_sizes/font_size = 18
+text = "PROJECT X · SUBJECT S-17"
+
+[node name="Brand" type="Label" parent="MenuGlass/MenuVBox" unique_id=1781019690]
+layout_mode = 2
+theme_override_font_sizes/font_size = 58
+text = "PROJECT MIRROR"
+
+[node name="LaserRule" type="ColorRect" parent="MenuGlass/MenuVBox" unique_id=1650067134]
+custom_minimum_size = Vector2(270, 3)
+layout_mode = 2
+size_flags_horizontal = 0
+color = Color(0.02, 0.75, 0.51, 0.9)
+
+[node name="Spacer" type="Control" parent="MenuGlass/MenuVBox" unique_id=1944670217]
+custom_minimum_size = Vector2(0, 34)
+layout_mode = 2
+
+[node name="NewGameButton" type="Button" parent="MenuGlass/MenuVBox" unique_id=100960780]
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+text = "NEW GAME"
+alignment = 0
+
+[node name="ContinueButton" type="Button" parent="MenuGlass/MenuVBox" unique_id=2112249676]
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+text = "CONTINUE"
+alignment = 0
+
+[node name="SettingsButton" type="Button" parent="MenuGlass/MenuVBox" unique_id=1568180504]
+visible = false
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+disabled = true
+text = "SETTINGS"
+alignment = 0
+
+[node name="QuitButton" type="Button" parent="MenuGlass/MenuVBox" unique_id=318756049]
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+text = "QUIT"
+alignment = 0
+
+[node name="SaveStatus" type="Label" parent="MenuGlass/MenuVBox" unique_id=703430064]
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.08, 0.36, 0.3, 1)
+theme_override_font_sizes/font_size = 18
+text = "NO ACTIVE SAVE"
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="WarningLabel" type="Label" parent="MenuGlass/MenuVBox" unique_id=1629929290]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.18, 0.14, 1)
+theme_override_font_sizes/font_size = 16
+autowrap_mode = 2
+
+[node name="OverwriteOverlay" type="Control" parent="." unique_id=2005973543]
+visible = false
+z_index = 20
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Dim" type="Panel" parent="OverwriteOverlay" unique_id=440494349]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("ConfirmDim")
+
+[node name="Center" type="CenterContainer" parent="OverwriteOverlay" unique_id=1009910264]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ConfirmGlass" type="PanelContainer" parent="OverwriteOverlay/Center" unique_id=1084232015]
+custom_minimum_size = Vector2(650, 370)
+layout_mode = 2
+
+[node name="ConfirmVBox" type="VBoxContainer" parent="OverwriteOverlay/Center/ConfirmGlass" unique_id=861267294]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="Title" type="Label" parent="OverwriteOverlay/Center/ConfirmGlass/ConfirmVBox" unique_id=932394838]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "REPLACE CURRENT SAVE?"
+
+[node name="Body" type="Label" parent="OverwriteOverlay/Center/ConfirmGlass/ConfirmVBox" unique_id=2027030313]
+layout_mode = 2
+size_flags_vertical = 3
+text = "Starting a new game will replace the current unfinished save."
+autowrap_mode = 2
+
+[node name="ConfirmButton" type="Button" parent="OverwriteOverlay/Center/ConfirmGlass/ConfirmVBox" unique_id=926204851]
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+text = "START NEW GAME"
+
+[node name="CancelButton" type="Button" parent="OverwriteOverlay/Center/ConfirmGlass/ConfirmVBox" unique_id=223215299]
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+text = "CANCEL"

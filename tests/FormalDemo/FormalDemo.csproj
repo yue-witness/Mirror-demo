@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="../../scripts/Games/GameTypes.cs" Link="Domain/GameTypes.cs" />
+    <Compile Include="../../scripts/Games/Bash/BashGame.cs" Link="Domain/BashGame.cs" />
+    <Compile Include="../../scripts/Games/LimitBash/LimitBashGame.cs" Link="Domain/LimitBashGame.cs" />
+    <Compile Include="../../scripts/AI/OutcomeDirector.cs" Link="Domain/OutcomeDirector.cs" />
+    <Compile Include="../../scripts/Core/DemoPhase.cs" Link="Domain/DemoPhase.cs" />
+    <Compile Include="../../scripts/Core/SessionRandom.cs" Link="Domain/SessionRandom.cs" />
+    <Compile Include="../../scripts/Session/SessionStats.cs" Link="Domain/SessionStats.cs" />
+    <Compile Include="../../scripts/Session/DemoSaveState.cs" Link="Domain/DemoSaveState.cs" />
+    <Compile Include="../../scripts/Data/SaveGameService.cs" Link="Domain/SaveGameService.cs" />
+    <Compile Include="../../scripts/Data/DialogueRepository.cs" Link="Domain/DialogueRepository.cs" />
+    <Compile Include="../../scripts/Data/RuleConfiguration.cs" Link="Domain/RuleConfiguration.cs" />
+  </ItemGroup>
+</Project>

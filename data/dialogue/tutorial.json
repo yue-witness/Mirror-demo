@@ -1,0 +1,227 @@
+{
+  "phases": {
+    "BashTutorial": [
+      {
+        "id": "bash_take",
+        "speaker": "TUTOR",
+        "text": "We begin with standard Bash. We alternate turns, removing 1, 2, or 3 units from the shared total. Only legal quantities remain available."
+      },
+      {
+        "id": "bash_last_loses",
+        "speaker": "TUTOR",
+        "text": "The terminal rule is the important one: whoever takes the final unit loses immediately. Near the end, distinguish a legal move from a safe move."
+      },
+      {
+        "id": "bash_two_rounds",
+        "speaker": "TUTOR",
+        "text": "You act first in round one; I act first in round two. You must complete both rounds. An unsuccessful result restarts only the current round, not the full introduction."
+      }
+    ]
+  },
+  "randomPools": {
+    "bash_round_start": [
+      {
+        "id": "bash_start_parameters",
+        "speaker": "TUTOR",
+        "text": "Round parameters are stable. Count forward to the terminal position before you commit."
+      },
+      {
+        "id": "bash_start_observe",
+        "speaker": "TUTOR",
+        "text": "Observation has begun. I will act only after the current choice is confirmed."
+      },
+      {
+        "id": "bash_start_sequence",
+        "speaker": "TUTOR",
+        "text": "Treat the remaining units as a sequence, S-17. The last action determines the result."
+      }
+    ],
+    "bash_player_confirmed": [
+      {
+        "id": "bash_player_registered",
+        "speaker": "TUTOR",
+        "text": "Choice registered. Control now passes to me."
+      },
+      {
+        "id": "bash_player_state_updated",
+        "speaker": "TUTOR",
+        "text": "Input accepted. The shared state has been updated."
+      },
+      {
+        "id": "bash_player_evaluating",
+        "speaker": "TUTOR",
+        "text": "Your action is confirmed. I am evaluating the legal replies."
+      }
+    ],
+    "bash_tutor_acted": [
+      {
+        "id": "bash_tutor_reassess",
+        "speaker": "TUTOR",
+        "text": "My action is complete. Reassess the remaining sequence."
+      },
+      {
+        "id": "bash_tutor_stable",
+        "speaker": "TUTOR",
+        "text": "Your turn, S-17. The board state is stable."
+      },
+      {
+        "id": "bash_tutor_no_hurry",
+        "speaker": "TUTOR",
+        "text": "Control is yours. Accuracy is more useful here than speed."
+      }
+    ],
+    "bash_terminal_approach": [
+      {
+        "id": "bash_terminal_last_unit",
+        "speaker": "TUTOR",
+        "text": "The terminal range is close. Remember: taking the final unit loses."
+      },
+      {
+        "id": "bash_terminal_legal_safe",
+        "speaker": "TUTOR",
+        "text": "Only a few units remain. A legal action is not necessarily a safe action."
+      },
+      {
+        "id": "bash_terminal_trace",
+        "speaker": "TUTOR",
+        "text": "Trace the next reply before confirming. The end condition now dominates the sequence."
+      }
+    ],
+    "limit_game_start": [
+      {
+        "id": "limit_start_hidden",
+        "speaker": "TUTOR",
+        "text": "A new simultaneous-choice trial is initialized. Your selection remains hidden until both sides are ready."
+      },
+      {
+        "id": "limit_start_history",
+        "speaker": "TUTOR",
+        "text": "New game state confirmed. Track both the remainder and our previous choices."
+      },
+      {
+        "id": "limit_start_protocol",
+        "speaker": "TUTOR",
+        "text": "Limit Bash is active. Choose privately; the protocol will reveal both decisions together."
+      }
+    ],
+    "limit_choice_locked": [
+      {
+        "id": "limit_lock_selecting",
+        "speaker": "TUTOR",
+        "text": "Choice locked. I am selecting from the same legal range."
+      },
+      {
+        "id": "limit_lock_commitment",
+        "speaker": "TUTOR",
+        "text": "Commitment accepted. Reveal will occur when both choices are fixed."
+      },
+      {
+        "id": "limit_lock_unchangeable",
+        "speaker": "TUTOR",
+        "text": "Your decision can no longer be changed. My response is now being finalized."
+      }
+    ],
+    "limit_reveal": [
+      {
+        "id": "limit_reveal_compare",
+        "speaker": "TUTOR",
+        "text": "Both choices are public. Compare the new remainder before proceeding."
+      },
+      {
+        "id": "limit_reveal_history",
+        "speaker": "TUTOR",
+        "text": "Reveal complete. This pair is now part of the game's decision history."
+      },
+      {
+        "id": "limit_reveal_next",
+        "speaker": "TUTOR",
+        "text": "The pair has been resolved. Any next choice must differ from your previous one."
+      }
+    ],
+    "limit_terminal_approach": [
+      {
+        "id": "limit_terminal_total",
+        "speaker": "TUTOR",
+        "text": "Terminal range reached. If our total meets the remainder, the larger choice loses."
+      },
+      {
+        "id": "limit_terminal_history",
+        "speaker": "TUTOR",
+        "text": "The next reveal may settle the game. Equal choices will be resolved from the recorded history."
+      },
+      {
+        "id": "limit_terminal_not_subtraction",
+        "speaker": "TUTOR",
+        "text": "At this distance, apply the terminal comparison rule rather than ordinary subtraction."
+      }
+    ],
+    "restore": [
+      {
+        "id": "restore_checkpoint",
+        "speaker": "TUTOR",
+        "text": "Stable checkpoint restored. The protocol may continue from the displayed state."
+      },
+      {
+        "id": "restore_integrity",
+        "speaker": "TUTOR",
+        "text": "Session reconstruction complete. Rule state and prior results passed integrity checks."
+      },
+      {
+        "id": "restore_resume",
+        "speaker": "TUTOR",
+        "text": "The active evaluation has resumed. Review the current state before confirming."
+      }
+    ],
+    "result_player_win": [
+      {
+        "id": "result_win_recorded",
+        "speaker": "TUTOR",
+        "text": "Evaluation recorded: successful. The result is valid; continue when your review is complete."
+      },
+      {
+        "id": "result_win_method",
+        "speaker": "TUTOR",
+        "text": "This game is complete. Your method reached a successful terminal state."
+      },
+      {
+        "id": "result_win_observation",
+        "speaker": "TUTOR",
+        "text": "Success confirmed, S-17. One result is evidence, not a complete model; proceed when ready."
+      }
+    ],
+    "result_player_lose": [
+      {
+        "id": "result_lose_recorded",
+        "speaker": "TUTOR",
+        "text": "Evaluation recorded: unsuccessful. Review the terminal condition before continuing."
+      },
+      {
+        "id": "result_lose_stable",
+        "speaker": "TUTOR",
+        "text": "This game is complete. The failed state is stable and has been recorded without penalty to the protocol."
+      },
+      {
+        "id": "result_lose_retry",
+        "speaker": "TUTOR",
+        "text": "The current attempt did not satisfy the objective. The next state will begin only when you continue."
+      }
+    ],
+    "result_draw": [
+      {
+        "id": "result_draw_recorded",
+        "speaker": "TUTOR",
+        "text": "Evaluation recorded: draw. Neither side established a decisive difference."
+      },
+      {
+        "id": "result_draw_history",
+        "speaker": "TUTOR",
+        "text": "The game resolved evenly across its recorded history. The draw is valid."
+      },
+      {
+        "id": "result_draw_stability",
+        "speaker": "TUTOR",
+        "text": "No losing line was established. Repeating that stability may satisfy the alternate completion condition."
+      }
+    ]
+  }
+}

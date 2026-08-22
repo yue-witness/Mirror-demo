@@ -1,0 +1,171 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/UI/TutorDialogueUI.cs" id="1_script"]
+
+[sub_resource type="StyleBoxFlat" id="PortraitCircle"]
+bg_color = Color(0.97, 0.985, 0.98, 0.96)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.02, 0.72, 0.5, 0.9)
+corner_radius_top_left = 90
+corner_radius_top_right = 90
+corner_radius_bottom_right = 90
+corner_radius_bottom_left = 90
+shadow_color = Color(0.02, 0.18, 0.15, 0.18)
+shadow_size = 16
+
+[sub_resource type="StyleBoxFlat" id="DialogueCard"]
+content_margin_left = 64.0
+content_margin_top = 54.0
+content_margin_right = 64.0
+content_margin_bottom = 46.0
+bg_color = Color(0.965, 0.985, 0.98, 0.94)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.08, 0.68, 0.48, 0.82)
+corner_radius_top_left = 52
+corner_radius_top_right = 52
+corner_radius_bottom_right = 52
+corner_radius_bottom_left = 52
+shadow_color = Color(0.02, 0.18, 0.15, 0.2)
+shadow_size = 20
+
+[node name="TutorDialogueUI" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="SafeArea" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 56
+theme_override_constants/margin_top = 34
+theme_override_constants/margin_right = 56
+theme_override_constants/margin_bottom = 30
+
+[node name="Layout" type="VBoxContainer" parent="SafeArea"]
+layout_mode = 2
+theme_override_constants/separation = 28
+
+[node name="Header" type="PanelContainer" parent="SafeArea/Layout"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+
+[node name="HeaderRow" type="HBoxContainer" parent="SafeArea/Layout/Header"]
+layout_mode = 2
+
+[node name="PhaseLabel" type="Label" parent="SafeArea/Layout/Header/HeaderRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 27
+text = "BACKGROUND / EXPLANATION"
+vertical_alignment = 1
+
+[node name="SaveLabel" type="Label" parent="SafeArea/Layout/Header/HeaderRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+text = "SAVE · STABLE"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PlayTimeLabel" type="Label" parent="SafeArea/Layout/Header/HeaderRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 18
+text = "PLAY TIME · 00:00"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Content" type="HBoxContainer" parent="SafeArea/Layout"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 80
+
+[node name="TutorCard" type="PanelContainer" parent="SafeArea/Layout/Content"]
+custom_minimum_size = Vector2(620, 0)
+layout_mode = 2
+
+[node name="TutorVBox" type="VBoxContainer" parent="SafeArea/Layout/Content/TutorCard"]
+layout_mode = 2
+alignment = 1
+
+[node name="Portrait" type="PanelContainer" parent="SafeArea/Layout/Content/TutorCard/TutorVBox"]
+custom_minimum_size = Vector2(180, 180)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_styles/panel = SubResource("PortraitCircle")
+
+[node name="PortraitText" type="Label" parent="SafeArea/Layout/Content/TutorCard/TutorVBox/Portrait"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 66
+text = "T"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TutorName" type="Label" parent="SafeArea/Layout/Content/TutorCard/TutorVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "THE TUTOR · ONLINE"
+horizontal_alignment = 1
+
+[node name="DialogueCard" type="PanelContainer" parent="SafeArea/Layout/Content"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("DialogueCard")
+
+[node name="DialogueVBox" type="VBoxContainer" parent="SafeArea/Layout/Content/DialogueCard"]
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="Speaker" type="Label" parent="SafeArea/Layout/Content/DialogueCard/DialogueVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.55, 0.08, 0.16, 1)
+theme_override_font_sizes/font_size = 22
+text = "TUTOR"
+
+[node name="DialogueText" type="RichTextLabel" parent="SafeArea/Layout/Content/DialogueCard/DialogueVBox"]
+custom_minimum_size = Vector2(0, 180)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/normal_font_size = 30
+text = "Welcome to Project X."
+fit_content = false
+scroll_active = false
+autowrap_mode = 2
+
+[node name="SupplementaryText" type="RichTextLabel" parent="SafeArea/Layout/Content/DialogueCard/DialogueVBox"]
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/normal_font_size = 21
+bbcode_enabled = true
+fit_content = false
+scroll_active = false
+autowrap_mode = 2
+
+[node name="Footer" type="HBoxContainer" parent="SafeArea/Layout"]
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+
+[node name="Spacer" type="Control" parent="SafeArea/Layout/Footer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="BackButton" type="Button" parent="SafeArea/Layout/Footer"]
+custom_minimum_size = Vector2(220, 44)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "SAVE & BACK"

@@ -1,0 +1,247 @@
+extends Node
+
+const SAVE_PATH := "res://.godot/tests/full_flow_save.json"
+const QA_DIRECTORY := "res://_qa/formal-demo"
+
+var _failed := false
+var _main: Control
+
+
+func _ready() -> void:
+	_prepare_paths()
+	var packed := load("res://scenes/main.tscn") as PackedScene
+	_main = packed.instantiate() as Control
+	_main.set("SavePath", SAVE_PATH)
+	_main.set("FastMode", true)
+	_main.set("TestSeed", 772774)
+	add_child(_main)
+	await _frames()
+
+	_press("TitleScreen/MenuGlass/MenuVBox/NewGameButton")
+	await get_tree().create_timer(0.22).timeout
+	await _frames()
+	_left_click()
+
+	# Three background pages lead to the Chapter 1 splash.
+	for index in range(3):
+		await _advance_dialogue_page()
+
+	await _frames()
+	_left_click()
+
+	# Three Bash tutorial pages lead to the first playable round.
+	for index in range(3):
+		await _advance_dialogue_page()
+
+	await _complete_bash_tutorial_gate()
+	await _complete_rule_transition()
+	await _complete_limit_bash()
+
+	var summary_phase := _label(
+		"TutorDialogueUI/SafeArea/Layout/Header/HeaderRow/PhaseLabel")
+	_assert(summary_phase.text == "SUMMARY",
+		"The complete session did not reach the final summary.")
+	_assert(FileAccess.file_exists(SAVE_PATH),
+		"The complete flow did not retain its session save.")
+	_capture("04-summary.png")
+
+	await _advance_dialogue_page()
+	_assert(_main.get_node("TitleScreen").visible,
+		"Completing the summary did not return to the title screen.")
+	_assert(not _button("TitleScreen/MenuGlass/MenuVBox/ContinueButton").visible,
+		"A completed session must not remain available through Continue.")
+
+	if _failed:
+		get_tree().quit(1)
+	else:
+		print("Formal demo full-flow smoke passed: title to completed summary.")
+		get_tree().quit(0)
+
+
+func _complete_bash_tutorial_gate() -> void:
+	var completed_rounds := 0
+	var guard := 0
+
+	while completed_rounds < 2 and guard < 500:
+		guard += 1
+		await get_tree().create_timer(0.025).timeout
+		await _frames()
+
+		var continue_button := _button(
+			"GameplayHUD/SafeArea/Layout/Content/Center/ContinueButton")
+		if continue_button.visible:
+			var bash_result_log := _main.get_node(
+				"GameplayHUD/SafeArea/Layout/Content/RightLog/RightVBox/Log") as RichTextLabel
+			_assert(bash_result_log.text.contains("Final unit taken")
+				and bash_result_log.text.contains("ACTIONS THIS ROUND"),
+				"The Bash result screen cleared the SYSTEM action log.")
+			_capture("03c-bash-result.png")
+			var result := _label(
+				"GameplayHUD/SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/RemainingValue").text
+			if result == "PLAYER WIN":
+				completed_rounds += 1
+			_press("GameplayHUD/SafeArea/Layout/Content/Center/ContinueButton")
+			continue
+
+		var choice := _choose_optimal_bash_button()
+		if choice != null:
+			choice.emit_signal("pressed")
+			await _frames()
+			_press("GameplayHUD/SafeArea/Layout/Content/Center/ConfirmButton")
+
+	_assert(completed_rounds == 2,
+		"Both required Bash wins were not completed within the safety bound.")
+
+
+func _choose_optimal_bash_button() -> Button:
+	var confirm := _button("GameplayHUD/SafeArea/Layout/Content/Center/ConfirmButton")
+	if not confirm.visible:
+		return null
+
+	var remaining_text := _label(
+		"GameplayHUD/SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/RemainingValue").text
+	if not remaining_text.is_valid_int():
+		return null
+
+	var remaining := remaining_text.to_int()
+	var desired := (remaining - 1) % 4
+	var choices: Array[Button] = []
+
+	for index in range(1, 4):
+		var button := _button(
+			"GameplayHUD/SafeArea/Layout/Content/Center/ChoiceRow/Choice%d" % index)
+		if button.visible and not button.disabled:
+			if index == desired:
+				return button
+			choices.append(button)
+
+	return choices[0] if not choices.is_empty() else null
+
+
+func _complete_rule_transition() -> void:
+	for index in range(4):
+		await _advance_dialogue_page()
+
+
+func _complete_limit_bash() -> void:
+	var guard := 0
+	var captured_result := false
+	var observed_live_log := false
+
+	while guard < 800:
+		guard += 1
+		await get_tree().create_timer(0.025).timeout
+		await _frames()
+
+		if _main.get_node("TutorDialogueUI").visible:
+			_assert(observed_live_log,
+				"Limit Bash did not show a per-round execution log during play.")
+			return
+
+		var banner := _label("GameplayHUD/SafeArea/Layout/Header/HeaderRow/PhaseBanner")
+
+		var continue_button := _button(
+			"GameplayHUD/SafeArea/Layout/Content/Center/ContinueButton")
+		var current_log := _main.get_node(
+			"GameplayHUD/SafeArea/Layout/Content/RightLog/RightVBox/Log") as RichTextLabel
+		if current_log.text.contains("R01") and current_log.text.contains("PLAYER"):
+			observed_live_log = true
+
+		if continue_button.visible:
+			if banner.text.contains("GAME RESULT") and not captured_result:
+				var selection := _label(
+					"GameplayHUD/SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/SelectionLabel")
+				var system_log := _main.get_node(
+					"GameplayHUD/SafeArea/Layout/Content/RightLog/RightVBox/Log") as RichTextLabel
+				_assert(selection.text.contains("FINAL · PLAYER")
+					and selection.text.contains("TUTOR"),
+					"Limit Bash result did not show both final choices.")
+				_assert(system_log.text.contains("R01")
+					and system_log.text.contains("PLAYER")
+					and system_log.text.contains("TUTOR"),
+					"Limit Bash result did not retain its execution log.")
+				_capture("03b-limit-result.png")
+				captured_result = true
+			_press("GameplayHUD/SafeArea/Layout/Content/Center/ContinueButton")
+			continue
+
+		for index in range(1, 4):
+			var choice := _button(
+				"GameplayHUD/SafeArea/Layout/Content/Center/ChoiceRow/Choice%d" % index)
+			if choice.visible and not choice.disabled:
+				choice.emit_signal("pressed")
+				await _frames()
+				_press("GameplayHUD/SafeArea/Layout/Content/Center/ConfirmButton")
+				break
+
+	_assert(false, "Limit Bash did not settle within the safety bound.")
+
+
+func _prepare_paths() -> void:
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(QA_DIRECTORY))
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("res://.godot/tests"))
+	for suffix in ["", ".bak", ".tmp"]:
+		var resource_path: String = SAVE_PATH + suffix
+		if FileAccess.file_exists(resource_path):
+			DirAccess.remove_absolute(ProjectSettings.globalize_path(resource_path))
+
+
+func _button(path: String) -> Button:
+	return _main.get_node(path) as Button
+
+
+func _label(path: String) -> Label:
+	return _main.get_node(path) as Label
+
+
+func _press(path: String) -> void:
+	var button := _button(path)
+	_assert(button != null, "Missing button: " + path)
+	if button != null:
+		button.emit_signal("pressed")
+
+
+func _left_click() -> void:
+	var event := InputEventMouseButton.new()
+	event.button_index = MOUSE_BUTTON_LEFT
+	event.pressed = true
+	event.position = Vector2(640, 500)
+	event.global_position = event.position
+	Input.parse_input_event(event)
+
+
+func _advance_dialogue_page() -> void:
+	await _frames()
+	var dialogue := _main.get_node(
+		"TutorDialogueUI/SafeArea/Layout/Content/DialogueCard/DialogueVBox/DialogueText") as RichTextLabel
+
+	if dialogue.visible_characters != -1:
+		_left_click()
+		await _frames()
+
+	_left_click()
+	await _frames()
+
+
+func _capture(file_name: String) -> void:
+	# The headless display driver has no render texture. Visual runs still write
+	# the same QA captures when a real display driver is available.
+	if DisplayServer.get_name() == "headless":
+		return
+
+	var image := get_viewport().get_texture().get_image()
+	var result := image.save_png(
+		ProjectSettings.globalize_path(QA_DIRECTORY + "/" + file_name))
+	_assert(result == OK, "Could not save QA capture: " + file_name)
+
+
+func _frames() -> void:
+	await get_tree().process_frame
+	await get_tree().process_frame
+
+
+func _assert(condition: bool, message: String) -> void:
+	if condition:
+		return
+	_failed = true
+	push_error(message)

@@ -1,0 +1,43 @@
+{
+  "phases": {
+    "Background": [
+      {
+        "id": "background_online",
+        "speaker": "TUTOR",
+        "text": "Initialization complete. Visual and motor channels are stable. Welcome online, S-17."
+      },
+      {
+        "id": "background_project_x",
+        "speaker": "TUTOR",
+        "text": "This facility belongs to Project X. You are its seventeenth synthetic reasoning subject. I am the Tutor: an impartial guidance and evaluation system. I will explain each protocol, then participate as your opponent."
+      },
+      {
+        "id": "background_protocol",
+        "speaker": "TUTOR",
+        "text": "These trials measure whether your reasoning remains reliable as the rules change. Final failure results in decommissioning and reconstruction; that is a procedure, not a threat. All responses use three fixed positions. Select first, then confirm when your decision is ready."
+      }
+    ],
+    "RuleTransition": [
+      {
+        "id": "transition_hidden",
+        "speaker": "TUTOR",
+        "text": "Protocol variation loaded: Limit Bash. Alternating turns are replaced by hidden choices from both sides. Nothing is revealed until both choices are locked."
+      },
+      {
+        "id": "transition_repeat",
+        "speaker": "TUTOR",
+        "text": "Each round, both of us still choose 1, 2, or 3. Neither side may repeat its own previous choice; unavailable controls will be disabled."
+      },
+      {
+        "id": "transition_resolution",
+        "speaker": "TUTOR",
+        "text": "If our combined choices meet or exceed the remaining total, the larger choice loses. If they are equal, the protocol looks back to the most recent round in which they differed."
+      },
+      {
+        "id": "transition_draw",
+        "speaker": "TUTOR",
+        "text": "If every revealed pair has matched, the game is a draw. This evaluation ends after you record two wins, or after two consecutive draws demonstrate a stable non-losing strategy."
+      }
+    ]
+  }
+}
