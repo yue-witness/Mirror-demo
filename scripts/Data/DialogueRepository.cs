@@ -15,33 +15,79 @@ public sealed record DialogueLine(
 /// </summary>
 public static class TutorDialoguePool
 {
-    public const string BashRoundStart = "bash_round_start";
+    public const string BashRoundOneRetryHint1 = "bash_r1_retry_hint_1";
+    public const string BashRoundOneRetryHint2 = "bash_r1_retry_hint_2";
+    public const string BashRoundOneRetryHint3 = "bash_r1_retry_hint_3";
+    public const string BashRoundTwoRetryHint1 = "bash_r2_retry_hint_1";
+    public const string BashRoundTwoRetryHint2 = "bash_r2_retry_hint_2";
+    public const string BashRoundTwoRetryHint3 = "bash_r2_retry_hint_3";
+    public const string LimitGameTwoBegin = "limit_game_two_begin";
+    public const string LimitGameThreeBegin = "limit_game_three_begin";
+    public const string LimitLateBegin = "limit_late_begin";
+    public const string LimitRestart = "limit_restart";
+    public const string ChoiceRevision = "choice_revision";
+    public const string ChoiceHesitation = "choice_hesitation";
+    public const string BashState = "bash_state";
+    public const string BashFirstSelection = "bash_first_selection";
     public const string BashPlayerConfirmed = "bash_player_confirmed";
-    public const string BashTutorActed = "bash_tutor_acted";
+    public const string BashRoundOneTutorActed = "bash_r1_tutor_acted";
+    public const string BashRoundTwoTutorActed = "bash_r2_tutor_acted";
     public const string BashTerminalApproach = "bash_terminal_approach";
-    public const string LimitGameStart = "limit_game_start";
+    public const string LimitState = "limit_state";
+    public const string LimitFirstSelection = "limit_first_selection";
     public const string LimitChoiceLocked = "limit_choice_locked";
     public const string LimitReveal = "limit_reveal";
     public const string LimitTerminalApproach = "limit_terminal_approach";
     public const string Restore = "restore";
-    public const string PlayerWin = "result_player_win";
-    public const string PlayerLose = "result_player_lose";
-    public const string Draw = "result_draw";
+    public const string BashRoundOneWin = "bash_r1_win";
+    public const string BashRoundTwoWin = "bash_r2_win";
+    public const string BashLossTier1 = "bash_loss_tier_1";
+    public const string BashLossTier2 = "bash_loss_tier_2";
+    public const string BashLossTier3 = "bash_loss_tier_3";
+    public const string LimitWinDirect = "limit_win_direct";
+    public const string LimitWinHistory = "limit_win_history";
+    public const string LimitLossDirect = "limit_loss_direct";
+    public const string LimitLossHistory = "limit_loss_history";
+    public const string LimitDraw = "limit_draw";
+    public const string LimitDrawCompletion = "limit_draw_completion";
 
     public static IReadOnlyList<string> All { get; } = new[]
     {
-        BashRoundStart,
+        BashRoundOneRetryHint1,
+        BashRoundOneRetryHint2,
+        BashRoundOneRetryHint3,
+        BashRoundTwoRetryHint1,
+        BashRoundTwoRetryHint2,
+        BashRoundTwoRetryHint3,
+        LimitGameTwoBegin,
+        LimitGameThreeBegin,
+        LimitLateBegin,
+        LimitRestart,
+        ChoiceRevision,
+        ChoiceHesitation,
+        BashState,
+        BashFirstSelection,
         BashPlayerConfirmed,
-        BashTutorActed,
+        BashRoundOneTutorActed,
+        BashRoundTwoTutorActed,
         BashTerminalApproach,
-        LimitGameStart,
+        LimitState,
+        LimitFirstSelection,
         LimitChoiceLocked,
         LimitReveal,
         LimitTerminalApproach,
         Restore,
-        PlayerWin,
-        PlayerLose,
-        Draw
+        BashRoundOneWin,
+        BashRoundTwoWin,
+        BashLossTier1,
+        BashLossTier2,
+        BashLossTier3,
+        LimitWinDirect,
+        LimitWinHistory,
+        LimitLossDirect,
+        LimitLossHistory,
+        LimitDraw,
+        LimitDrawCompletion
     };
 }
 
@@ -80,6 +126,17 @@ public sealed class DialogueRepository
         return _randomPools.TryGetValue(poolId, out List<DialogueLine>? lines)
             ? lines
             : Array.Empty<DialogueLine>();
+    }
+
+    public DialogueLine GetById(string lineId)
+    {
+        DialogueLine? line = _lines.Values
+            .SelectMany(lines => lines)
+            .Concat(_randomPools.Values.SelectMany(lines => lines))
+            .FirstOrDefault(candidate => candidate.Id == lineId);
+
+        return line ?? throw new InvalidDataException(
+            $"Dialogue line {lineId} does not exist.");
     }
 
     /// <summary>

@@ -1,6 +1,7 @@
-[gd_scene load_steps=12 format=3]
+[gd_scene load_steps=13 format=3]
 
 [ext_resource type="Script" path="res://scripts/UI/GameplayHUD.cs" id="1_script"]
+[ext_resource type="Script" path="res://scripts/UI/StabilityLatticeView.cs" id="2_lattice"]
 
 [sub_resource type="StyleBoxFlat" id="ChoiceGreen"]
 content_margin_left = 18.0
@@ -222,7 +223,7 @@ layout_mode = 2
 size_flags_vertical = 3
 theme_override_font_sizes/normal_font_size = 20
 bbcode_enabled = true
-text = "• Starting units: 15\n\n• Remaining: 8\n\n• Player's turn\n\n• Taking the last unit loses"
+text = "• Starting anchors: 15\n\n• Active anchors: 8\n\n• Player's turn\n\n• Disengaging the keystone loses synchronization"
 fit_content = false
 scroll_active = false
 
@@ -232,7 +233,7 @@ size_flags_horizontal = 3
 theme_override_constants/separation = 14
 
 [node name="RemainingCard" type="PanelContainer" parent="SafeArea/Layout/Content/Center"]
-custom_minimum_size = Vector2(0, 270)
+custom_minimum_size = Vector2(0, 310)
 layout_mode = 2
 
 [node name="RemainingVBox" type="VBoxContainer" parent="SafeArea/Layout/Content/Center/RemainingCard"]
@@ -243,14 +244,21 @@ alignment = 1
 layout_mode = 2
 theme_override_colors/font_color = Color(0.08, 0.39, 0.32, 1)
 theme_override_font_sizes/font_size = 17
-text = "REMAINING"
+text = "STABILITY LATTICE · ACTIVE ANCHORS"
 horizontal_alignment = 1
 
 [node name="RemainingValue" type="Label" parent="SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 54
+theme_override_font_sizes/font_size = 42
 text = "08"
 horizontal_alignment = 1
+
+[node name="LatticeView" type="Control" parent="SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox"]
+custom_minimum_size = Vector2(0, 176)
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+script = ExtResource("2_lattice")
 
 [node name="SelectionLabel" type="Label" parent="SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox"]
 layout_mode = 2

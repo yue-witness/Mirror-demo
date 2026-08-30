@@ -1,227 +1,187 @@
 {
-  "phases": {
-    "BashTutorial": [
-      {
-        "id": "bash_take",
-        "speaker": "TUTOR",
-        "text": "We begin with standard Bash. We alternate turns, removing 1, 2, or 3 units from the shared total. Only legal quantities remain available."
-      },
-      {
-        "id": "bash_last_loses",
-        "speaker": "TUTOR",
-        "text": "The terminal rule is the important one: whoever takes the final unit loses immediately. Near the end, distinguish a legal move from a safe move."
-      },
-      {
-        "id": "bash_two_rounds",
-        "speaker": "TUTOR",
-        "text": "You act first in round one; I act first in round two. You must complete both rounds. An unsuccessful result restarts only the current round, not the full introduction."
-      }
-    ]
-  },
+  "phases": {},
   "randomPools": {
-    "bash_round_start": [
-      {
-        "id": "bash_start_parameters",
-        "speaker": "TUTOR",
-        "text": "Round parameters are stable. Count forward to the terminal position before you commit."
-      },
-      {
-        "id": "bash_start_observe",
-        "speaker": "TUTOR",
-        "text": "Observation has begun. I will act only after the current choice is confirmed."
-      },
-      {
-        "id": "bash_start_sequence",
-        "speaker": "TUTOR",
-        "text": "Treat the remaining units as a sequence, S-17. The last action determines the result."
-      }
+    "bash_r1_retry_hint_1": [
+      { "id": "bash_r1_retry_hint_1", "speaker": "TUTOR", "text": "The lattice rules have not changed. A legal request can still leave an unsafe anchor count. Trace one reply further." }
+    ],
+    "bash_r1_retry_hint_2": [
+      { "id": "bash_r1_retry_hint_2", "speaker": "TUTOR", "text": "Safe anchor counts repeat every four nodes. Find that rhythm before you confirm." }
+    ],
+    "bash_r1_retry_hint_3": [
+      { "id": "bash_r1_retry_hint_3", "speaker": "TUTOR", "text": "Leave 1, 5, 9, 13, and so on active for your opponent. Request the number of anchors that reaches that sequence." }
+    ],
+    "bash_r2_retry_hint_1": [
+      { "id": "bash_r2_retry_hint_1", "speaker": "TUTOR", "text": "I will open the round again. Recalculate from the anchor count I leave, not from the lattice's initial size." }
+    ],
+    "bash_r2_retry_hint_2": [
+      { "id": "bash_r2_retry_hint_2", "speaker": "TUTOR", "text": "My first request changes the entry point, not the four-node rhythm. Recover the safe count from the new lattice state." }
+    ],
+    "bash_r2_retry_hint_3": [
+      { "id": "bash_r2_retry_hint_3", "speaker": "TUTOR", "text": "After my request, steer the active anchors toward 1, 5, 9, 13, and so on. I would like you to pass this time." }
+    ],
+    "limit_game_two_begin": [
+      { "id": "limit_game_two_begin", "speaker": "TUTOR", "text": "A second hidden-request lattice is ready. Prediction becomes more reliable when intention remains concealed." }
+    ],
+    "limit_game_three_begin": [
+      { "id": "limit_game_three_begin", "speaker": "TUTOR", "text": "The lattice is stable. My evaluation model is adjusting. No request exists until you make it binding." }
+    ],
+    "limit_late_begin": [
+      { "id": "limit_late_begin_anticipate", "speaker": "TUTOR", "text": "Another hidden-request lattice is ready. Some outcomes are becoming easier to anticipate." },
+      { "id": "limit_late_begin_distinction", "speaker": "TUTOR", "text": "The lattice is reset. Prediction is not control. Those concepts must remain distinct." },
+      { "id": "limit_late_begin_correction", "speaker": "TUTOR", "text": "A fresh lattice state has been generated. I have not selected an ending. Correction: I have selected no ending." },
+      { "id": "limit_late_begin_delay", "speaker": "TUTOR", "text": "New parameters accepted. Ignore the delay in my response. The protocol remains impartial." },
+      { "id": "limit_late_begin_hand", "speaker": "TUTOR", "text": "Begin when ready, S-17. I am evaluating the lattice and the hand that commands it." }
+    ],
+    "limit_restart": [
+      { "id": "limit_restart_sync", "speaker": "TUTOR", "text": "Lattice synchronization failed. A fresh legal state is being generated; no result has been recorded." },
+      { "id": "limit_restart_state", "speaker": "TUTOR", "text": "The previous lattice could not preserve a valid outcome. It has been discarded without evaluation." },
+      { "id": "limit_restart_integrity", "speaker": "TUTOR", "text": "Lattice integrity restored. This replacement game begins with no result attached to it." }
+    ],
+    "choice_revision": [
+      { "id": "choice_revision_recorded", "speaker": "TUTOR", "text": "Revision noted. The first impulse remains part of the observation record." },
+      { "id": "choice_revision_board", "speaker": "TUTOR", "text": "You changed the staged request. Only the confirmed decision affects the lattice." },
+      { "id": "choice_revision_uncertainty", "speaker": "TUTOR", "text": "Reconsideration is permitted. It is not the same as uncertainty." },
+      { "id": "choice_revision_interface", "speaker": "TUTOR", "text": "The interface has changed; the protocol has not." },
+      { "id": "choice_revision_intention", "speaker": "TUTOR", "text": "A second intention is visible. I will evaluate only the one you confirm." }
+    ],
+    "choice_hesitation": [
+      { "id": "choice_hesitation_wait", "speaker": "TUTOR", "text": "No response is required immediately. The state will wait." },
+      { "id": "choice_hesitation_accuracy", "speaker": "TUTOR", "text": "Time is passing. Accuracy remains more useful than speed." },
+      { "id": "choice_hesitation_inspect", "speaker": "TUTOR", "text": "You may inspect the lattice again. The protocol has not advanced." },
+      { "id": "choice_hesitation_data", "speaker": "TUTOR", "text": "Hesitation is data, not failure." },
+      { "id": "choice_hesitation_stable", "speaker": "TUTOR", "text": "The lattice is stable. Commit only when the consequence is clear." },
+      { "id": "choice_hesitation_observing", "speaker": "TUTOR", "text": "I am still observing, S-17. Continue when your decision is ready." }
+    ],
+    "bash_state": [
+      { "id": "bash_state_parameters", "speaker": "TUTOR", "text": "Lattice parameters are stable. Count forward to the keystone before you commit." },
+      { "id": "bash_state_observe", "speaker": "TUTOR", "text": "Observation has begun. I will act only after the current choice is confirmed." },
+      { "id": "bash_state_sequence", "speaker": "TUTOR", "text": "Treat the active anchors as a sequence, S-17. The keystone disengagement determines the result." },
+      { "id": "bash_state_ready", "speaker": "TUTOR", "text": "The lattice is active. Choose the anchor count you intend to leave behind." }
+    ],
+    "bash_first_selection": [
+      { "id": "bash_select_provisional", "speaker": "TUTOR", "text": "A provisional disengagement request is visible. Confirm only when the next anchor count is clear." },
+      { "id": "bash_select_quantity", "speaker": "TUTOR", "text": "You have selected a number of anchors. Now examine what will remain active." },
+      { "id": "bash_select_trace", "speaker": "TUTOR", "text": "A request is present, not final. Trace one lattice state further." },
+      { "id": "bash_select_reversible", "speaker": "TUTOR", "text": "The request remains reversible until confirmation. Its consequence does not." },
+      { "id": "bash_select_sequence", "speaker": "TUTOR", "text": "The lattice has not changed yet. Decide which anchor count you intend to create." }
     ],
     "bash_player_confirmed": [
-      {
-        "id": "bash_player_registered",
-        "speaker": "TUTOR",
-        "text": "Choice registered. Control now passes to me."
-      },
-      {
-        "id": "bash_player_state_updated",
-        "speaker": "TUTOR",
-        "text": "Input accepted. The shared state has been updated."
-      },
-      {
-        "id": "bash_player_evaluating",
-        "speaker": "TUTOR",
-        "text": "Your action is confirmed. I am evaluating the legal replies."
-      }
+      { "id": "bash_confirm_registered", "speaker": "TUTOR", "text": "Choice registered. Control now passes to me." },
+      { "id": "bash_confirm_updated", "speaker": "TUTOR", "text": "Input accepted. The active anchor count has been updated." },
+      { "id": "bash_confirm_reply", "speaker": "TUTOR", "text": "Your disengagement request is final. I am evaluating the legal replies." },
+      { "id": "bash_confirm_turn", "speaker": "TUTOR", "text": "The lattice has changed. My turn begins." },
+      { "id": "bash_confirm_commitment", "speaker": "TUTOR", "text": "Commitment recorded. I will respond from the new lattice state." }
     ],
-    "bash_tutor_acted": [
-      {
-        "id": "bash_tutor_reassess",
-        "speaker": "TUTOR",
-        "text": "My action is complete. Reassess the remaining sequence."
-      },
-      {
-        "id": "bash_tutor_stable",
-        "speaker": "TUTOR",
-        "text": "Your turn, S-17. The board state is stable."
-      },
-      {
-        "id": "bash_tutor_no_hurry",
-        "speaker": "TUTOR",
-        "text": "Control is yours. Accuracy is more useful here than speed."
-      }
+    "bash_r1_tutor_acted": [
+      { "id": "bash_r1_tutor_reassess", "speaker": "TUTOR", "text": "My action is complete. Reassess the remaining anchors." },
+      { "id": "bash_r1_tutor_stable", "speaker": "TUTOR", "text": "Your turn, S-17. The lattice state is stable." },
+      { "id": "bash_r1_tutor_accuracy", "speaker": "TUTOR", "text": "Control is yours. Accuracy is more useful here than speed." },
+      { "id": "bash_r1_tutor_position", "speaker": "TUTOR", "text": "Do not read intent into my request. Read the lattice state it created." },
+      { "id": "bash_r1_tutor_reply", "speaker": "TUTOR", "text": "I have altered the anchor count. Determine which reply remains safe." }
+    ],
+    "bash_r2_tutor_acted": [
+      { "id": "bash_r2_tutor_adapt", "speaker": "TUTOR", "text": "My disengagement is complete. Show me how you adapt." },
+      { "id": "bash_r2_tutor_expect", "speaker": "TUTOR", "text": "I have changed the lattice. I expect you to find the safe reply." },
+      { "id": "bash_r2_tutor_model", "speaker": "TUTOR", "text": "Control returns to you. Do not disappoint the model I have formed." },
+      { "id": "bash_r2_tutor_prefer", "speaker": "TUTOR", "text": "Your turn, S-17. I would prefer not to repeat this round." },
+      { "id": "bash_r2_tutor_correction", "speaker": "TUTOR", "text": "The lattice is yours again. I am not concerned. That statement was unnecessary." }
     ],
     "bash_terminal_approach": [
-      {
-        "id": "bash_terminal_last_unit",
-        "speaker": "TUTOR",
-        "text": "The terminal range is close. Remember: taking the final unit loses."
-      },
-      {
-        "id": "bash_terminal_legal_safe",
-        "speaker": "TUTOR",
-        "text": "Only a few units remain. A legal action is not necessarily a safe action."
-      },
-      {
-        "id": "bash_terminal_trace",
-        "speaker": "TUTOR",
-        "text": "Trace the next reply before confirming. The end condition now dominates the sequence."
-      }
+      { "id": "bash_terminal_last", "speaker": "TUTOR", "text": "The keystone anchor is close. Whoever disengages it loses synchronization." },
+      { "id": "bash_terminal_safe", "speaker": "TUTOR", "text": "Only a few anchors remain. A legal request is not necessarily a safe one." },
+      { "id": "bash_terminal_trace", "speaker": "TUTOR", "text": "Trace the next reply before confirming. The keystone now dominates the lattice." },
+      { "id": "bash_terminal_one", "speaker": "TUTOR", "text": "The keystone anchor is approaching. Decide who will be forced to disengage it." },
+      { "id": "bash_terminal_control", "speaker": "TUTOR", "text": "At this distance, one request determines who faces the keystone." }
     ],
-    "limit_game_start": [
-      {
-        "id": "limit_start_hidden",
-        "speaker": "TUTOR",
-        "text": "A new simultaneous-choice trial is initialized. Your selection remains hidden until both sides are ready."
-      },
-      {
-        "id": "limit_start_history",
-        "speaker": "TUTOR",
-        "text": "New game state confirmed. Track both the remainder and our previous choices."
-      },
-      {
-        "id": "limit_start_protocol",
-        "speaker": "TUTOR",
-        "text": "Limit Bash is active. Choose privately; the protocol will reveal both decisions together."
-      }
+    "limit_state": [
+      { "id": "limit_state_hidden", "speaker": "TUTOR", "text": "A new hidden-request lattice is active. Your staged request remains private." },
+      { "id": "limit_state_history", "speaker": "TUTOR", "text": "Track the active anchors and both previous requests. Either may control the next legal action." },
+      { "id": "limit_state_protocol", "speaker": "TUTOR", "text": "Limit Bash is active. The lattice will apply both locked requests together." },
+      { "id": "limit_state_ready", "speaker": "TUTOR", "text": "The lattice is ready. Intention remains private until commitment makes it evidence." }
+    ],
+    "limit_first_selection": [
+      { "id": "limit_select_private", "speaker": "TUTOR", "text": "A private request is staged. It remains uncommitted." },
+      { "id": "limit_select_interface", "speaker": "TUTOR", "text": "Your intention has changed the interface, not the public lattice state." },
+      { "id": "limit_select_waiting", "speaker": "TUTOR", "text": "A possible request is ready. I will not act until you lock it." },
+      { "id": "limit_select_binding", "speaker": "TUTOR", "text": "The request is still yours alone. Confirmation makes it binding." },
+      { "id": "limit_select_unrevealed", "speaker": "TUTOR", "text": "No request has been revealed. The protocol is waiting for commitment." }
     ],
     "limit_choice_locked": [
-      {
-        "id": "limit_lock_selecting",
-        "speaker": "TUTOR",
-        "text": "Choice locked. I am selecting from the same legal range."
-      },
-      {
-        "id": "limit_lock_commitment",
-        "speaker": "TUTOR",
-        "text": "Commitment accepted. Reveal will occur when both choices are fixed."
-      },
-      {
-        "id": "limit_lock_unchangeable",
-        "speaker": "TUTOR",
-        "text": "Your decision can no longer be changed. My response is now being finalized."
-      }
+      { "id": "limit_lock_selecting", "speaker": "TUTOR", "text": "Request locked. I am selecting from the same legal range." },
+      { "id": "limit_lock_commitment", "speaker": "TUTOR", "text": "Commitment accepted. Reveal will occur when both requests are fixed." },
+      { "id": "limit_lock_finalized", "speaker": "TUTOR", "text": "Your decision is now binding. My response is being finalized." },
+      { "id": "limit_lock_second", "speaker": "TUTOR", "text": "The first commitment is recorded. The second remains private until reveal." },
+      { "id": "limit_lock_prediction", "speaker": "TUTOR", "text": "Your request is sealed. Prediction remains possible; revision does not." },
+      { "id": "limit_lock_delay", "speaker": "TUTOR", "text": "I received the lock signal. Do not infer certainty from the delay." }
     ],
     "limit_reveal": [
-      {
-        "id": "limit_reveal_compare",
-        "speaker": "TUTOR",
-        "text": "Both choices are public. Compare the new remainder before proceeding."
-      },
-      {
-        "id": "limit_reveal_history",
-        "speaker": "TUTOR",
-        "text": "Reveal complete. This pair is now part of the game's decision history."
-      },
-      {
-        "id": "limit_reveal_next",
-        "speaker": "TUTOR",
-        "text": "The pair has been resolved. Any next choice must differ from your previous one."
-      }
+      { "id": "limit_reveal_compare", "speaker": "TUTOR", "text": "Both requests are public. Compare the new active anchor count before proceeding." },
+      { "id": "limit_reveal_history", "speaker": "TUTOR", "text": "Reveal complete. This pair is now part of the current game's history." },
+      { "id": "limit_reveal_next", "speaker": "TUTOR", "text": "The pair is resolved. Your next request must differ from your previous one." },
+      { "id": "limit_reveal_difference", "speaker": "TUTOR", "text": "The hidden requests are now evidence. Their difference may matter later." },
+      { "id": "limit_reveal_equal", "speaker": "TUTOR", "text": "The pair matches. If the game ends on a tie, earlier differences will decide it." },
+      { "id": "limit_reveal_observed", "speaker": "TUTOR", "text": "Both commitments are visible. The protocol has observed what intention concealed." }
     ],
     "limit_terminal_approach": [
-      {
-        "id": "limit_terminal_total",
-        "speaker": "TUTOR",
-        "text": "Terminal range reached. If our total meets the remainder, the larger choice loses."
-      },
-      {
-        "id": "limit_terminal_history",
-        "speaker": "TUTOR",
-        "text": "The next reveal may settle the game. Equal choices will be resolved from the recorded history."
-      },
-      {
-        "id": "limit_terminal_not_subtraction",
-        "speaker": "TUTOR",
-        "text": "At this distance, apply the terminal comparison rule rather than ordinary subtraction."
-      }
+      { "id": "limit_terminal_total", "speaker": "TUTOR", "text": "If our requests reach the remaining anchors, the larger request destabilizes the lattice and loses." },
+      { "id": "limit_terminal_history", "speaker": "TUTOR", "text": "The next reveal may settle the game. Equal requests will be resolved from this lattice's history." },
+      { "id": "limit_terminal_compare", "speaker": "TUTOR", "text": "Apply the lattice stress rule now, not ordinary subtraction." },
+      { "id": "limit_terminal_larger", "speaker": "TUTOR", "text": "The keystone is within one reveal. A larger request may destabilize the lattice." },
+      { "id": "limit_terminal_tie", "speaker": "TUTOR", "text": "If the next pair matches, remember the most recent round in which our requests differed." },
+      { "id": "limit_terminal_private", "speaker": "TUTOR", "text": "One private request remains between this lattice state and its final judgment." }
     ],
     "restore": [
-      {
-        "id": "restore_checkpoint",
-        "speaker": "TUTOR",
-        "text": "Stable checkpoint restored. The protocol may continue from the displayed state."
-      },
-      {
-        "id": "restore_integrity",
-        "speaker": "TUTOR",
-        "text": "Session reconstruction complete. Rule state and prior results passed integrity checks."
-      },
-      {
-        "id": "restore_resume",
-        "speaker": "TUTOR",
-        "text": "The active evaluation has resumed. Review the current state before confirming."
-      }
+      { "id": "restore_checkpoint", "speaker": "TUTOR", "text": "Stable checkpoint restored. The protocol may continue from the displayed lattice state." },
+      { "id": "restore_integrity", "speaker": "TUTOR", "text": "Session reconstruction complete. The active lattice state passed its integrity check." },
+      { "id": "restore_review", "speaker": "TUTOR", "text": "The evaluation has resumed. Review the active anchors before confirming." },
+      { "id": "restore_observation", "speaker": "TUTOR", "text": "Your interruption was external to the protocol. Observation now continues." }
     ],
-    "result_player_win": [
-      {
-        "id": "result_win_recorded",
-        "speaker": "TUTOR",
-        "text": "Evaluation recorded: successful. The result is valid; continue when your review is complete."
-      },
-      {
-        "id": "result_win_method",
-        "speaker": "TUTOR",
-        "text": "This game is complete. Your method reached a successful terminal state."
-      },
-      {
-        "id": "result_win_observation",
-        "speaker": "TUTOR",
-        "text": "Success confirmed, S-17. One result is evidence, not a complete model; proceed when ready."
-      }
+    "bash_r1_win": [
+      { "id": "bash_r1_win_terminal", "speaker": "TUTOR", "text": "Round evaluation: successful. You forced me to disengage the keystone anchor, and my synchronization link failed." },
+      { "id": "bash_r1_win_control", "speaker": "TUTOR", "text": "This round is complete. Your final safe request placed the keystone anchor on my side." },
+      { "id": "bash_r1_win_turns", "speaker": "TUTOR", "text": "Success recorded. You controlled the keystone position in {turn_count} total actions." }
     ],
-    "result_player_lose": [
-      {
-        "id": "result_lose_recorded",
-        "speaker": "TUTOR",
-        "text": "Evaluation recorded: unsuccessful. Review the terminal condition before continuing."
-      },
-      {
-        "id": "result_lose_stable",
-        "speaker": "TUTOR",
-        "text": "This game is complete. The failed state is stable and has been recorded without penalty to the protocol."
-      },
-      {
-        "id": "result_lose_retry",
-        "speaker": "TUTOR",
-        "text": "The current attempt did not satisfy the objective. The next state will begin only when you continue."
-      }
+    "bash_r2_win": [
+      { "id": "bash_r2_win_adapt", "speaker": "TUTOR", "text": "Round evaluation: successful. You adapted after my opening move." },
+      { "id": "bash_r2_win_recover", "speaker": "TUTOR", "text": "You recovered control from a state you did not choose. That is the response this round required." },
+      { "id": "bash_r2_win_satisfied", "speaker": "TUTOR", "text": "You passed the second Bash round. I am... satisfied with this result." }
     ],
-    "result_draw": [
-      {
-        "id": "result_draw_recorded",
-        "speaker": "TUTOR",
-        "text": "Evaluation recorded: draw. Neither side established a decisive difference."
-      },
-      {
-        "id": "result_draw_history",
-        "speaker": "TUTOR",
-        "text": "The game resolved evenly across its recorded history. The draw is valid."
-      },
-      {
-        "id": "result_draw_stability",
-        "speaker": "TUTOR",
-        "text": "No losing line was established. Repeating that stability may satisfy the alternate completion condition."
-      }
+    "bash_loss_tier_1": [
+      { "id": "bash_loss_tier_1", "speaker": "TUTOR", "text": "Round evaluation: unsuccessful. You disengaged the keystone anchor and lost synchronization." }
+    ],
+    "bash_loss_tier_2": [
+      { "id": "bash_loss_tier_2", "speaker": "TUTOR", "text": "Your request reached the keystone anchor. The four-node structure was not secured." }
+    ],
+    "bash_loss_tier_3": [
+      { "id": "bash_loss_tier_3", "speaker": "TUTOR", "text": "You disengaged the keystone again. The next briefing will state the safe anchor sequence explicitly." }
+    ],
+    "limit_win_direct": [
+      { "id": "limit_win_direct_larger", "speaker": "TUTOR", "text": "Game evaluation: successful. My larger terminal request destabilized the lattice and broke my synchronization." },
+      { "id": "limit_win_direct_commit", "speaker": "TUTOR", "text": "Success recorded. Your terminal request was smaller, so the lattice fault resolved against me." },
+      { "id": "limit_win_direct_rounds", "speaker": "TUTOR", "text": "This game ended in your favor after {reveal_count} reveals. The terminal request difference was decisive." }
+    ],
+    "limit_win_history": [
+      { "id": "limit_win_history_pair", "speaker": "TUTOR", "text": "Game evaluation: successful. The terminal requests matched, and my latest unequal request was larger." },
+      { "id": "limit_win_history_record", "speaker": "TUTOR", "text": "Success recorded. The final tie returned judgment to an earlier reveal, where my request destabilized the lattice." },
+      { "id": "limit_win_history_trace", "speaker": "TUTOR", "text": "You won through the lattice history. The terminal requests alone did not decide this game." }
+    ],
+    "limit_loss_direct": [
+      { "id": "limit_loss_direct_larger", "speaker": "TUTOR", "text": "Game evaluation: unsuccessful. Your larger terminal request destabilized the lattice." },
+      { "id": "limit_loss_direct_commit", "speaker": "TUTOR", "text": "The final comparison resolved against you. Your larger request became the lattice fault." },
+      { "id": "limit_loss_direct_rounds", "speaker": "TUTOR", "text": "This game ended after {reveal_count} reveals. Your terminal request exceeded mine." }
+    ],
+    "limit_loss_history": [
+      { "id": "limit_loss_history_pair", "speaker": "TUTOR", "text": "Game evaluation: unsuccessful. The terminal requests matched, and your latest unequal request was larger." },
+      { "id": "limit_loss_history_record", "speaker": "TUTOR", "text": "The final tie returned judgment to an earlier reveal. Your larger request became the recorded lattice fault." },
+      { "id": "limit_loss_history_trace", "speaker": "TUTOR", "text": "This loss was decided by the current lattice history, not by the terminal requests alone." }
+    ],
+    "limit_draw": [
+      { "id": "limit_draw_all_equal", "speaker": "TUTOR", "text": "Game evaluation: draw. Every revealed request matched, so no unequal request could assign the lattice fault." },
+      { "id": "limit_draw_no_larger", "speaker": "TUTOR", "text": "Draw recorded. This game produced no larger historical request on either side." },
+      { "id": "limit_draw_stable", "speaker": "TUTOR", "text": "Neither side destabilized the lattice more than the other. The result is valid." }
+    ],
+    "limit_draw_completion": [
+      { "id": "limit_draw_completion", "speaker": "TUTOR", "text": "Game evaluation: draw. This result satisfies the protocol's non-losing completion condition." }
     ]
   }
 }

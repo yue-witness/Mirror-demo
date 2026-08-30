@@ -16,6 +16,7 @@ public partial class GameplayHUD : Control
     private RichTextLabel _leftDetails = null!;
     private Label _remainingLabel = null!;
     private Label _selectionLabel = null!;
+    private StabilityLatticeView _latticeView = null!;
     private RichTextLabel _dialogueText = null!;
     private Label _systemStatus = null!;
     private RichTextLabel _systemLog = null!;
@@ -26,6 +27,7 @@ public partial class GameplayHUD : Control
     private Control _chapterOverlay = null!;
     private Label _chapterNumber = null!;
     private Label _chapterTitle = null!;
+    private string _choiceVerb = "DISENGAGE";
 
     public event Action<int>? ChoiceSelected;
 
@@ -50,6 +52,8 @@ public partial class GameplayHUD : Control
             "SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/RemainingValue");
         _selectionLabel = GetNode<Label>(
             "SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/SelectionLabel");
+        _latticeView = GetNode<StabilityLatticeView>(
+            "SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/LatticeView");
         _dialogueText = GetNode<RichTextLabel>(
             "SafeArea/Layout/Content/Center/DialoguePanel/DialogueVBox/Text");
         _systemStatus = GetNode<Label>(
@@ -137,23 +141,30 @@ public partial class GameplayHUD : Control
             : "STATUS · TUTOR TURN · ACTING";
         _leftTitle.Text = "ROUND STATUS";
         _leftDetails.Text =
-            $"• Starting units: {game.InitialUnits}\n\n"
-            + $"• Remaining: {game.Remaining}\n\n"
+            $"• Starting anchors: {game.InitialUnits}\n\n"
+            + $"• Active anchors: {game.Remaining}\n\n"
             + $"• {(game.CurrentTurn == Actor.Player ? "Player's turn" : "Tutor's turn")}\n\n"
-            + "• Taking the last unit loses";
+            + "• Disengaging the keystone loses synchronization";
         _remainingLabel.Text = game.Remaining.ToString("00");
         _selectionLabel.Text = selectedChoice.HasValue
-            ? $"SELECTED: TAKE {selectedChoice.Value}"
-            : "NO SELECTION";
+            ? $"STAGED: DISENGAGE {selectedChoice.Value}"
+            : "NO REQUEST STAGED";
+        _latticeView.ShowState(
+            game.InitialUnits,
+            game.Remaining,
+            selectedChoice,
+            requestLocked: !inputOpen && selectedChoice.HasValue,
+            limitMode: false);
         _dialogueText.Text = tutorDialogue;
         _systemLog.Text = $"{systemLog}\n\nACTIONS THIS ROUND: {turns}";
 
+        _choiceVerb = "DISENGAGE";
         int[] legal = Enumerable.Range(1, 3).Where(game.CanTake).ToArray();
         ConfigureChoices(legal, selectedChoice, locked: !inputOpen);
         _confirmButton.Visible = true;
         _confirmButton.Disabled = !inputOpen || !selectedChoice.HasValue;
         _confirmButton.Text = selectedChoice.HasValue
-            ? $"CONFIRM · TAKE {selectedChoice.Value}"
+            ? $"CONFIRM · DISENGAGE {selectedChoice.Value}"
             : "SELECT FIRST";
         _continueButton.Visible = false;
     }
@@ -177,16 +188,22 @@ public partial class GameplayHUD : Control
                 : "STATUS · REVEALING · INPUT LOCKED";
         _leftTitle.Text = "CURRENT STATUS";
         _leftDetails.Text =
-            $"• Starting units: {game.InitialUnits}\n\n"
-            + $"• Remaining: {game.Remaining}\n\n"
-            + $"• Player's last choice: {FormatPrevious(game.PlayerPrevious)}\n\n"
-            + $"• Tutor's last choice: {FormatPrevious(game.TutorPrevious)}";
+            $"• Starting anchors: {game.InitialUnits}\n\n"
+            + $"• Active anchors: {game.Remaining}\n\n"
+            + $"• Player's last request: {FormatPrevious(game.PlayerPrevious)}\n\n"
+            + $"• Tutor's last request: {FormatPrevious(game.TutorPrevious)}";
         _remainingLabel.Text = game.Remaining.ToString("00");
         _selectionLabel.Text = selectedChoice.HasValue
             ? waiting
-                ? $"PLAYER CHOICE: {selectedChoice.Value} · LOCKED"
-                : $"PLAYER CHOICE: {selectedChoice.Value}"
-            : "CHOOSE 1 / 2 / 3";
+                ? $"PLAYER REQUEST: {selectedChoice.Value} · LOCKED"
+                : $"PLAYER REQUEST: {selectedChoice.Value}"
+            : "REQUEST 1 / 2 / 3";
+        _latticeView.ShowState(
+            game.InitialUnits,
+            game.Remaining,
+            selectedChoice,
+            requestLocked: waiting,
+            limitMode: true);
         _dialogueText.Text = tutorDialogue;
         _systemLog.Text =
             $"{systemLog}\n\n"
@@ -195,13 +212,14 @@ public partial class GameplayHUD : Control
             + $"TOTAL WINS: {stats.LimitBashPlayerWins} / 2\n"
             + $"CONSECUTIVE DRAWS: {stats.ConsecutiveLimitBashDraws} / 2";
 
+        _choiceVerb = "REQUEST";
         ConfigureChoices(game.GetLegalPlayerActions(), selectedChoice, !inputOpen);
         _confirmButton.Visible = true;
         _confirmButton.Disabled = !inputOpen || !selectedChoice.HasValue;
         _confirmButton.Text = waiting
             ? "LOCKED · WAITING"
             : selectedChoice.HasValue
-                ? $"CONFIRM · TAKE {selectedChoice.Value}"
+                ? $"CONFIRM · REQUEST {selectedChoice.Value}"
                 : "SELECT FIRST";
         _continueButton.Visible = false;
     }
@@ -228,7 +246,7 @@ public partial class GameplayHUD : Control
                 tutorTake,
                 game.Remaining,
                 Math.Max(0, game.Remaining - playerTake - tutorTake)));
-        _selectionLabel.Text = $"PLAYER {playerTake}  ·  TUTOR {tutorTake}";
+        _selectionLabel.Text = $"REVEAL · PLAYER {playerTake}  ·  TUTOR {tutorTake}";
         _confirmButton.Visible = false;
     }
 
@@ -252,18 +270,22 @@ public partial class GameplayHUD : Control
             ? "STATUS · GAME COMPLETE · WAITING TO CONTINUE"
             : "STATUS · END CONDITION REACHED";
         _leftTitle.Text = "GAME STATISTICS";
-        _leftDetails.Text =
-            $"• {FormatOutcomeDescription(outcome)}\n\n"
-            + $"• Total wins: {stats.LimitBashPlayerWins} / 2\n\n"
-            + $"• Consecutive draws: {stats.ConsecutiveLimitBashDraws} / 2\n\n"
-            + $"• Rounds this game: {rounds}"
-            + (finalChoice.HasValue
-                ? $"\n\n• Final round: Player {finalChoice.Value.PlayerTake}"
-                    + $" / Tutor {finalChoice.Value.TutorTake}"
-                : string.Empty);
+        _leftDetails.Text = game == GameKind.Bash
+            ? $"• {FormatOutcomeDescription(outcome)}\n\n"
+                + $"• Actions this round: {rounds}\n\n"
+                + "• Terminal event: keystone disengaged"
+            : $"• {FormatOutcomeDescription(outcome)}\n\n"
+                + $"• Total wins: {stats.LimitBashPlayerWins} / 2\n\n"
+                + $"• Consecutive draws: {stats.ConsecutiveLimitBashDraws} / 2\n\n"
+                + $"• Reveals this game: {rounds}"
+                + (finalChoice.HasValue
+                    ? $"\n\n• Final requests: Player {finalChoice.Value.PlayerTake}"
+                        + $" / Tutor {finalChoice.Value.TutorTake}"
+                    : string.Empty);
         _remainingLabel.Text = result;
+        _latticeView.ShowResult(outcome);
         _selectionLabel.Text = finalChoice.HasValue
-            ? $"FINAL · PLAYER {finalChoice.Value.PlayerTake}"
+            ? $"FINAL REQUESTS · PLAYER {finalChoice.Value.PlayerTake}"
                 + $" / TUTOR {finalChoice.Value.TutorTake}"
             : $"{gameName} · {result}";
         _dialogueText.Text = tutorDialogue;
@@ -310,14 +332,14 @@ public partial class GameplayHUD : Control
             button.Scale = selected ? new Vector2(1.035f, 1.035f) : Vector2.One;
             button.ZIndex = selected ? 2 : 0;
             button.Text = selected
-                ? $"✓ {choice}\nSELECTED"
-                : $"{choice}\nTAKE {choice}";
+                ? $"✓ {choice}\nSTAGED"
+                : $"{choice}\n{_choiceVerb} {choice}";
         }
     }
 
     private static string FormatPrevious(int? previous)
     {
-        return previous?.ToString() ?? "—";
+        return previous?.ToString() ?? "NONE";
     }
 
     private static string FormatChoiceLog(
@@ -366,9 +388,9 @@ public partial class GameplayHUD : Control
     {
         return outcome switch
         {
-            RoundOutcome.PlayerWin => "Player victory",
-            RoundOutcome.PlayerLose => "Player defeat",
-            RoundOutcome.Draw => "Game drawn",
+            RoundOutcome.PlayerWin => "Tutor synchronization lost",
+            RoundOutcome.PlayerLose => "Player synchronization lost",
+            RoundOutcome.Draw => "Lattice balanced",
             _ => "In progress"
         };
     }

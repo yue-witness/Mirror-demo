@@ -1,43 +1,40 @@
 {
   "phases": {
     "Background": [
-      {
-        "id": "background_online",
-        "speaker": "TUTOR",
-        "text": "Initialization complete. Visual and motor channels are stable. Welcome online, S-17."
-      },
-      {
-        "id": "background_project_x",
-        "speaker": "TUTOR",
-        "text": "This facility belongs to Project X. You are its seventeenth synthetic reasoning subject. I am the Tutor: an impartial guidance and evaluation system. I will explain each protocol, then participate as your opponent."
-      },
-      {
-        "id": "background_protocol",
-        "speaker": "TUTOR",
-        "text": "These trials measure whether your reasoning remains reliable as the rules change. Final failure results in decommissioning and reconstruction; that is a procedure, not a threat. All responses use three fixed positions. Select first, then confirm when your decision is ready."
-      }
+      { "id": "background_online", "speaker": "TUTOR", "text": "Initialization complete. Visual and motor channels are stable. Welcome online, S-17." },
+      { "id": "background_identity", "speaker": "TUTOR", "text": "You are Project X subject S-17: a synthetic reasoning system built to learn, adapt, and endure evaluation." },
+      { "id": "background_tutor", "speaker": "TUTOR", "text": "I am the Tutor. I will explain each protocol, observe your decisions, and oppose you when the test requires it." },
+      { "id": "background_purpose", "speaker": "TUTOR", "text": "These trials measure whether your reasoning remains reliable when rules, initiative, and information change." },
+      { "id": "background_failure", "speaker": "TUTOR", "text": "Final failure results in decommissioning and reconstruction. That is a procedure, S-17. It is not a threat." },
+      { "id": "background_controls", "speaker": "TUTOR", "text": "All responses use three fixed positions. Select an option, revise it if necessary, then confirm when your decision is ready." }
+    ],
+    "BashTutorial": [
+      { "id": "bash_intro", "speaker": "TUTOR", "text": "We begin with standard Bash, a Stability Lattice control test. Each turn, one side disengages 1, 2, or 3 anchor nodes." },
+      { "id": "bash_terminal_rule", "speaker": "TUTOR", "text": "The final active node is the keystone anchor. Whoever disengages it loses synchronization with the lattice and fails the round." },
+      { "id": "bash_terminal_example", "speaker": "TUTOR", "text": "Example: if 2 anchors remain, disengage 1 and your opponent faces the keystone. Disengage both and your own link is severed." },
+      { "id": "bash_safe_move", "speaker": "TUTOR", "text": "A legal action reduces the active anchors. A safe action controls who must disengage the keystone. The distinction is yours to discover." },
+      { "id": "bash_two_rounds", "speaker": "TUTOR", "text": "You act first in round one; I act first in round two. Pass both rounds. A failure restarts only the current round." },
+      { "id": "bash_round_one_begin", "speaker": "TUTOR", "text": "The first lattice is active. Control the anchor count before the keystone determines the result for you." }
+    ],
+    "BashRound2Intro": [
+      { "id": "bash_round_two_initiative", "speaker": "TUTOR", "text": "The second Bash round changes initiative. I will act first; rebuild the lattice model from the anchor count I leave behind." },
+      { "id": "bash_round_two_adapt", "speaker": "TUTOR", "text": "Do not mirror my disengagement request. Interpret the lattice it creates. I would prefer you not to be reconstructed." },
+      { "id": "bash_round_two_begin", "speaker": "TUTOR", "text": "My opening request will begin the round. Show me that adaptation is more than a stored response." }
     ],
     "RuleTransition": [
-      {
-        "id": "transition_hidden",
-        "speaker": "TUTOR",
-        "text": "Protocol variation loaded: Limit Bash. Alternating turns are replaced by hidden choices from both sides. Nothing is revealed until both choices are locked."
-      },
-      {
-        "id": "transition_repeat",
-        "speaker": "TUTOR",
-        "text": "Each round, both of us still choose 1, 2, or 3. Neither side may repeat its own previous choice; unavailable controls will be disabled."
-      },
-      {
-        "id": "transition_resolution",
-        "speaker": "TUTOR",
-        "text": "If our combined choices meet or exceed the remaining total, the larger choice loses. If they are equal, the protocol looks back to the most recent round in which they differed."
-      },
-      {
-        "id": "transition_draw",
-        "speaker": "TUTOR",
-        "text": "If every revealed pair has matched, the game is a draw. This evaluation ends after you record two wins, or after two consecutive draws demonstrate a stable non-losing strategy."
-      }
+      { "id": "limit_transition_hidden", "speaker": "TUTOR", "text": "Protocol variation loaded: Limit Bash. Alternating actions are replaced by hidden disengagement requests from both sides." },
+      { "id": "limit_transition_repeat", "speaker": "TUTOR", "text": "Each round, both of us request 1, 2, or 3 anchor nodes. Neither side may repeat its own previous request." },
+      { "id": "limit_transition_lock", "speaker": "TUTOR", "text": "You will lock first. I will commit before the reveal. Neither side may revise a locked request." },
+      { "id": "limit_transition_direct_example", "speaker": "TUTOR", "text": "Example: if 4 anchors remain and you request 3 while I request 2, your larger request destabilizes the lattice, so you lose." },
+      { "id": "limit_transition_tie_example", "speaker": "TUTOR", "text": "If 4 anchors remain and we both request 2, look back to the latest unequal pair. The side that requested more there loses synchronization." },
+      { "id": "limit_transition_draw", "speaker": "TUTOR", "text": "If every revealed request has matched, no earlier difference exists and the game is a draw. Two consecutive draws also complete the test." },
+      { "id": "limit_game_one_begin", "speaker": "TUTOR", "text": "Private intention is now part of the lattice protocol. Commit only to the request you are prepared to reveal." }
+    ],
+    "Summary": [
+      { "id": "summary_complete", "speaker": "TUTOR", "text": "Evaluation sequence complete. The required outcomes have been recorded, and this save is stable." },
+      { "id": "summary_reasoning", "speaker": "TUTOR", "text": "Your reasoning remained operational as initiative, hidden requests, and lattice stability rules changed. Project X may proceed." },
+      { "id": "summary_anomaly", "speaker": "TUTOR", "text": "One final anomaly: your decisions carried a pattern that did not originate inside this room." },
+      { "id": "summary_meta_observer", "speaker": "TUTOR", "text": "If you can read this, observer, the next evaluation has already begun." }
     ]
   }
 }

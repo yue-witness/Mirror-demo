@@ -9,14 +9,28 @@ public sealed record DemoSaveState(
     int SessionSeed,
     int RngStep,
     int DialogueIndex,
+    string ActiveBriefingLineId,
+    string CurrentTutorDialogue,
+    PendingGameStart PendingGameStart,
+    int BashRoundIndex,
+    int LimitGameIndex,
+    int BashRoundOneFailures,
+    int BashRoundTwoFailures,
+    int DialogueStep,
+    IReadOnlyList<DialoguePoolHistorySnapshot> DialogueHistory,
+    OutcomeDirective? PendingLimitDirective,
     SessionStatsSnapshot Stats,
     GameSnapshot? CurrentGame,
     long ElapsedPlayMilliseconds,
     bool IsComplete,
     string Checksum)
 {
-    public const int CurrentSchemaVersion = 2;
+    public const int CurrentSchemaVersion = 3;
 }
+
+public sealed record DialoguePoolHistorySnapshot(
+    string PoolId,
+    IReadOnlyList<string> RecentLineIds);
 
 public sealed record GameSnapshot(
     GameKind Game,

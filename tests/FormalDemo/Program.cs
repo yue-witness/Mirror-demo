@@ -34,27 +34,37 @@ internal static class Program
             Path.Combine(root, "data", "dialogue", "intro.json"),
             Path.Combine(root, "data", "dialogue", "tutorial.json"));
 
-        Assert(dialogue.Get(DemoPhase.Background).Count == 3,
-            "The Project X introduction must contain three complete pages.");
-        Assert(dialogue.Get(DemoPhase.BashTutorial).Count == 3,
-            "The standard Bash tutorial must contain three complete pages.");
-        Assert(dialogue.Get(DemoPhase.RuleTransition).Count == 4,
-            "The Limit Bash transition must contain four complete pages.");
+        Assert(dialogue.Get(DemoPhase.Background).Count == 6,
+            "The Stability Lattice introduction must contain six complete pages.");
+        Assert(dialogue.Get(DemoPhase.BashTutorial).Count == 6,
+            "The standard Bash tutorial must contain six complete pages.");
+        Assert(dialogue.Get(DemoPhase.BashRound2Intro).Count == 3,
+            "The initiative-shift briefing must contain three complete pages.");
+        Assert(dialogue.Get(DemoPhase.RuleTransition).Count == 7,
+            "The Limit Bash transition must contain seven complete pages.");
+        Assert(dialogue.Get(DemoPhase.Summary).Count == 4,
+            "The final evaluation must contain four complete pages.");
+
+        int configuredLines = 26;
 
         foreach (string poolId in TutorDialoguePool.All)
         {
             IReadOnlyList<DialogueLine> pool = dialogue.GetRandomPool(poolId);
-            Assert(pool.Count >= 3,
-                $"Tutor dialogue pool {poolId} needs at least three variants.");
+            configuredLines += pool.Count;
+            Assert(pool.Count >= 1,
+                $"Tutor dialogue pool {poolId} must not be empty.");
             Assert(pool.All(line => line.Speaker == "TUTOR"),
                 $"Tutor dialogue pool {poolId} contains the wrong speaker.");
         }
 
+        Assert(configuredLines == 138,
+            $"The approved Tutor script must contain 138 lines, got {configuredLines}.");
+
         DialogueLine first = dialogue.PickRandom(
-            TutorDialoguePool.BashRoundStart,
+            TutorDialoguePool.BashState,
             selector: 7);
         DialogueLine repeated = dialogue.PickRandom(
-            TutorDialoguePool.BashRoundStart,
+            TutorDialoguePool.BashState,
             selector: 7);
         Assert(first.Id == repeated.Id,
             "A stable dialogue selector must reproduce the same line.");
@@ -271,6 +281,16 @@ internal static class Program
             42,
             0,
             0,
+            string.Empty,
+            string.Empty,
+            PendingGameStart.None,
+            0,
+            0,
+            0,
+            0,
+            0,
+            Array.Empty<DialoguePoolHistorySnapshot>(),
+            null,
             new SessionStats().ToSnapshot(),
             null,
             12_345,

@@ -187,7 +187,8 @@ public sealed class SaveGameService
             }
 
             if (string.IsNullOrWhiteSpace(state.SaveId)
-                || state.Stats is null)
+                || state.Stats is null
+                || state.DialogueHistory is null)
             {
                 error = "The save is missing required fields.";
                 state = null;

@@ -54,11 +54,12 @@ func _ready() -> void:
 		"Tutor dialogue did not begin with the typewriter animation.")
 	_capture("02b-tutor-dialogue.png")
 
-	for index in range(3):
+	for index in range(6):
 		if dialogue_text.visible_characters != -1:
 			_left_click()
 			await _settle_frames()
-		_capture("02c-background-%02d.png" % (index + 1))
+		if index < 3:
+			_capture("02c-background-%02d.png" % (index + 1))
 		_left_click()
 		await _settle_frames()
 
@@ -67,7 +68,7 @@ func _ready() -> void:
 	_left_click()
 	await _settle_frames()
 
-	for index in range(3):
+	for index in range(6):
 		await _advance_dialogue_page()
 
 	var choice_one := _button("GameplayHUD/SafeArea/Layout/Content/Center/ChoiceRow/Choice1")
@@ -78,6 +79,9 @@ func _ready() -> void:
 		"The removed top-centre score display is still present.")
 	_assert(_main.has_node("GameplayHUD/SafeArea/Layout/Header/HeaderRow/HeaderSpacer"),
 		"The top header no longer preserves its left/right alignment.")
+	_assert(_main.has_node(
+		"GameplayHUD/SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/LatticeView"),
+		"The Stability Lattice visualization is missing from gameplay.")
 	_assert(choice_one.visible and not choice_one.disabled,
 		"Bash gameplay did not open a legal player choice.")
 	_assert(confirm.visible and confirm.disabled,
@@ -87,9 +91,9 @@ func _ready() -> void:
 	_press("GameplayHUD/SafeArea/Layout/Content/Center/ChoiceRow/Choice1")
 	await _settle_frames()
 	_assert(not confirm.disabled, "Selecting a legal Bash action did not enable confirm.")
-	_assert((_main.get_node(
-		"GameplayHUD/SafeArea/Layout/Content/Center/DialoguePanel/DialogueVBox/Text") as RichTextLabel).text == tutor_line,
-		"Tutor dialogue changed in response to the player's selection.")
+	_assert(not (_main.get_node(
+		"GameplayHUD/SafeArea/Layout/Content/Center/DialoguePanel/DialogueVBox/Text") as RichTextLabel).text.is_empty(),
+		"The optional selection-stage Tutor dialogue left the panel empty.")
 	_capture("03a-bash-selected.png")
 	_press("GameplayHUD/SafeArea/Layout/Content/Center/ConfirmButton")
 	await get_tree().create_timer(0.08).timeout

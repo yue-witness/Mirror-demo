@@ -22,15 +22,15 @@ func _ready() -> void:
 	await _frames()
 	_left_click()
 
-	# Three background pages lead to the Chapter 1 splash.
-	for index in range(3):
+	# Six background pages lead to the Chapter 1 splash.
+	for index in range(6):
 		await _advance_dialogue_page()
 
 	await _frames()
 	_left_click()
 
-	# Three Bash tutorial pages lead to the first playable round.
-	for index in range(3):
+	# Six Bash tutorial pages lead to the first playable round.
+	for index in range(6):
 		await _advance_dialogue_page()
 
 	await _complete_bash_tutorial_gate()
@@ -43,9 +43,20 @@ func _ready() -> void:
 		"The complete session did not reach the final summary.")
 	_assert(FileAccess.file_exists(SAVE_PATH),
 		"The complete flow did not retain its session save.")
+	var summary_dialogue := _main.get_node(
+		"TutorDialogueUI/SafeArea/Layout/Content/DialogueCard/DialogueVBox/DialogueText") as RichTextLabel
+	if summary_dialogue.visible_characters != -1:
+		_left_click()
+		await _frames()
 	_capture("04-summary.png")
 
-	await _advance_dialogue_page()
+	for index in range(4):
+		await _advance_dialogue_page()
+		if index == 2:
+			var tutor_name := _label(
+				"TutorDialogueUI/SafeArea/Layout/Content/TutorCard/TutorVBox/TutorName")
+			_assert(tutor_name.text.contains("SIGNAL ANOMALY"),
+				"The final observer line did not activate the Tutor red-eye anomaly.")
 	_assert(_main.get_node("TitleScreen").visible,
 		"Completing the summary did not return to the title screen.")
 	_assert(not _button("TitleScreen/MenuGlass/MenuVBox/ContinueButton").visible,
@@ -67,12 +78,16 @@ func _complete_bash_tutorial_gate() -> void:
 		await get_tree().create_timer(0.025).timeout
 		await _frames()
 
+		if _main.get_node("TutorDialogueUI").visible:
+			await _advance_dialogue_page()
+			continue
+
 		var continue_button := _button(
 			"GameplayHUD/SafeArea/Layout/Content/Center/ContinueButton")
 		if continue_button.visible:
 			var bash_result_log := _main.get_node(
 				"GameplayHUD/SafeArea/Layout/Content/RightLog/RightVBox/Log") as RichTextLabel
-			_assert(bash_result_log.text.contains("Final unit taken")
+			_assert(bash_result_log.text.contains("keystone anchor was disengaged")
 				and bash_result_log.text.contains("ACTIONS THIS ROUND"),
 				"The Bash result screen cleared the SYSTEM action log.")
 			_capture("03c-bash-result.png")
@@ -119,7 +134,7 @@ func _choose_optimal_bash_button() -> Button:
 
 
 func _complete_rule_transition() -> void:
-	for index in range(4):
+	for index in range(7):
 		await _advance_dialogue_page()
 
 
@@ -134,9 +149,14 @@ func _complete_limit_bash() -> void:
 		await _frames()
 
 		if _main.get_node("TutorDialogueUI").visible:
-			_assert(observed_live_log,
-				"Limit Bash did not show a per-round execution log during play.")
-			return
+			var phase := _label(
+				"TutorDialogueUI/SafeArea/Layout/Header/HeaderRow/PhaseLabel")
+			if phase.text == "SUMMARY":
+				_assert(observed_live_log,
+					"Limit Bash did not show a per-round execution log during play.")
+				return
+			await _advance_dialogue_page()
+			continue
 
 		var banner := _label("GameplayHUD/SafeArea/Layout/Header/HeaderRow/PhaseBanner")
 
@@ -153,7 +173,7 @@ func _complete_limit_bash() -> void:
 					"GameplayHUD/SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/SelectionLabel")
 				var system_log := _main.get_node(
 					"GameplayHUD/SafeArea/Layout/Content/RightLog/RightVBox/Log") as RichTextLabel
-				_assert(selection.text.contains("FINAL · PLAYER")
+				_assert(selection.text.contains("FINAL REQUESTS · PLAYER")
 					and selection.text.contains("TUTOR"),
 					"Limit Bash result did not show both final choices.")
 				_assert(system_log.text.contains("R01")

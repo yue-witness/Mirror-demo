@@ -13,9 +13,13 @@ public partial class DemoFlowController : Control
     private const double TutorDelaySeconds = 0.45;
     private const double RevealDelaySeconds = 0.42;
     private const int MaximumControlledRestarts = 3;
+    private const int DialogueHistoryLimit = 2;
+    private const int SelectionDialoguePercent = 35;
 
     private readonly StrategyEngine _strategy = new();
     private readonly OutcomeDirector _outcomeDirector = new();
+    private readonly Dictionary<string, List<string>> _dialogueHistory = new(
+        StringComparer.OrdinalIgnoreCase);
 
     private TextureRect _background = null!;
     private TitleScreen _titleScreen = null!;
@@ -39,7 +43,17 @@ public partial class DemoFlowController : Control
     private int? _selectedChoice;
     private bool _inputLocked;
     private bool _chapterPending;
+    private bool _selectionDialogueShown;
+    private bool _revisionDialogueShown;
+    private bool _hesitationDialogueShown;
+    private ulong _hesitationDueTicks;
+    private string _activeBriefingLineId = string.Empty;
     private string _currentTutorDialogue = string.Empty;
+    private PendingGameStart _pendingGameStart;
+    private OutcomeDirective? _pendingLimitDirective;
+    private int _bashRoundOneFailures;
+    private int _bashRoundTwoFailures;
+    private int _dialogueStep;
     private string _saveId = string.Empty;
     private GameKind _lastSettledGame;
     private RoundOutcome _lastOutcome;
@@ -92,22 +106,20 @@ public partial class DemoFlowController : Control
 
     public override void _Process(double delta)
     {
-        if (!_playClockRunning)
+        if (_playClockRunning)
         {
-            return;
+            long elapsed = GetElapsedPlayMilliseconds();
+            long second = elapsed / 1000;
+
+            if (second != _lastRenderedElapsedSecond)
+            {
+                _lastRenderedElapsedSecond = second;
+                _hud.SetElapsedPlayTime(elapsed);
+                _dialogueUI.SetElapsedPlayTime(elapsed);
+            }
         }
 
-        long elapsed = GetElapsedPlayMilliseconds();
-        long second = elapsed / 1000;
-
-        if (second == _lastRenderedElapsedSecond)
-        {
-            return;
-        }
-
-        _lastRenderedElapsedSecond = second;
-        _hud.SetElapsedPlayTime(elapsed);
-        _dialogueUI.SetElapsedPlayTime(elapsed);
+        TryShowHesitationDialogue();
     }
 
     public override void _ExitTree()
@@ -154,7 +166,14 @@ public partial class DemoFlowController : Control
         _bash = null;
         _limitBash = null;
         _controlledRestarts = 0;
+        _dialogueHistory.Clear();
+        _activeBriefingLineId = string.Empty;
         _currentTutorDialogue = string.Empty;
+        _pendingGameStart = PendingGameStart.None;
+        _pendingLimitDirective = null;
+        _bashRoundOneFailures = 0;
+        _bashRoundTwoFailures = 0;
+        _dialogueStep = 0;
         StartPlayClock(0);
         EnterDialoguePhase(DemoPhase.Background, showChapter: true);
     }
@@ -192,6 +211,9 @@ public partial class DemoFlowController : Control
         _flowVersion++;
         _phase = phase;
         _dialogueIndex = 0;
+        _activeBriefingLineId = string.Empty;
+        _pendingGameStart = PendingGameStart.None;
+        _pendingLimitDirective = null;
         _selectedChoice = null;
         _inputLocked = false;
         _bash = null;
@@ -239,7 +261,7 @@ public partial class DemoFlowController : Control
 
     private void RenderDialogue()
     {
-        IReadOnlyList<DialogueLine> lines = _dialogues.Get(_phase);
+        IReadOnlyList<DialogueLine> lines = GetActiveDialogueLines();
 
         if (lines.Count == 0)
         {
@@ -249,11 +271,25 @@ public partial class DemoFlowController : Control
         _dialogueIndex = Math.Clamp(_dialogueIndex, 0, lines.Count - 1);
         _hud.Visible = false;
         _dialogueUI.Visible = true;
-        _dialogueUI.ShowDialogue(
-            _phase,
-            lines[_dialogueIndex],
-            _dialogueIndex,
-            lines.Count);
+        DialogueLine line = lines[_dialogueIndex];
+
+        if (_phase == DemoPhase.Summary)
+        {
+            _dialogueUI.ShowSummary(
+                line,
+                _dialogueIndex,
+                lines.Count,
+                _stats,
+                redEye: line.Id == "summary_meta_observer");
+        }
+        else
+        {
+            _dialogueUI.ShowDialogue(
+                _phase,
+                line,
+                _dialogueIndex,
+                lines.Count);
+        }
     }
 
     private void AdvanceCurrentPage()
@@ -267,7 +303,12 @@ public partial class DemoFlowController : Control
         {
             case DemoPhase.Background:
             case DemoPhase.BashTutorial:
+            case DemoPhase.BashRound2Intro:
+            case DemoPhase.BashRetryBriefing:
             case DemoPhase.RuleTransition:
+            case DemoPhase.LimitGameBriefing:
+            case DemoPhase.LimitRestartBriefing:
+            case DemoPhase.Summary:
                 AdvanceDialogue();
                 break;
 
@@ -275,15 +316,12 @@ public partial class DemoFlowController : Control
                 AdvanceAfterResult();
                 break;
 
-            case DemoPhase.Summary:
-                CompleteDemo();
-                break;
         }
     }
 
     private void AdvanceDialogue()
     {
-        IReadOnlyList<DialogueLine> lines = _dialogues.Get(_phase);
+        IReadOnlyList<DialogueLine> lines = GetActiveDialogueLines();
         _dialogueIndex++;
 
         if (_dialogueIndex < lines.Count)
@@ -303,9 +341,99 @@ public partial class DemoFlowController : Control
                 StartBashRound(roundIndex: 1);
                 break;
 
+            case DemoPhase.BashRound2Intro:
+                StartBashRound(roundIndex: 2);
+                break;
+
+            case DemoPhase.BashRetryBriefing:
+            case DemoPhase.LimitGameBriefing:
+            case DemoPhase.LimitRestartBriefing:
+                StartPendingGame();
+                break;
+
             case DemoPhase.RuleTransition:
                 StartLimitBashGame();
                 break;
+
+            case DemoPhase.Summary:
+                CompleteDemo();
+                break;
+        }
+    }
+
+    private IReadOnlyList<DialogueLine> GetActiveDialogueLines()
+    {
+        if (_phase is DemoPhase.BashRetryBriefing
+            or DemoPhase.LimitGameBriefing
+            or DemoPhase.LimitRestartBriefing)
+        {
+            if (string.IsNullOrWhiteSpace(_activeBriefingLineId))
+            {
+                throw new InvalidOperationException(
+                    $"Phase {_phase} has no selected briefing dialogue.");
+            }
+
+            return new[] { _dialogues.GetById(_activeBriefingLineId) };
+        }
+
+        return _dialogues.Get(_phase);
+    }
+
+    private void EnterBriefing(
+        DemoPhase phase,
+        string poolId,
+        PendingGameStart pendingStart,
+        OutcomeDirective? pendingDirective = null)
+    {
+        _flowVersion++;
+        _phase = phase;
+        _dialogueIndex = 0;
+        _activeBriefingLineId = PickTutorLine(poolId).Id;
+        _pendingGameStart = pendingStart;
+        _pendingLimitDirective = pendingDirective;
+        _selectedChoice = null;
+        _inputLocked = false;
+        _bash = null;
+        _limitBash = null;
+        _titleScreen.Visible = false;
+        _hud.Visible = false;
+        _dialogueUI.Visible = true;
+        _background.Texture = GD.Load<Texture2D>(
+            "res://assets/backgrounds/bright_lab.png");
+        WriteCheckpoint();
+        RenderDialogue();
+    }
+
+    private void StartPendingGame()
+    {
+        PendingGameStart pendingStart = _pendingGameStart;
+        OutcomeDirective? pendingDirective = _pendingLimitDirective;
+        _activeBriefingLineId = string.Empty;
+        _pendingGameStart = PendingGameStart.None;
+        _pendingLimitDirective = null;
+
+        switch (pendingStart)
+        {
+            case PendingGameStart.BashRound1:
+                StartBashRound(roundIndex: 1);
+                break;
+
+            case PendingGameStart.BashRound2:
+                StartBashRound(roundIndex: 2);
+                break;
+
+            case PendingGameStart.LimitBash:
+                StartLimitBashGame();
+                break;
+
+            case PendingGameStart.LimitBashPreservingDirective:
+                _pendingLimitDirective = pendingDirective;
+                StartLimitBashGame(preserveDirective: true);
+                break;
+
+            default:
+                throw new InvalidOperationException(
+                    "The briefing has no pending game destination.");
         }
     }
 
@@ -319,6 +447,9 @@ public partial class DemoFlowController : Control
         _currentGameTurns = 0;
         _selectedChoice = null;
         _inputLocked = roundIndex == 2;
+        _activeBriefingLineId = string.Empty;
+        _pendingGameStart = PendingGameStart.None;
+        _pendingLimitDirective = null;
         _limitBash = null;
         _titleScreen.Visible = false;
         _hud.Visible = true;
@@ -334,10 +465,11 @@ public partial class DemoFlowController : Control
             initialUnits,
             roundIndex == 1 ? Actor.Player : Actor.Tutor);
 
+        ResetTurnDialogueState();
         WriteCheckpoint();
         RenderBash(
-            "A new round has started.",
-            TutorDialoguePool.BashRoundStart);
+            "A fresh Stability Lattice is online.",
+            TutorDialoguePool.BashState);
 
         if (_bash.CurrentTurn == Actor.Tutor)
         {
@@ -361,8 +493,13 @@ public partial class DemoFlowController : Control
                 return;
             }
 
+            int? previousChoice = _selectedChoice;
             _selectedChoice = choice;
-            RenderBash("Waiting for player confirmation.");
+            UpdateChoiceStageDialogue(
+                previousChoice,
+                choice,
+                TutorDialoguePool.BashFirstSelection);
+            RenderBash("Anchor request staged. Waiting for confirmation.");
             return;
         }
 
@@ -374,10 +511,15 @@ public partial class DemoFlowController : Control
                 return;
             }
 
+            int? previousChoice = _selectedChoice;
             _selectedChoice = choice;
+            UpdateChoiceStageDialogue(
+                previousChoice,
+                choice,
+                TutorDialoguePool.LimitFirstSelection);
             RenderLimitBash(
                 waiting: false,
-                log: "Waiting for player confirmation.");
+                log: "Anchor request staged. Waiting for confirmation.");
         }
     }
 
@@ -415,13 +557,13 @@ public partial class DemoFlowController : Control
         if (outcome != RoundOutcome.Continue)
         {
             RenderBash(
-                $"Player took {choice}; 0 remaining. Final unit taken.");
+                $"Player disengaged {choice}; the keystone anchor was disengaged.");
             FinishBash(outcome);
             return;
         }
 
         RenderBash(
-            $"Player took {choice}; {_bash.Remaining} remaining.",
+            $"Player disengaged {choice}; {_bash.Remaining} anchors remain active.",
             TutorDialoguePool.BashPlayerConfirmed);
         RunBashTutorTurn(_flowVersion);
     }
@@ -453,18 +595,21 @@ public partial class DemoFlowController : Control
         if (outcome != RoundOutcome.Continue)
         {
             RenderBash(
-                $"Tutor took {choice}; 0 remaining. Final unit taken.");
+                $"Tutor disengaged {choice}; the keystone anchor was disengaged.");
             FinishBash(outcome);
             return;
         }
 
         _inputLocked = false;
+        ResetTurnDialogueState();
         WriteCheckpoint();
         RenderBash(
-            $"Tutor took {choice}; {_bash.Remaining} remaining.",
+            $"Tutor disengaged {choice}; {_bash.Remaining} anchors remain active.",
             _bash.Remaining <= BashGame.MaximumTake + 1
                 ? TutorDialoguePool.BashTerminalApproach
-                : TutorDialoguePool.BashTutorActed);
+                : _bashRoundIndex == 1
+                    ? TutorDialoguePool.BashRoundOneTutorActed
+                    : TutorDialoguePool.BashRoundTwoTutorActed);
     }
 
     private void RenderBash(string log, string? dialoguePool = null)
@@ -474,7 +619,7 @@ public partial class DemoFlowController : Control
             return;
         }
 
-        UpdateTutorDialogue(dialoguePool, TutorDialoguePool.BashRoundStart);
+        UpdateTutorDialogue(dialoguePool, TutorDialoguePool.BashState);
 
         _hud.ShowBash(
             _bash,
@@ -496,12 +641,26 @@ public partial class DemoFlowController : Control
 
         _inputLocked = false;
         _stats.RecordBash(outcome, _currentGameTurns);
+
+        if (outcome == RoundOutcome.PlayerLose)
+        {
+            if (_bashRoundIndex == 1)
+            {
+                _bashRoundOneFailures++;
+            }
+            else
+            {
+                _bashRoundTwoFailures++;
+            }
+        }
+
         _lastSettledGame = GameKind.Bash;
         _lastOutcome = outcome;
         _lastGameIndex = _bashRoundIndex;
         _lastGameTurns = _currentGameTurns;
         _phase = DemoPhase.RoundResult;
         _background.Texture = GD.Load<Texture2D>("res://assets/backgrounds/result_shards.png");
+        _currentTutorDialogue = PickBashResultDialogue(outcome);
         WriteCheckpoint();
         _hud.ShowRoundResult(
             GameKind.Bash,
@@ -510,7 +669,7 @@ public partial class DemoFlowController : Control
             _currentGameTurns,
             _stats,
             willContinue: true,
-            tutorDialogue: PickResultDialogue(outcome));
+            tutorDialogue: _currentTutorDialogue);
     }
 
     private void StartLimitBashGame(bool preserveDirective = false)
@@ -522,6 +681,8 @@ public partial class DemoFlowController : Control
         _currentGameTurns = 0;
         _selectedChoice = null;
         _inputLocked = false;
+        _activeBriefingLineId = string.Empty;
+        _pendingGameStart = PendingGameStart.None;
         _titleScreen.Visible = false;
         _hud.Visible = true;
         _dialogueUI.Visible = false;
@@ -534,6 +695,12 @@ public partial class DemoFlowController : Control
                 _sessionRandom.NextSingle());
             _controlledRestarts = 0;
         }
+        else if (_pendingLimitDirective.HasValue)
+        {
+            _limitDirective = _pendingLimitDirective.Value;
+        }
+
+        _pendingLimitDirective = null;
 
         int initialUnits = _sessionRandom.Next(
             _rules.LimitBash.MinimumInitialUnits,
@@ -548,11 +715,12 @@ public partial class DemoFlowController : Control
             return;
         }
 
+        ResetTurnDialogueState();
         WriteCheckpoint();
         RenderLimitBash(
             waiting: false,
-            log: "A new game has started.",
-            dialoguePool: TutorDialoguePool.LimitGameStart);
+            log: "A fresh simultaneous-request lattice is online.",
+            dialoguePool: TutorDialoguePool.LimitState);
     }
 
     private void ConfirmLimitBashChoice(int choice)
@@ -568,7 +736,7 @@ public partial class DemoFlowController : Control
         _limitBash.LockPlayerChoice(choice);
         RenderLimitBash(
             waiting: true,
-            log: "Player choice locked. Waiting for the simultaneous reveal.",
+            log: "Player request locked. Waiting for the simultaneous reveal.",
             dialoguePool: TutorDialoguePool.LimitChoiceLocked);
 
         int tutorChoice;
@@ -634,11 +802,12 @@ public partial class DemoFlowController : Control
         }
 
         _inputLocked = false;
+        ResetTurnDialogueState();
         WriteCheckpoint();
         RenderLimitBash(
             waiting: false,
             log: $"REVEAL: PLAYER {playerChoice} / TUTOR {tutorChoice}; "
-                + $"{_limitBash.Remaining} remaining.",
+                + $"{_limitBash.Remaining} anchors remain active.",
             dialoguePool: _limitBash.Remaining <= 6
                 ? TutorDialoguePool.LimitTerminalApproach
                 : TutorDialoguePool.LimitReveal);
@@ -654,7 +823,7 @@ public partial class DemoFlowController : Control
             return;
         }
 
-        UpdateTutorDialogue(dialoguePool, TutorDialoguePool.LimitGameStart);
+        UpdateTutorDialogue(dialoguePool, TutorDialoguePool.LimitState);
 
         _hud.ShowLimitBash(
             _limitBash,
@@ -682,6 +851,7 @@ public partial class DemoFlowController : Control
         _lastGameTurns = _currentGameTurns;
         _phase = DemoPhase.RoundResult;
         _background.Texture = GD.Load<Texture2D>("res://assets/backgrounds/result_shards.png");
+        _currentTutorDialogue = PickLimitResultDialogue(outcome);
         WriteCheckpoint();
         _hud.ShowRoundResult(
             GameKind.LimitBash,
@@ -690,7 +860,7 @@ public partial class DemoFlowController : Control
             _currentGameTurns,
             _stats,
             willContinue: !_stats.IsLimitBashComplete,
-            tutorDialogue: PickResultDialogue(outcome),
+            tutorDialogue: _currentTutorDialogue,
             finalChoice: _limitBash.ChoicePairs.Count > 0
                 ? _limitBash.ChoicePairs[^1]
                 : null,
@@ -711,7 +881,11 @@ public partial class DemoFlowController : Control
         }
 
         GD.PushWarning($"Limit Bash controlled restart {_controlledRestarts}: {reason}");
-        StartLimitBashGame(preserveDirective: true);
+        EnterBriefing(
+            DemoPhase.LimitRestartBriefing,
+            TutorDialoguePool.LimitRestart,
+            PendingGameStart.LimitBashPreservingDirective,
+            _limitDirective);
     }
 
     private void AdvanceAfterResult()
@@ -722,7 +896,7 @@ public partial class DemoFlowController : Control
             {
                 if (_lastGameIndex == 1)
                 {
-                    StartBashRound(roundIndex: 2);
+                    EnterDialoguePhase(DemoPhase.BashRound2Intro);
                 }
                 else
                 {
@@ -731,7 +905,15 @@ public partial class DemoFlowController : Control
             }
             else
             {
-                StartBashRound(_lastGameIndex);
+                int failureCount = _lastGameIndex == 1
+                    ? _bashRoundOneFailures
+                    : _bashRoundTwoFailures;
+                EnterBriefing(
+                    DemoPhase.BashRetryBriefing,
+                    GetBashRetryPool(_lastGameIndex, failureCount),
+                    _lastGameIndex == 1
+                        ? PendingGameStart.BashRound1
+                        : PendingGameStart.BashRound2);
             }
 
             return;
@@ -743,7 +925,17 @@ public partial class DemoFlowController : Control
         }
         else
         {
-            StartLimitBashGame();
+            int upcomingGame = _stats.LimitBashGamesCompleted + 1;
+            string pool = upcomingGame switch
+            {
+                2 => TutorDialoguePool.LimitGameTwoBegin,
+                3 => TutorDialoguePool.LimitGameThreeBegin,
+                _ => TutorDialoguePool.LimitLateBegin
+            };
+            EnterBriefing(
+                DemoPhase.LimitGameBriefing,
+                pool,
+                PendingGameStart.LimitBash);
         }
     }
 
@@ -751,6 +943,10 @@ public partial class DemoFlowController : Control
     {
         _flowVersion++;
         _phase = DemoPhase.Summary;
+        _dialogueIndex = 0;
+        _activeBriefingLineId = string.Empty;
+        _pendingGameStart = PendingGameStart.None;
+        _pendingLimitDirective = null;
         _bash = null;
         _limitBash = null;
         _selectedChoice = null;
@@ -759,7 +955,7 @@ public partial class DemoFlowController : Control
         _hud.Visible = false;
         _dialogueUI.Visible = true;
         WriteCheckpoint();
-        _dialogueUI.ShowSummary(_stats);
+        RenderDialogue();
     }
 
     private void CompleteDemo()
@@ -789,6 +985,22 @@ public partial class DemoFlowController : Control
         _saveId = state.SaveId;
         _phase = state.ResumePhase;
         _dialogueIndex = state.DialogueIndex;
+        _activeBriefingLineId = state.ActiveBriefingLineId;
+        _currentTutorDialogue = state.CurrentTutorDialogue;
+        _pendingGameStart = state.PendingGameStart;
+        _pendingLimitDirective = state.PendingLimitDirective;
+        _bashRoundIndex = state.BashRoundIndex;
+        _limitGameIndex = state.LimitGameIndex;
+        _bashRoundOneFailures = state.BashRoundOneFailures;
+        _bashRoundTwoFailures = state.BashRoundTwoFailures;
+        _dialogueStep = state.DialogueStep;
+        _dialogueHistory.Clear();
+
+        foreach (DialoguePoolHistorySnapshot history in state.DialogueHistory)
+        {
+            _dialogueHistory[history.PoolId] = history.RecentLineIds.ToList();
+        }
+
         _stats = SessionStats.FromSnapshot(state.Stats);
         _sessionRandom = new SessionRandom(state.SessionSeed, state.RngStep);
         StartPlayClock(state.ElapsedPlayMilliseconds);
@@ -802,18 +1014,18 @@ public partial class DemoFlowController : Control
 
         if (_phase is DemoPhase.Background
             or DemoPhase.BashTutorial
-            or DemoPhase.RuleTransition)
+            or DemoPhase.BashRound2Intro
+            or DemoPhase.BashRetryBriefing
+            or DemoPhase.RuleTransition
+            or DemoPhase.LimitGameBriefing
+            or DemoPhase.LimitRestartBriefing
+            or DemoPhase.Summary)
         {
-            _background.Texture = GD.Load<Texture2D>("res://assets/backgrounds/bright_lab.png");
+            _background.Texture = GD.Load<Texture2D>(
+                _phase == DemoPhase.Summary
+                    ? "res://assets/backgrounds/result_shards.png"
+                    : "res://assets/backgrounds/bright_lab.png");
             RenderDialogue();
-            return;
-        }
-
-        if (_phase == DemoPhase.Summary)
-        {
-            _background.Texture = GD.Load<Texture2D>("res://assets/backgrounds/result_shards.png");
-            _dialogueUI.Visible = true;
-            _dialogueUI.ShowSummary(_stats);
             return;
         }
 
@@ -867,7 +1079,11 @@ public partial class DemoFlowController : Control
                 _stats,
                 willContinue: snapshot.Game == GameKind.Bash
                     || !_stats.IsLimitBashComplete,
-                tutorDialogue: PickResultDialogue(snapshot.Result),
+                tutorDialogue: string.IsNullOrWhiteSpace(_currentTutorDialogue)
+                    ? snapshot.Game == GameKind.Bash
+                        ? PickBashResultDialogue(snapshot.Result)
+                        : PickLimitResultDialogue(snapshot.Result)
+                    : _currentTutorDialogue,
                 finalChoice: snapshot.Game == GameKind.LimitBash
                     && snapshot.ChoicePairs.Count > 0
                         ? snapshot.ChoicePairs[^1]
@@ -880,6 +1096,7 @@ public partial class DemoFlowController : Control
 
         _background.Texture = GD.Load<Texture2D>("res://assets/backgrounds/bright_lab.png");
         _hud.Visible = true;
+        ResetTurnDialogueState();
 
         if (snapshot.Game == GameKind.Bash && _bash is not null)
         {
@@ -916,25 +1133,97 @@ public partial class DemoFlowController : Control
         }
     }
 
-    private string PickResultDialogue(RoundOutcome outcome)
+    private string PickBashResultDialogue(RoundOutcome outcome)
     {
+        string pool;
+
+        if (outcome == RoundOutcome.PlayerWin)
+        {
+            pool = _bashRoundIndex == 1
+                ? TutorDialoguePool.BashRoundOneWin
+                : TutorDialoguePool.BashRoundTwoWin;
+        }
+        else if (outcome == RoundOutcome.PlayerLose)
+        {
+            int failures = _bashRoundIndex == 1
+                ? _bashRoundOneFailures
+                : _bashRoundTwoFailures;
+            pool = failures switch
+            {
+                <= 1 => TutorDialoguePool.BashLossTier1,
+                2 => TutorDialoguePool.BashLossTier2,
+                _ => TutorDialoguePool.BashLossTier3
+            };
+        }
+        else
+        {
+            throw new InvalidOperationException(
+                "Standard Bash does not support a draw result.");
+        }
+
+        return PickTutorDialogue(pool);
+    }
+
+    private string PickLimitResultDialogue(RoundOutcome outcome)
+    {
+        ChoicePair? finalPair = _limitBash?.ChoicePairs.Count > 0
+            ? _limitBash.ChoicePairs[^1]
+            : null;
+        bool directComparison = finalPair.HasValue
+            && finalPair.Value.PlayerTake != finalPair.Value.TutorTake;
         string pool = outcome switch
         {
-            RoundOutcome.PlayerWin => TutorDialoguePool.PlayerWin,
-            RoundOutcome.PlayerLose => TutorDialoguePool.PlayerLose,
-            RoundOutcome.Draw => TutorDialoguePool.Draw,
+            RoundOutcome.PlayerWin => directComparison
+                ? TutorDialoguePool.LimitWinDirect
+                : TutorDialoguePool.LimitWinHistory,
+            RoundOutcome.PlayerLose => directComparison
+                ? TutorDialoguePool.LimitLossDirect
+                : TutorDialoguePool.LimitLossHistory,
+            RoundOutcome.Draw => _stats.IsLimitBashComplete
+                ? TutorDialoguePool.LimitDrawCompletion
+                : TutorDialoguePool.LimitDraw,
             _ => throw new InvalidOperationException(
                 "A result dialogue requires a settled outcome.")
         };
+
         return PickTutorDialogue(pool);
     }
 
     private string PickTutorDialogue(string poolId)
     {
+        return FormatDialogue(PickTutorLine(poolId).Text);
+    }
+
+    private DialogueLine PickTutorLine(string poolId)
+    {
+        IReadOnlyList<DialogueLine> pool = _dialogues.GetRandomPool(poolId);
+
+        if (pool.Count == 0)
+        {
+            throw new InvalidDataException(
+                $"Dialogue pool {poolId} is missing or empty.");
+        }
+
+        if (!_dialogueHistory.TryGetValue(poolId, out List<string>? recent))
+        {
+            recent = new List<string>();
+            _dialogueHistory[poolId] = recent;
+        }
+
+        DialogueLine[] candidates = pool
+            .Where(line => !recent.Contains(line.Id, StringComparer.Ordinal))
+            .ToArray();
+
+        if (candidates.Length == 0)
+        {
+            candidates = pool.ToArray();
+        }
+
         int remaining = _bash?.Remaining ?? _limitBash?.Remaining ?? 0;
         uint selector = 2_166_136_261u;
 
         MixDialogueSelector(ref selector, _sessionRandom.Seed);
+        MixDialogueSelector(ref selector, _dialogueStep++);
         MixDialogueSelector(ref selector, (int)_phase);
         MixDialogueSelector(ref selector, _bashRoundIndex);
         MixDialogueSelector(ref selector, _limitGameIndex);
@@ -946,7 +1235,126 @@ public partial class DemoFlowController : Control
             MixDialogueSelector(ref selector, character);
         }
 
-        return _dialogues.PickRandom(poolId, unchecked((int)selector)).Text;
+        DialogueLine selected = candidates[(int)(selector % (uint)candidates.Length)];
+        recent.Add(selected.Id);
+
+        while (recent.Count > DialogueHistoryLimit)
+        {
+            recent.RemoveAt(0);
+        }
+
+        return selected;
+    }
+
+    private string FormatDialogue(string text)
+    {
+        return text
+            .Replace(
+                "{turn_count}",
+                _currentGameTurns.ToString(),
+                StringComparison.Ordinal)
+            .Replace(
+                "{reveal_count}",
+                _currentGameTurns.ToString(),
+                StringComparison.Ordinal);
+    }
+
+    private void UpdateChoiceStageDialogue(
+        int? previousChoice,
+        int currentChoice,
+        string firstSelectionPool)
+    {
+        if (!previousChoice.HasValue)
+        {
+            if (!_selectionDialogueShown && ShouldShowSelectionDialogue(currentChoice))
+            {
+                _currentTutorDialogue = PickTutorDialogue(firstSelectionPool);
+            }
+
+            _selectionDialogueShown = true;
+            return;
+        }
+
+        if (previousChoice.Value != currentChoice && !_revisionDialogueShown)
+        {
+            _revisionDialogueShown = true;
+            _currentTutorDialogue = PickTutorDialogue(
+                TutorDialoguePool.ChoiceRevision);
+        }
+    }
+
+    private bool ShouldShowSelectionDialogue(int choice)
+    {
+        uint selector = 2_166_136_261u;
+        MixDialogueSelector(ref selector, _sessionRandom.Seed);
+        MixDialogueSelector(ref selector, _dialogueStep++);
+        MixDialogueSelector(ref selector, (int)_phase);
+        MixDialogueSelector(ref selector, _currentGameTurns);
+        MixDialogueSelector(ref selector, choice);
+        return selector % 100u < SelectionDialoguePercent;
+    }
+
+    private void ResetTurnDialogueState()
+    {
+        _selectionDialogueShown = false;
+        _revisionDialogueShown = false;
+        _hesitationDialogueShown = false;
+        uint spread = unchecked((uint)(_sessionRandom.Seed + _dialogueStep));
+        _hesitationDueTicks = Time.GetTicksMsec() + 8_000u + spread % 4_001u;
+    }
+
+    private void TryShowHesitationDialogue()
+    {
+        if (_hesitationDialogueShown
+            || _inputLocked
+            || _selectedChoice.HasValue
+            || Time.GetTicksMsec() < _hesitationDueTicks)
+        {
+            return;
+        }
+
+        bool bashInputOpen = (_phase is DemoPhase.BashGame1Round1
+                or DemoPhase.BashGame1Round2)
+            && _bash is not null
+            && _bash.CurrentTurn == Actor.Player;
+        bool limitInputOpen = _phase == DemoPhase.LimitBash
+            && _limitBash is not null;
+
+        if (!bashInputOpen && !limitInputOpen)
+        {
+            return;
+        }
+
+        _hesitationDialogueShown = true;
+        _currentTutorDialogue = PickTutorDialogue(
+            TutorDialoguePool.ChoiceHesitation);
+
+        if (bashInputOpen)
+        {
+            RenderBash("The lattice is stable. Awaiting an anchor request.");
+        }
+        else
+        {
+            RenderLimitBash(
+                waiting: false,
+                log: "The lattice is stable. Awaiting a simultaneous request.");
+        }
+    }
+
+    private static string GetBashRetryPool(int roundIndex, int failureCount)
+    {
+        int tier = Math.Clamp(failureCount, 1, 3);
+
+        return (roundIndex, tier) switch
+        {
+            (1, 1) => TutorDialoguePool.BashRoundOneRetryHint1,
+            (1, 2) => TutorDialoguePool.BashRoundOneRetryHint2,
+            (1, _) => TutorDialoguePool.BashRoundOneRetryHint3,
+            (2, 1) => TutorDialoguePool.BashRoundTwoRetryHint1,
+            (2, 2) => TutorDialoguePool.BashRoundTwoRetryHint2,
+            (2, _) => TutorDialoguePool.BashRoundTwoRetryHint3,
+            _ => throw new ArgumentOutOfRangeException(nameof(roundIndex))
+        };
     }
 
     private static void MixDialogueSelector(ref uint hash, int value)
@@ -965,6 +1373,21 @@ public partial class DemoFlowController : Control
             _sessionRandom.Seed,
             _sessionRandom.Step,
             _dialogueIndex,
+            _activeBriefingLineId,
+            _currentTutorDialogue,
+            _pendingGameStart,
+            _bashRoundIndex,
+            _limitGameIndex,
+            _bashRoundOneFailures,
+            _bashRoundTwoFailures,
+            _dialogueStep,
+            _dialogueHistory
+                .OrderBy(entry => entry.Key, StringComparer.OrdinalIgnoreCase)
+                .Select(entry => new DialoguePoolHistorySnapshot(
+                    entry.Key,
+                    entry.Value.ToArray()))
+                .ToArray(),
+            _pendingLimitDirective,
             _stats.ToSnapshot(),
             CreateGameSnapshot(),
             GetElapsedPlayMilliseconds(),

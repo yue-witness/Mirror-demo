@@ -15,6 +15,9 @@ public partial class TutorDialogueUI : Control
     private Label _playTimeLabel = null!;
     private RichTextLabel _dialogueText = null!;
     private RichTextLabel _supplementaryText = null!;
+    private PanelContainer _portrait = null!;
+    private Label _portraitText = null!;
+    private Label _tutorName = null!;
     private Button _backButton = null!;
     private double _visibleCharacterProgress;
     private bool _isTyping;
@@ -33,6 +36,12 @@ public partial class TutorDialogueUI : Control
             "SafeArea/Layout/Content/DialogueCard/DialogueVBox/DialogueText");
         _supplementaryText = GetNode<RichTextLabel>(
             "SafeArea/Layout/Content/DialogueCard/DialogueVBox/SupplementaryText");
+        _portrait = GetNode<PanelContainer>(
+            "SafeArea/Layout/Content/TutorCard/TutorVBox/Portrait");
+        _portraitText = GetNode<Label>(
+            "SafeArea/Layout/Content/TutorCard/TutorVBox/Portrait/PortraitText");
+        _tutorName = GetNode<Label>(
+            "SafeArea/Layout/Content/TutorCard/TutorVBox/TutorName");
         _backButton = GetNode<Button>("SafeArea/Layout/Footer/BackButton");
 
         _backButton.Pressed += () => BackToTitleRequested?.Invoke();
@@ -90,19 +99,30 @@ public partial class TutorDialogueUI : Control
         {
             DemoPhase.Background => "BACKGROUND / EXPLANATION",
             DemoPhase.BashTutorial => "RULE / BASH",
+            DemoPhase.BashRound2Intro => "BASH / INITIATIVE SHIFT",
+            DemoPhase.BashRetryBriefing => "BASH / RECALIBRATION",
             DemoPhase.RuleTransition => "RULE / LIMIT BASH",
+            DemoPhase.LimitGameBriefing => "LIMIT BASH / NEW LATTICE",
+            DemoPhase.LimitRestartBriefing => "LIMIT BASH / STATE RECOVERY",
             _ => phase.ToString().ToUpperInvariant()
         };
         _saveLabel.Text = $"SAVE · STABLE   {lineIndex + 1:00}/{totalLines:00}";
+        SetRedEye(active: false);
         BeginTyping(line.Text);
         _supplementaryText.Visible = false;
     }
 
-    public void ShowSummary(SessionStats stats)
+    public void ShowSummary(
+        DialogueLine line,
+        int lineIndex,
+        int totalLines,
+        SessionStats stats,
+        bool redEye)
     {
         _phaseLabel.Text = "SUMMARY";
-        _saveLabel.Text = "SAVE · STABLE";
-        BeginTyping("The test is complete. Here is the final summary for this save.");
+        _saveLabel.Text = $"SAVE · STABLE   {lineIndex + 1:00}/{totalLines:00}";
+        SetRedEye(redEye);
+        BeginTyping(line.Text);
         _supplementaryText.Visible = true;
         _supplementaryText.Text =
             "[b]SESSION SUMMARY[/b]\n\n"
@@ -141,5 +161,35 @@ public partial class TutorDialogueUI : Control
     {
         _isTyping = false;
         _dialogueText.VisibleCharacters = -1;
+    }
+
+    private void SetRedEye(bool active)
+    {
+        if (!active)
+        {
+            _portrait.RemoveThemeStyleboxOverride("panel");
+            _portraitText.RemoveThemeColorOverride("font_color");
+            _tutorName.Text = "THE TUTOR · ONLINE";
+            return;
+        }
+
+        var anomalyStyle = new StyleBoxFlat
+        {
+            BgColor = new Color("fff4f5"),
+            BorderColor = new Color("ff314d"),
+            BorderWidthLeft = 4,
+            BorderWidthTop = 4,
+            BorderWidthRight = 4,
+            BorderWidthBottom = 4,
+            CornerRadiusTopLeft = 90,
+            CornerRadiusTopRight = 90,
+            CornerRadiusBottomRight = 90,
+            CornerRadiusBottomLeft = 90,
+            ShadowColor = new Color("b000244d"),
+            ShadowSize = 24
+        };
+        _portrait.AddThemeStyleboxOverride("panel", anomalyStyle);
+        _portraitText.AddThemeColorOverride("font_color", new Color("ff1738"));
+        _tutorName.Text = "THE TUTOR · SIGNAL ANOMALY";
     }
 }
