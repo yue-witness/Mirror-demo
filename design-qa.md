@@ -6,6 +6,7 @@
   - `C:\Users\yuewi\AppData\Local\Temp\codex-clipboard-c9ee2465-aea2-4437-a2fd-5417d4e67a9d.png`
   - `C:\Users\yuewi\AppData\Local\Temp\codex-clipboard-7b3ef71e-f1f4-4b46-af1f-eece593e9297.png`
   - `C:\Users\yuewi\AppData\Local\Temp\codex-clipboard-26957a17-2300-4b1b-b3d5-0caf76276804.png`
+  - `C:\Users\yuewi\AppData\Local\Temp\codex-clipboard-611f6f2f-bb7c-4e88-9fa6-1e104056bebd.png`
   - `_qa/formal-demo/approved-effect-mockup.png`
 - Rendered implementation:
   - `_qa/formal-demo/02c-background-01.png`
@@ -13,14 +14,21 @@
   - `_qa/formal-demo/03-bash-gameplay.png`
   - `_qa/formal-demo/03-hover-choice.png`
   - `_qa/formal-demo/03a-confirm-hover.png`
+  - `_qa/formal-demo/03b-tutor-locked.png`
+  - `_qa/formal-demo/03c-bash-result.png`
+  - `_qa/formal-demo/03d-limit-tutor-acting.png`
 - Side-by-side evidence:
   - `_qa/formal-demo/comparison-dialogue-current.png`
   - `_qa/formal-demo/comparison-gameplay-current.png`
   - `_qa/formal-demo/comparison-text-effect.png`
   - `_qa/formal-demo/comparison-approved-effect.png`
+  - `_qa/formal-demo/comparison-disabled-confirm-pass7.png`
 - Source pixels: 1832 x 1027 for dialogue, 1893 x 1050 for gameplay,
   and 978 x 722 for the phosphor-text reference.
 - Implementation pixels: 1920 x 1080 at density 1.
+- Pass 7 disabled-state source pixels: 210 x 210. The 1920 x 1080
+  implementation was cropped to a 240 x 240 Confirm region, then normalized to
+  210 x 210 and placed beside the source in one 420 x 210 comparison image.
 - Layout comparisons fit each full source and implementation capture into one
   960 x 540 half without cropping. The text-effect comparison uses focused
   source and dialogue-panel crops in a single 1920 x 520 image.
@@ -62,6 +70,11 @@ and former dark foreground text is fluorescent green.
   all three choices and Confirm.
 - The smoke test injects 80 overflow lines and verifies that the SYSTEM vertical
   scrollbar becomes visible with a range larger than one page.
+- `comparison-disabled-confirm-pass7.png` places the user's problematic masked
+  Confirm state beside the corrected state. It verifies removal of the blue
+  fill, removal of the underlying caption, and a dot-matrix X that reaches the
+  circular frame. `03b-tutor-locked.png` verifies the same transparent treatment
+  on all three rectangular choices.
 
 ## Required fidelity surfaces
 
@@ -75,9 +88,8 @@ and former dark foreground text is fluorescent green.
   placement, top-row SYSTEM alignment, and bottom Tutor/dialogue alignment now
   match the supplied compositions.
 - Colors and visual tokens: transparent panel fills, #39FF3A-style fluorescent
-  green text and
-  borders, semantic choice colors, the blue circular Confirm control, Tutor red,
-  and S-17 cyan remain intentional.
+  green text and borders, semantic choice colors, transparent disabled controls,
+  the blue enabled Confirm control, Tutor red, and S-17 cyan remain intentional.
 - Image quality and asset fidelity: Tutor and S-17 use the existing project-local
   1254 x 1254 portraits with preserved aspect ratio. The new project-local
   1920 x 1080 command-chamber background is sharp and free of UI/text artefacts.
@@ -155,6 +167,26 @@ and former dark foreground text is fluorescent green.
   locked Tutor controls, aligned result panels, enlarged result animation text,
   and the command-chamber SUMMARY background.
 
+### Pass 7
+
+- P1: disabled controls still retained tinted background masks. Fixed by using
+  fully transparent disabled StyleBoxes for all three choices and Confirm while
+  preserving their semantic fluorescent borders.
+- P1: the X shared the caption's padded layer, remained too small, and overlapped
+  underlying text. Fixed by making it a button-level shader layer, hiding the
+  caption while disabled, stretching the X to the clipped frame bounds, and
+  retaining the dot-matrix material.
+- P1: Limit Reveal hid Confirm and allowed the action row to reflow. Fixed by
+  keeping Confirm visible and disabled with `TUTOR / ACTING`; the test records
+  all four pre-action positions and confirms exact equality during reveal.
+- P1: PLAYER WIN/LOSE occupied only the active-count slot. Fixed with an
+  independent 56%-viewport result layer, 184 px pulsing display text, gold
+  `#FFD21F` victory, and vivid red `#FF0038` defeat.
+- Post-fix D3D12 captures at 1920 x 1080 show no mask, clipping, caption overlap,
+  action-row movement, or weak result hierarchy. The focused 420 x 210
+  side-by-side comparison contains no actionable P0/P1/P2 mismatch with the
+  user's revised disabled-state direction.
+
 ## Interaction and runtime checks
 
 - Primary interactions tested: New Game, click-to-complete typewriter,
@@ -167,7 +199,10 @@ and former dark foreground text is fluorescent green.
   Tutor/dialogue frames, and distinct normal/hover/disabled StyleBoxes.
 - Result-flow checks: no gameplay Continue node, enlarged pulsing result text,
   click-anywhere advance, and sharp command-chamber result/SUMMARY textures.
-- Console errors checked in headless and OpenGL Compatibility runs: none.
+- Disabled-state checks: zero-alpha fills, shader material on all X overlays,
+  132/184 px cross glyphs, and invariant positions across Bash Tutor and Limit
+  Reveal states.
+- Console errors checked in headless and D3D12 Forward Mobile runs: none.
 - Domain test result: 459 assertions passed.
 
 ## Follow-up polish

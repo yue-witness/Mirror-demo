@@ -94,8 +94,15 @@ func _complete_bash_tutorial_gate() -> void:
 				and bash_result_log.text.contains("ACTIONS THIS ROUND"),
 				"The Bash result screen cleared the SYSTEM action log.")
 			_capture("03c-bash-result.png")
-			var result := _label(
-				"GameplayHUD/SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/StateRow/ActiveStack/RemainingValue").text
+			var result_label := _label("GameplayHUD/ResultOverlay/ResultLabel")
+			var result := result_label.text
+			_assert((_main.get_node("GameplayHUD/ResultOverlay") as Control).visible
+				and (_main.get_node("GameplayHUD/ResultOverlay") as Control).size.y >= 540.0
+				and result_label.get_theme_font_size("font_size") >= 180,
+				"The result animation does not cover the full upper half.")
+			_assert(result_label.get_theme_color("font_color").is_equal_approx(
+				Color("ffd21f")),
+				"PLAYER WIN is not using the requested golden yellow.")
 			_assert(not _main.has_node(
 				"GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ChoiceStack/ContinueButton"),
 				"The obsolete result Continue button is still present.")
@@ -160,6 +167,7 @@ func _complete_limit_bash() -> void:
 	var guard := 0
 	var captured_result := false
 	var observed_live_log := false
+	var checked_tutor_layout := false
 
 	while guard < 800:
 		guard += 1
@@ -205,9 +213,34 @@ func _complete_limit_bash() -> void:
 			var choice := _button(
 				"GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ChoiceStack/ChoiceRow/Choice%d" % index)
 			if choice.visible and not choice.disabled:
+				var confirm := _button(
+					"GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ConfirmButton")
+				var action_buttons := [
+					_button("GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ChoiceStack/ChoiceRow/Choice1"),
+					_button("GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ChoiceStack/ChoiceRow/Choice2"),
+					_button("GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ChoiceStack/ChoiceRow/Choice3")]
+				var positions := [
+					action_buttons[0].global_position,
+					action_buttons[1].global_position,
+					action_buttons[2].global_position,
+					confirm.global_position]
+				if not checked_tutor_layout:
+					_main.set("FastMode", false)
 				choice.emit_signal("pressed")
 				await _frames()
 				_press("GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ConfirmButton")
+				if not checked_tutor_layout:
+					await get_tree().create_timer(0.5).timeout
+					await _frames()
+					_assert(confirm.visible
+						and action_buttons[0].global_position == positions[0]
+						and action_buttons[1].global_position == positions[1]
+						and action_buttons[2].global_position == positions[2]
+						and confirm.global_position == positions[3],
+						"Limit Tutor reveal hid Confirm or moved the action row.")
+					_capture("03d-limit-tutor-acting.png")
+					checked_tutor_layout = true
+					_main.set("FastMode", true)
 				break
 
 	_assert(false, "Limit Bash did not settle within the safety bound.")

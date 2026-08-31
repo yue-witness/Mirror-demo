@@ -55,6 +55,7 @@ public partial class DotMatrixButtonText : Label
 
         if (showDisabledCross)
         {
+            button.ClipContents = true;
             _disabledCross = new Label
             {
                 Name = "DisabledCross",
@@ -64,13 +65,22 @@ public partial class DotMatrixButtonText : Label
                 VerticalAlignment = VerticalAlignment.Center,
                 Material = (ShaderMaterial)textMaterial.Duplicate()
             };
-            _disabledCross.AddThemeFontSizeOverride("font_size", 64);
+            bool isCircularConfirm = button.Name == "ConfirmButton";
+            _disabledCross.AddThemeFontSizeOverride(
+                "font_size",
+                isCircularConfirm ? 184 : 132);
             _disabledCross.AddThemeConstantOverride("outline_size", 3);
             _disabledCross.AddThemeColorOverride(
                 "font_outline_color",
                 new Color(0, 0, 0, 0.92f));
-            AddChild(_disabledCross);
+            button.AddChild(_disabledCross);
             _disabledCross.SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
+            _disabledCross.OffsetTop = -30.0f;
+            _disabledCross.OffsetBottom = -30.0f;
+            _disabledCross.PivotOffset = _disabledCross.Size / 2.0f;
+            _disabledCross.Scale = isCircularConfirm
+                ? new Vector2(1.42f, 1.65f)
+                : new Vector2(3.8f, 1.7f);
         }
 
         Color transparent = new(0, 0, 0, 0);
@@ -96,7 +106,8 @@ public partial class DotMatrixButtonText : Label
             return;
         }
 
-        Text = _button.Text;
+        Text = _button.Disabled ? string.Empty : _button.Text;
+        Visible = _button.Visible;
         HorizontalAlignment = _button.Alignment;
 
         Color color = _button.Disabled
@@ -112,8 +123,13 @@ public partial class DotMatrixButtonText : Label
 
         if (_disabledCross is not null)
         {
+            bool isCircularConfirm = _button.Name == "ConfirmButton";
+            _disabledCross.PivotOffset = _disabledCross.Size / 2.0f;
+            _disabledCross.Scale = isCircularConfirm
+                ? new Vector2(1.42f, 1.65f)
+                : new Vector2(3.8f, 1.7f);
             _disabledCross.Visible = _button.Visible && _button.Disabled;
-            _disabledCross.AddThemeColorOverride(FontColor, _disabledColor);
+            _disabledCross.AddThemeColorOverride(FontColor, _normalColor);
         }
     }
 }

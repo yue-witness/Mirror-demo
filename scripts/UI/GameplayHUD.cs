@@ -17,6 +17,8 @@ public partial class GameplayHUD : Control
     private Label _remainingLabel = null!;
     private Label _selectionLabel = null!;
     private StabilityLatticeView _latticeView = null!;
+    private Control _resultOverlay = null!;
+    private Label _resultLabel = null!;
     private RichTextLabel _dialogueText = null!;
     private Label _systemStatus = null!;
     private RichTextLabel _systemLog = null!;
@@ -59,6 +61,8 @@ public partial class GameplayHUD : Control
         _latticeView = GetNode<StabilityLatticeView>(
             "SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/StateRow/"
             + "LatticeView");
+        _resultOverlay = GetNode<Control>("ResultOverlay");
+        _resultLabel = GetNode<Label>("ResultOverlay/ResultLabel");
         _dialogueText = GetNode<RichTextLabel>(
             "SafeArea/Layout/Content/Center/DialoguePanel/DialogueVBox/Text");
         _systemStatus = GetNode<Label>(
@@ -268,7 +272,9 @@ public partial class GameplayHUD : Control
                 game.Remaining,
                 Math.Max(0, game.Remaining - playerTake - tutorTake)));
         _selectionLabel.Text = $"REVEAL · PLAYER {playerTake}  ·  TUTOR {tutorTake}";
-        _confirmButton.Visible = false;
+        _confirmButton.Visible = true;
+        _confirmButton.Disabled = true;
+        _confirmButton.Text = "TUTOR\nACTING";
     }
 
     public void ShowRoundResult(
@@ -303,7 +309,7 @@ public partial class GameplayHUD : Control
                     ? $"\n\n• Final requests: Player {finalChoice.Value.PlayerTake}"
                         + $" / Tutor {finalChoice.Value.TutorTake}"
                     : string.Empty);
-        _remainingLabel.Text = result;
+        _remainingLabel.Text = string.Empty;
         _latticeView.ShowResult(outcome);
         _selectionLabel.Text = finalChoice.HasValue
             ? $"FINAL REQUESTS · PLAYER {finalChoice.Value.PlayerTake}"
@@ -359,30 +365,31 @@ public partial class GameplayHUD : Control
     {
         StopResultAnimation();
         _resultAwaitingSkip = true;
-        _remainingLabel.AddThemeFontSizeOverride("font_size", 68);
-        _remainingLabel.AddThemeColorOverride(
+        _resultOverlay.Visible = true;
+        _resultLabel.Text = FormatOutcome(outcome);
+        _resultLabel.AddThemeColorOverride(
             "font_color",
             outcome switch
             {
-                RoundOutcome.PlayerWin => new Color("39ff3a"),
-                RoundOutcome.PlayerLose => new Color("ff3861"),
+                RoundOutcome.PlayerWin => new Color("ffd21f"),
+                RoundOutcome.PlayerLose => new Color("ff0038"),
                 _ => new Color("ffc21f")
             });
-        _remainingLabel.PivotOffset = _remainingLabel.Size / 2.0f;
-        _remainingLabel.Scale = new Vector2(0.84f, 0.84f);
+        _resultLabel.PivotOffset = _resultLabel.Size / 2.0f;
+        _resultLabel.Scale = new Vector2(0.82f, 0.82f);
 
         _resultTween = CreateTween().SetLoops();
         _resultTween.TweenProperty(
-                _remainingLabel,
+                _resultLabel,
                 "scale",
-                new Vector2(1.08f, 1.08f),
+                new Vector2(1.06f, 1.06f),
                 0.55)
             .SetTrans(Tween.TransitionType.Back)
             .SetEase(Tween.EaseType.Out);
         _resultTween.TweenProperty(
-                _remainingLabel,
+                _resultLabel,
                 "scale",
-                new Vector2(0.96f, 0.96f),
+                new Vector2(0.94f, 0.94f),
                 0.55)
             .SetTrans(Tween.TransitionType.Sine)
             .SetEase(Tween.EaseType.InOut);
@@ -400,9 +407,9 @@ public partial class GameplayHUD : Control
         _resultAwaitingSkip = false;
         if (GodotObject.IsInstanceValid(_remainingLabel))
         {
-            _remainingLabel.Scale = Vector2.One;
-            _remainingLabel.RemoveThemeFontSizeOverride("font_size");
-            _remainingLabel.RemoveThemeColorOverride("font_color");
+            _resultOverlay.Visible = false;
+            _resultLabel.Scale = Vector2.One;
+            _resultLabel.RemoveThemeColorOverride("font_color");
         }
     }
 

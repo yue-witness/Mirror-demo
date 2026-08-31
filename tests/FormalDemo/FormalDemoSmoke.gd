@@ -98,6 +98,11 @@ func _ready() -> void:
 		"GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ConfirmButton")
 	var choice_center_y := choice_one.global_position.y + choice_one.size.y / 2.0
 	var confirm_center_y := confirm.global_position.y + confirm.size.y / 2.0
+	var choice_positions := [
+		choice_one.global_position,
+		choice_two.global_position,
+		choice_three.global_position]
+	var confirm_position := confirm.global_position
 	_assert(is_equal_approx(choice_center_y, confirm_center_y),
 		"The three central choices are not vertically centred between the panels.")
 	var choice_one_text := choice_one.get_node("DotMatrixText") as Label
@@ -116,7 +121,7 @@ func _ready() -> void:
 		"The fixed A/B/C choice headings are missing.")
 	for button in [choice_one, choice_two, choice_three, confirm]:
 		var shader_text := button.get_node("DotMatrixText") as Label
-		var disabled_cross := shader_text.get_node("DisabledCross") as Label
+		var disabled_cross := button.get_node("DisabledCross") as Label
 		_assert(shader_text.material is ShaderMaterial
 			and disabled_cross.material is ShaderMaterial,
 			"A central button caption or disabled X is missing its dot-matrix shader.")
@@ -213,23 +218,39 @@ func _ready() -> void:
 	await get_tree().process_frame
 	_assert(choice_one.disabled and choice_two.disabled and choice_three.disabled,
 		"Tutor selection did not immediately lock all three player choices.")
-	_assert((choice_one.get_node("DotMatrixText/DisabledCross") as Label).visible
-		and (choice_two.get_node("DotMatrixText/DisabledCross") as Label).visible
-		and (choice_three.get_node("DotMatrixText/DisabledCross") as Label).visible,
+	_assert(confirm.visible and confirm.global_position == confirm_position,
+		"Tutor selection hid or moved the Confirm button.")
+	_assert(choice_one.global_position == choice_positions[0]
+		and choice_two.global_position == choice_positions[1]
+		and choice_three.global_position == choice_positions[2],
+		"Tutor selection moved one or more choice buttons.")
+	_assert((choice_one.get_node("DisabledCross") as Label).visible
+		and (choice_two.get_node("DisabledCross") as Label).visible
+		and (choice_three.get_node("DisabledCross") as Label).visible,
 		"Tutor selection did not expose the disabled X overlays.")
+	_assert(choice_one.get_theme_stylebox("disabled").get_bg_color().a == 0.0
+		and choice_two.get_theme_stylebox("disabled").get_bg_color().a == 0.0
+		and choice_three.get_theme_stylebox("disabled").get_bg_color().a == 0.0
+		and confirm.get_theme_stylebox("disabled").get_bg_color().a == 0.0,
+		"A disabled action button still draws an opaque mask.")
+	_assert((choice_one.get_node("DisabledCross") as Label).get_theme_font_size(
+		"font_size") >= 120
+		and (confirm.get_node("DisabledCross") as Label).get_theme_font_size(
+			"font_size") >= 180,
+		"The disabled X does not reach the surrounding frame.")
 	_assert(choice_one.scale == Vector2.ONE
 		and choice_two.scale == Vector2.ONE
 		and choice_three.scale == Vector2.ONE,
 		"Tutor selection changed the three-button geometry.")
-	_capture("03b-tutor-locked.png")
-	await get_tree().create_timer(0.9).timeout
+	await get_tree().create_timer(0.2).timeout
 	await _settle_frames()
+	_capture("03b-tutor-locked.png")
 	_main.set("FastMode", true)
 	_assert((_main.get_node(
 		"GameplayHUD/SafeArea/Layout/Content/Center/DialoguePanel/DialogueVBox/Text") as RichTextLabel).text != tutor_line,
 		"Tutor dialogue did not advance after a confirmed gameplay event.")
 	_assert(FileAccess.file_exists(SAVE_PATH), "A stable session checkpoint was not written.")
-	await get_tree().create_timer(1.0).timeout
+	await get_tree().create_timer(0.35).timeout
 
 	_press("GameplayHUD/SafeArea/Layout/Content/RightColumn/BackButton")
 	await _settle_frames()
