@@ -15,6 +15,8 @@ public partial class DemoFlowController : Control
     private const int MaximumControlledRestarts = 3;
     private const int DialogueHistoryLimit = 2;
     private const int SelectionDialoguePercent = 35;
+    private const string BackgroundTexturePath =
+        "res://assets/backgrounds/command_chamber_powered_down.png";
 
     private readonly StrategyEngine _strategy = new();
     private readonly OutcomeDirector _outcomeDirector = new();
@@ -141,8 +143,7 @@ public partial class DemoFlowController : Control
         _selectedChoice = null;
         _chapterPending = false;
         _currentTutorDialogue = string.Empty;
-        _background.Texture = GD.Load<Texture2D>(
-            "res://assets/backgrounds/sci_fi_command_chamber.png");
+        _background.Texture = GD.Load<Texture2D>(BackgroundTexturePath);
         _titleScreen.Visible = true;
         _hud.Visible = false;
         _dialogueUI.Visible = false;
@@ -222,8 +223,7 @@ public partial class DemoFlowController : Control
         _titleScreen.Visible = false;
         _hud.Visible = showChapter;
         _dialogueUI.Visible = false;
-        _background.Texture = GD.Load<Texture2D>(
-            "res://assets/backgrounds/sci_fi_command_chamber.png");
+        _background.Texture = GD.Load<Texture2D>(BackgroundTexturePath);
         WriteCheckpoint();
 
         if (showChapter)
@@ -400,8 +400,7 @@ public partial class DemoFlowController : Control
         _titleScreen.Visible = false;
         _hud.Visible = false;
         _dialogueUI.Visible = true;
-        _background.Texture = GD.Load<Texture2D>(
-            "res://assets/backgrounds/sci_fi_command_chamber.png");
+        _background.Texture = GD.Load<Texture2D>(BackgroundTexturePath);
         WriteCheckpoint();
         RenderDialogue();
     }
@@ -456,8 +455,7 @@ public partial class DemoFlowController : Control
         _titleScreen.Visible = false;
         _hud.Visible = true;
         _dialogueUI.Visible = false;
-        _background.Texture = GD.Load<Texture2D>(
-            "res://assets/backgrounds/sci_fi_command_chamber.png");
+        _background.Texture = GD.Load<Texture2D>(BackgroundTexturePath);
 
         int[] candidates = roundIndex == 1
             ? _rules.Bash.Round1InitialUnits
@@ -662,8 +660,7 @@ public partial class DemoFlowController : Control
         _lastGameIndex = _bashRoundIndex;
         _lastGameTurns = _currentGameTurns;
         _phase = DemoPhase.RoundResult;
-        _background.Texture = GD.Load<Texture2D>(
-            "res://assets/backgrounds/sci_fi_command_chamber.png");
+        _background.Texture = GD.Load<Texture2D>(BackgroundTexturePath);
         _currentTutorDialogue = PickBashResultDialogue(outcome);
         WriteCheckpoint();
         _hud.ShowRoundResult(
@@ -690,8 +687,7 @@ public partial class DemoFlowController : Control
         _titleScreen.Visible = false;
         _hud.Visible = true;
         _dialogueUI.Visible = false;
-        _background.Texture = GD.Load<Texture2D>(
-            "res://assets/backgrounds/sci_fi_command_chamber.png");
+        _background.Texture = GD.Load<Texture2D>(BackgroundTexturePath);
 
         if (!preserveDirective)
         {
@@ -855,8 +851,7 @@ public partial class DemoFlowController : Control
         _lastGameIndex = _limitGameIndex;
         _lastGameTurns = _currentGameTurns;
         _phase = DemoPhase.RoundResult;
-        _background.Texture = GD.Load<Texture2D>(
-            "res://assets/backgrounds/sci_fi_command_chamber.png");
+        _background.Texture = GD.Load<Texture2D>(BackgroundTexturePath);
         _currentTutorDialogue = PickLimitResultDialogue(outcome);
         WriteCheckpoint();
         _hud.ShowRoundResult(
@@ -957,8 +952,7 @@ public partial class DemoFlowController : Control
         _limitBash = null;
         _selectedChoice = null;
         _inputLocked = false;
-        _background.Texture = GD.Load<Texture2D>(
-            "res://assets/backgrounds/sci_fi_command_chamber.png");
+        _background.Texture = GD.Load<Texture2D>(BackgroundTexturePath);
         _hud.Visible = false;
         _dialogueUI.Visible = true;
         WriteCheckpoint();
@@ -1028,8 +1022,7 @@ public partial class DemoFlowController : Control
             or DemoPhase.LimitRestartBriefing
             or DemoPhase.Summary)
         {
-            _background.Texture = GD.Load<Texture2D>(
-                "res://assets/backgrounds/sci_fi_command_chamber.png");
+            _background.Texture = GD.Load<Texture2D>(BackgroundTexturePath);
             RenderDialogue();
             return;
         }
@@ -1075,8 +1068,7 @@ public partial class DemoFlowController : Control
                 ? snapshot.BashRoundIndex
                 : snapshot.LimitGameIndex;
             _lastGameTurns = snapshot.RoundIndex;
-            _background.Texture = GD.Load<Texture2D>(
-                "res://assets/backgrounds/sci_fi_command_chamber.png");
+            _background.Texture = GD.Load<Texture2D>(BackgroundTexturePath);
             _hud.ShowRoundResult(
                 snapshot.Game,
                 snapshot.Result,
@@ -1100,8 +1092,7 @@ public partial class DemoFlowController : Control
             return;
         }
 
-        _background.Texture = GD.Load<Texture2D>(
-            "res://assets/backgrounds/sci_fi_command_chamber.png");
+        _background.Texture = GD.Load<Texture2D>(BackgroundTexturePath);
         _hud.Visible = true;
         ResetTurnDialogueState();
 

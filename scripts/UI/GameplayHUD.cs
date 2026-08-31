@@ -19,6 +19,7 @@ public partial class GameplayHUD : Control
     private StabilityLatticeView _latticeView = null!;
     private Control _resultOverlay = null!;
     private Label _resultLabel = null!;
+    private SpriteAtlasAnimator _tutorPortrait = null!;
     private RichTextLabel _dialogueText = null!;
     private Label _systemStatus = null!;
     private RichTextLabel _systemLog = null!;
@@ -63,6 +64,9 @@ public partial class GameplayHUD : Control
             + "LatticeView");
         _resultOverlay = GetNode<Control>("ResultOverlay");
         _resultLabel = GetNode<Label>("ResultOverlay/ResultLabel");
+        _tutorPortrait = GetNode<SpriteAtlasAnimator>(
+            "SafeArea/Layout/Content/LeftColumn/TutorCard/TutorVBox/"
+            + "PortraitFrame/PortraitTexture");
         _dialogueText = GetNode<RichTextLabel>(
             "SafeArea/Layout/Content/Center/DialoguePanel/DialogueVBox/Text");
         _systemStatus = GetNode<Label>(
@@ -416,6 +420,47 @@ public partial class GameplayHUD : Control
     private void SetTutorDialogue(string text)
     {
         _dialogueText.Text = $"[center]{text.Replace("[", "[lb]")}[/center]";
+        _tutorPortrait.SetState(ResolveTutorState(text));
+    }
+
+    private static int ResolveTutorState(string text)
+    {
+        foreach (string fragment in new[]
+        {
+            "alert",
+            "anomaly",
+            "error",
+            "fail",
+            "lost",
+            "threat",
+            "unstable",
+            "warning"
+        })
+        {
+            if (text.Contains(fragment, StringComparison.OrdinalIgnoreCase))
+            {
+                return 2;
+            }
+        }
+
+        foreach (string fragment in new[]
+        {
+            "clever",
+            "excellent",
+            "good",
+            "impressive",
+            "success",
+            "well done",
+            "you win"
+        })
+        {
+            if (text.Contains(fragment, StringComparison.OrdinalIgnoreCase))
+            {
+                return 1;
+            }
+        }
+
+        return 0;
     }
 
     private static string FormatPrevious(int? previous)

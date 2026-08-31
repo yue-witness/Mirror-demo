@@ -1,12 +1,16 @@
-[gd_scene load_steps=8 format=3 uid="uid://bgranncpwtngt"]
+[gd_scene load_steps=12 format=3 uid="uid://bgranncpwtngt"]
 
 [ext_resource type="Theme" path="res://themes/ProjectMirrorLightTheme.tres" id="1_theme"]
 [ext_resource type="Script" path="res://scripts/Core/DemoFlowController.cs" id="2_flow"]
-[ext_resource type="Texture2D" path="res://assets/backgrounds/sci_fi_command_chamber.png" id="3_background"]
+[ext_resource type="Texture2D" path="res://assets/backgrounds/command_chamber_powered_down.png" id="3_background"]
 [ext_resource type="PackedScene" path="res://scenes/ui/TitleScreen.tscn" id="4_title"]
 [ext_resource type="PackedScene" path="res://scenes/ui/GameplayHUD.tscn" id="5_hud"]
 [ext_resource type="PackedScene" path="res://scenes/ui/TutorDialogueUI.tscn" id="6_dialogue"]
 [ext_resource type="Script" path="res://scripts/UI/DotMatrixTextStyler.cs" id="7_text_styler"]
+[ext_resource type="Script" path="res://scripts/UI/BackgroundVfx.cs" id="8_background_vfx"]
+[ext_resource type="Texture2D" path="res://assets/vfx/container_glow.png" id="9_container_glow"]
+[ext_resource type="Texture2D" path="res://assets/vfx/scanner_glow.png" id="10_scanner_glow"]
+[ext_resource type="Script" path="res://scripts/UI/FrameParticleEffectsInstaller.cs" id="11_frame_effects"]
 
 [node name="Main" type="Control"]
 layout_mode = 3
@@ -40,6 +44,38 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0.005, 0.012, 0.014, 0.12)
 
+[node name="BackgroundVfx" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("8_background_vfx")
+
+[node name="ContainerGlow" type="TextureRect" parent="BackgroundVfx"]
+layout_mode = 0
+offset_left = 1510.0
+offset_top = 112.0
+offset_right = 1890.0
+offset_bottom = 562.0
+mouse_filter = 2
+texture = ExtResource("9_container_glow")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ScannerGlow" type="TextureRect" parent="BackgroundVfx"]
+layout_mode = 0
+offset_left = 1260.0
+offset_top = 615.0
+offset_right = 1910.0
+offset_bottom = 860.0
+mouse_filter = 2
+texture = ExtResource("10_scanner_glow")
+expand_mode = 1
+stretch_mode = 5
+
 [node name="TitleScreen" parent="." instance=ExtResource("4_title")]
 layout_mode = 1
 
@@ -53,3 +89,6 @@ layout_mode = 1
 
 [node name="DotMatrixTextStyler" type="Node" parent="."]
 script = ExtResource("7_text_styler")
+
+[node name="FrameParticleEffectsInstaller" type="Node" parent="."]
+script = ExtResource("11_frame_effects")

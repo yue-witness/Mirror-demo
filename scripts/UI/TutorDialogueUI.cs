@@ -17,7 +17,7 @@ public partial class TutorDialogueUI : Control
     private RichTextLabel _dialogueText = null!;
     private RichTextLabel _supplementaryText = null!;
     private PanelContainer _portrait = null!;
-    private TextureRect _portraitTexture = null!;
+    private SpriteAtlasAnimator _portraitTexture = null!;
     private Label _speakerName = null!;
     private Button _backButton = null!;
     private Texture2D _tutorPortrait = null!;
@@ -43,15 +43,15 @@ public partial class TutorDialogueUI : Control
             "SafeArea/Layout/Content/DialogueCard/DialogueVBox/SupplementaryText");
         _portrait = GetNode<PanelContainer>(
             "SafeArea/Layout/Content/SpeakerCard/SpeakerVBox/PortraitFrame");
-        _portraitTexture = GetNode<TextureRect>(
+        _portraitTexture = GetNode<SpriteAtlasAnimator>(
             "SafeArea/Layout/Content/SpeakerCard/SpeakerVBox/PortraitFrame/PortraitTexture");
         _speakerName = GetNode<Label>(
             "SafeArea/Layout/Content/SpeakerCard/SpeakerVBox/SpeakerName");
         _backButton = GetNode<Button>("SafeArea/Layout/Footer/BackButton");
         _tutorPortrait = ResourceLoader.Load<Texture2D>(
-            "res://assets/portraits/tutor.png");
+            "res://assets/portraits/tutor_states.png");
         _s17Portrait = ResourceLoader.Load<Texture2D>(
-            "res://assets/portraits/s17.png");
+            "res://assets/portraits/s17_idle.png");
 
         _backButton.Pressed += () => BackToTitleRequested?.Invoke();
     }
@@ -116,7 +116,7 @@ public partial class TutorDialogueUI : Control
             _ => phase.ToString().ToUpperInvariant()
         };
         _saveLabel.Text = $"SAVE · STABLE   {lineIndex + 1:00}/{totalLines:00}";
-        SetSpeaker(line.Speaker, redEye: false);
+        SetSpeaker(line.Speaker, redEye: false, line.Text);
         BeginTyping(line.Text);
         _supplementaryText.Visible = false;
     }
@@ -130,7 +130,7 @@ public partial class TutorDialogueUI : Control
     {
         _phaseLabel.Text = "SUMMARY";
         _saveLabel.Text = $"SAVE · STABLE   {lineIndex + 1:00}/{totalLines:00}";
-        SetSpeaker(line.Speaker, redEye);
+        SetSpeaker(line.Speaker, redEye, line.Text);
         BeginTyping(line.Text);
         _supplementaryText.Visible = true;
         _supplementaryText.Text =
@@ -177,14 +177,30 @@ public partial class TutorDialogueUI : Control
         _dialogueText.VisibleCharacters = -1;
     }
 
-    private void SetSpeaker(string speaker, bool redEye)
+    private void SetSpeaker(
+        string speaker,
+        bool redEye,
+        string dialogueText)
     {
         bool isS17 = speaker.Equals("S-17", StringComparison.OrdinalIgnoreCase)
             || speaker.Equals("S17", StringComparison.OrdinalIgnoreCase);
 
         _portrait.RemoveThemeStyleboxOverride("panel");
         _portraitTexture.Modulate = Colors.White;
-        _portraitTexture.Texture = isS17 ? _s17Portrait : _tutorPortrait;
+        if (isS17)
+        {
+            _portraitTexture.ConfigureAtlas(_s17Portrait, 4, 1);
+            _portraitTexture.HoverAmplitude = 2.0f;
+        }
+        else
+        {
+            _portraitTexture.ConfigureAtlas(
+                _tutorPortrait,
+                4,
+                3,
+                ResolveTutorState(dialogueText, redEye));
+            _portraitTexture.HoverAmplitude = 6.0f;
+        }
         _speakerLabel.Text = isS17 ? "S-17" : "TUTOR";
         _speakerLabel.AddThemeColorOverride(
             "font_color",
@@ -216,5 +232,50 @@ public partial class TutorDialogueUI : Control
         _portrait.AddThemeStyleboxOverride("panel", anomalyStyle);
         _portraitTexture.Modulate = new Color("ff8192");
         _speakerName.Text = "THE TUTOR · SIGNAL ANOMALY";
+    }
+
+    private static int ResolveTutorState(string text, bool redEye)
+    {
+        if (redEye || ContainsAny(
+            text,
+            "alert",
+            "anomaly",
+            "error",
+            "fail",
+            "lost",
+            "threat",
+            "unstable",
+            "warning"))
+        {
+            return 2;
+        }
+
+        if (ContainsAny(
+            text,
+            "clever",
+            "excellent",
+            "good",
+            "impressive",
+            "success",
+            "well done",
+            "you win"))
+        {
+            return 1;
+        }
+
+        return 0;
+    }
+
+    private static bool ContainsAny(string text, params string[] fragments)
+    {
+        foreach (string fragment in fragments)
+        {
+            if (text.Contains(fragment, StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

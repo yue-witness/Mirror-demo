@@ -1,8 +1,9 @@
-[gd_scene load_steps=23 format=3]
+[gd_scene load_steps=24 format=3]
 
 [ext_resource type="Script" path="res://scripts/UI/GameplayHUD.cs" id="1_script"]
 [ext_resource type="Script" path="res://scripts/UI/StabilityLatticeView.cs" id="2_lattice"]
-[ext_resource type="Texture2D" path="res://assets/portraits/tutor.png" id="3_tutor"]
+[ext_resource type="Texture2D" path="res://assets/portraits/tutor_states.png" id="3_tutor"]
+[ext_resource type="Script" path="res://scripts/UI/SpriteAtlasAnimator.cs" id="4_atlas_animator"]
 
 [sub_resource type="StyleBoxFlat" id="ChoiceGreen"]
 content_margin_left = 18.0
@@ -421,6 +422,12 @@ mouse_filter = 2
 texture = ExtResource("3_tutor")
 expand_mode = 1
 stretch_mode = 5
+script = ExtResource("4_atlas_animator")
+columns = 4
+rows = 3
+frames_per_second = 4.0
+hover_amplitude = 3.0
+hover_cycles_per_second = 0.34
 
 [node name="TutorName" type="Label" parent="SafeArea/Layout/Content/LeftColumn/TutorCard/TutorVBox"]
 layout_mode = 2

@@ -26,8 +26,34 @@ func _ready() -> void:
 	_assert(_main.get_node("TitleScreen").visible, "Title screen is not visible at startup.")
 	_assert(not _main.get_node("GameplayHUD").visible, "Gameplay HUD leaked onto the title screen.")
 	var background := _main.get_node("Background") as TextureRect
-	_assert(background.texture.resource_path.ends_with("sci_fi_command_chamber.png"),
+	_assert(background.texture.resource_path.ends_with("command_chamber_powered_down.png"),
 		"The confirmed sharp science-fiction background is not active.")
+	var container_glow := _main.get_node(
+		"BackgroundVfx/ContainerGlow") as TextureRect
+	var scanner_glow := _main.get_node(
+		"BackgroundVfx/ScannerGlow") as TextureRect
+	_assert(container_glow.texture.resource_path.ends_with("container_glow.png")
+		and scanner_glow.texture.resource_path.ends_with("scanner_glow.png"),
+		"The LLM-extracted animated background glow layers are missing.")
+	var title_particle_frame := _main.get_node(
+		"TitleScreen/MenuGlass/ParticleFrame") as ColorRect
+	var title_particle_material := title_particle_frame.material as ShaderMaterial
+	_assert(title_particle_material != null
+		and title_particle_material.shader.resource_path.ends_with(
+			"ui_particle_frame.gdshader"),
+		"The title frame does not use the particle-trail dot-matrix shader.")
+	var trail_length: float = title_particle_material.get_shader_parameter(
+		"trail_length")
+	var trail_diffusion: float = title_particle_material.get_shader_parameter(
+		"diffusion")
+	_assert(trail_length >= 0.10 and trail_diffusion > 1.0,
+		"The frame shader no longer has a visible diffusing fade trail.")
+	var initial_container_scale := container_glow.scale
+	var initial_scanner_rotation := scanner_glow.rotation
+	await get_tree().create_timer(0.16).timeout
+	_assert(not container_glow.scale.is_equal_approx(initial_container_scale)
+		and not is_equal_approx(scanner_glow.rotation, initial_scanner_rotation),
+		"The extracted background layers are present but not animated.")
 	_assert(not _button("TitleScreen/MenuGlass/MenuVBox/ContinueButton").visible,
 		"Continue must remain hidden without an unfinished save.")
 	_assert((_main.get_node(
@@ -125,6 +151,13 @@ func _ready() -> void:
 		_assert(shader_text.material is ShaderMaterial
 			and disabled_cross.texture.resource_path.ends_with("dot_matrix_x.png"),
 			"A central button caption or pre-rendered dot-matrix X is missing.")
+		_assert(button.get_node("ParticleFrame").material is ShaderMaterial,
+			"An original action-button border is missing its particle dot matrix.")
+	var status_particle_frame := _main.get_node(
+		"GameplayHUD/SafeArea/Layout/Content/LeftColumn/LeftStatus/ParticleFrame"
+		) as ColorRect
+	_assert(status_particle_frame.material is ShaderMaterial,
+		"An original gameplay panel is missing its particle dot matrix.")
 	var tutor_line: String = (_main.get_node(
 		"GameplayHUD/SafeArea/Layout/Content/Center/DialoguePanel/DialogueVBox/Text") as RichTextLabel).text
 	var gameplay_dialogue := _main.get_node(

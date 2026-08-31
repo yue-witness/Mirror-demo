@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dbquj7s5rkfyi"
-path="res://.godot/imported/sci_fi_command_chamber.png-0743fca5af233372b678b1a0c5a93a45.ctex"
+uid="uid://rudhsyge0el"
+path="res://.godot/imported/scanner_glow.png-c9b822fa218d0de6b02e408487da2e43.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/backgrounds/sci_fi_command_chamber.png"
-dest_files=["res://.godot/imported/sci_fi_command_chamber.png-0743fca5af233372b678b1a0c5a93a45.ctex"]
+source_file="res://assets/vfx/scanner_glow.png"
+dest_files=["res://.godot/imported/scanner_glow.png-c9b822fa218d0de6b02e408487da2e43.ctex"]
 
 [params]
 

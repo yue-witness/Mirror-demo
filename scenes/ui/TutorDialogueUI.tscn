@@ -1,8 +1,9 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scripts/UI/TutorDialogueUI.cs" id="1_script"]
-[ext_resource type="Texture2D" path="res://assets/portraits/tutor.png" id="2_tutor"]
-[ext_resource type="Texture2D" path="res://assets/portraits/s17.png" id="3_s17"]
+[ext_resource type="Texture2D" path="res://assets/portraits/tutor_states.png" id="2_tutor"]
+[ext_resource type="Texture2D" path="res://assets/portraits/s17_idle.png" id="3_s17"]
+[ext_resource type="Script" path="res://scripts/UI/SpriteAtlasAnimator.cs" id="4_atlas_animator"]
 
 [sub_resource type="StyleBoxFlat" id="PortraitFrame"]
 content_margin_left = 6.0
@@ -142,6 +143,12 @@ mouse_filter = 2
 texture = ExtResource("2_tutor")
 expand_mode = 1
 stretch_mode = 5
+script = ExtResource("4_atlas_animator")
+columns = 4
+rows = 3
+frames_per_second = 4.0
+hover_amplitude = 6.0
+hover_cycles_per_second = 0.32
 
 [node name="SpeakerName" type="Label" parent="SafeArea/Layout/Content/SpeakerCard/SpeakerVBox"]
 layout_mode = 2
