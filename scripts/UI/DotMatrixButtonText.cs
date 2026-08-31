@@ -75,7 +75,8 @@ public partial class DotMatrixButtonText : Label
                     ExpandMode = TextureRect.ExpandModeEnum.IgnoreSize,
                     StretchMode = TextureRect.StretchModeEnum.Scale,
                     MouseFilter = MouseFilterEnum.Ignore,
-                    TextureFilter = CanvasItem.TextureFilterEnum.Nearest
+                    TextureFilter = CanvasItem.TextureFilterEnum.Nearest,
+                    ZIndex = 1
                 };
                 button.AddChild(_disabledCross);
                 _disabledCross.SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
@@ -111,7 +112,9 @@ public partial class DotMatrixButtonText : Label
             return;
         }
 
-        Text = _button.Disabled ? string.Empty : _button.Text;
+        // The disabled-state X is an overlay, not a replacement caption.
+        // Keep the shader-rendered button copy visible underneath it.
+        Text = _button.Text;
         Visible = _button.Visible;
         HorizontalAlignment = _button.Alignment;
 

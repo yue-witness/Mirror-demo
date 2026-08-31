@@ -76,9 +76,9 @@ and former dark foreground text is fluorescent green.
 - `comparison-disabled-confirm-pass7.png` places the user's problematic masked
   Confirm state beside the first transparent correction. The final
   `comparison-disabled-icon-pass8.png` verifies the thinner pre-rendered X,
-  hidden underlying caption, transparent interior, and precise intersection
-  with the circular frame. `03b-tutor-locked.png` verifies corner-to-corner
-  alignment on all three rectangular choices.
+  transparent interior, and precise intersection with the circular frame.
+  `03b-tutor-locked.png` verifies corner-to-corner alignment on all three
+  rectangular choices and retains their original captions beneath the overlay.
 
 ## Required fidelity surfaces
 
@@ -205,10 +205,20 @@ and former dark foreground text is fluorescent green.
   meet the circle at its four 45-degree intersections. The texture is tinted at
   runtime to retain each control's green, yellow, or red semantic color.
 - D3D12 captures `03b-tutor-locked.png` and
-  `03d-limit-tutor-acting.png` confirm thin strokes, no caption overlap, fully
-  transparent disabled interiors, and invariant action-row geometry. The
+  `03d-limit-tutor-acting.png` confirm thin strokes, fully transparent disabled
+  interiors, and invariant action-row geometry. The
   focused `comparison-disabled-icon-pass8.png` contains no actionable
   P0/P1/P2 mismatch with the revised direction.
+
+### Pass 9
+
+- P1: the first texture-overlay implementation cleared the button caption while
+  disabled. Fixed by retaining the shader-rendered A/B/C and option copy and
+  assigning the X texture a higher canvas z-index, so it acts only as the
+  uppermost lock indicator.
+- Automated coverage now verifies that every disabled action retains its exact
+  source caption and that the X draws above that caption without introducing a
+  background mask or changing action-row geometry.
 
 ## Interaction and runtime checks
 

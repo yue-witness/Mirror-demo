@@ -228,6 +228,13 @@ func _ready() -> void:
 		and (choice_two.get_node("DisabledCross") as TextureRect).visible
 		and (choice_three.get_node("DisabledCross") as TextureRect).visible,
 		"Tutor selection did not expose the disabled X overlays.")
+	for button in [choice_one, choice_two, choice_three, confirm]:
+		var shader_text := button.get_node("DotMatrixText") as Label
+		var disabled_cross := button.get_node("DisabledCross") as TextureRect
+		_assert(shader_text.text == button.text and not shader_text.text.is_empty(),
+			"A disabled X replaced the button's original caption.")
+		_assert(disabled_cross.z_index > shader_text.z_index,
+			"A disabled X is not layered above its original caption.")
 	_assert(choice_one.get_theme_stylebox("disabled").get_bg_color().a == 0.0
 		and choice_two.get_theme_stylebox("disabled").get_bg_color().a == 0.0
 		and choice_three.get_theme_stylebox("disabled").get_bg_color().a == 0.0
