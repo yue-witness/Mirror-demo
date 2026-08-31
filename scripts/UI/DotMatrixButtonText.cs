@@ -7,6 +7,9 @@ using Godot;
 /// </summary>
 public partial class DotMatrixButtonText : Label
 {
+    private const string DisabledCrossTexturePath =
+        "res://assets/ui/dot_matrix_x.png";
+
     private static readonly StringName FontColor = "font_color";
     private static readonly StringName FontHoverColor = "font_hover_color";
     private static readonly StringName FontPressedColor = "font_pressed_color";
@@ -16,7 +19,7 @@ public partial class DotMatrixButtonText : Label
     private static readonly StringName FontDisabledColor = "font_disabled_color";
 
     private Button _button = null!;
-    private Label? _disabledCross;
+    private TextureRect? _disabledCross;
     private Color _normalColor;
     private Color _hoverColor;
     private Color _pressedColor;
@@ -56,31 +59,33 @@ public partial class DotMatrixButtonText : Label
         if (showDisabledCross)
         {
             button.ClipContents = true;
-            _disabledCross = new Label
+            Texture2D? crossTexture = GD.Load<Texture2D>(DisabledCrossTexturePath);
+
+            if (crossTexture is null)
             {
-                Name = "DisabledCross",
-                Text = "X",
-                MouseFilter = MouseFilterEnum.Ignore,
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-                Material = (ShaderMaterial)textMaterial.Duplicate()
-            };
-            bool isCircularConfirm = button.Name == "ConfirmButton";
-            _disabledCross.AddThemeFontSizeOverride(
-                "font_size",
-                isCircularConfirm ? 184 : 132);
-            _disabledCross.AddThemeConstantOverride("outline_size", 3);
-            _disabledCross.AddThemeColorOverride(
-                "font_outline_color",
-                new Color(0, 0, 0, 0.92f));
-            button.AddChild(_disabledCross);
-            _disabledCross.SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
-            _disabledCross.OffsetTop = -30.0f;
-            _disabledCross.OffsetBottom = -30.0f;
-            _disabledCross.PivotOffset = _disabledCross.Size / 2.0f;
-            _disabledCross.Scale = isCircularConfirm
-                ? new Vector2(1.42f, 1.65f)
-                : new Vector2(3.8f, 1.7f);
+                GD.PushWarning(
+                    $"Disabled cross texture was not found: {DisabledCrossTexturePath}");
+            }
+            else
+            {
+                _disabledCross = new TextureRect
+                {
+                    Name = "DisabledCross",
+                    Texture = crossTexture,
+                    ExpandMode = TextureRect.ExpandModeEnum.IgnoreSize,
+                    StretchMode = TextureRect.StretchModeEnum.Scale,
+                    MouseFilter = MouseFilterEnum.Ignore,
+                    TextureFilter = CanvasItem.TextureFilterEnum.Nearest
+                };
+                button.AddChild(_disabledCross);
+                _disabledCross.SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
+
+                float inset = button.Name == "ConfirmButton" ? 22.0f : 3.0f;
+                _disabledCross.OffsetLeft = inset;
+                _disabledCross.OffsetTop = inset;
+                _disabledCross.OffsetRight = -inset;
+                _disabledCross.OffsetBottom = -inset;
+            }
         }
 
         Color transparent = new(0, 0, 0, 0);
@@ -123,13 +128,8 @@ public partial class DotMatrixButtonText : Label
 
         if (_disabledCross is not null)
         {
-            bool isCircularConfirm = _button.Name == "ConfirmButton";
-            _disabledCross.PivotOffset = _disabledCross.Size / 2.0f;
-            _disabledCross.Scale = isCircularConfirm
-                ? new Vector2(1.42f, 1.65f)
-                : new Vector2(3.8f, 1.7f);
             _disabledCross.Visible = _button.Visible && _button.Disabled;
-            _disabledCross.AddThemeColorOverride(FontColor, _normalColor);
+            _disabledCross.SelfModulate = _normalColor;
         }
     }
 }

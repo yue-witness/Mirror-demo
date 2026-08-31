@@ -121,10 +121,10 @@ func _ready() -> void:
 		"The fixed A/B/C choice headings are missing.")
 	for button in [choice_one, choice_two, choice_three, confirm]:
 		var shader_text := button.get_node("DotMatrixText") as Label
-		var disabled_cross := button.get_node("DisabledCross") as Label
+		var disabled_cross := button.get_node("DisabledCross") as TextureRect
 		_assert(shader_text.material is ShaderMaterial
-			and disabled_cross.material is ShaderMaterial,
-			"A central button caption or disabled X is missing its dot-matrix shader.")
+			and disabled_cross.texture.resource_path.ends_with("dot_matrix_x.png"),
+			"A central button caption or pre-rendered dot-matrix X is missing.")
 	var tutor_line: String = (_main.get_node(
 		"GameplayHUD/SafeArea/Layout/Content/Center/DialoguePanel/DialogueVBox/Text") as RichTextLabel).text
 	var gameplay_dialogue := _main.get_node(
@@ -224,20 +224,22 @@ func _ready() -> void:
 		and choice_two.global_position == choice_positions[1]
 		and choice_three.global_position == choice_positions[2],
 		"Tutor selection moved one or more choice buttons.")
-	_assert((choice_one.get_node("DisabledCross") as Label).visible
-		and (choice_two.get_node("DisabledCross") as Label).visible
-		and (choice_three.get_node("DisabledCross") as Label).visible,
+	_assert((choice_one.get_node("DisabledCross") as TextureRect).visible
+		and (choice_two.get_node("DisabledCross") as TextureRect).visible
+		and (choice_three.get_node("DisabledCross") as TextureRect).visible,
 		"Tutor selection did not expose the disabled X overlays.")
 	_assert(choice_one.get_theme_stylebox("disabled").get_bg_color().a == 0.0
 		and choice_two.get_theme_stylebox("disabled").get_bg_color().a == 0.0
 		and choice_three.get_theme_stylebox("disabled").get_bg_color().a == 0.0
 		and confirm.get_theme_stylebox("disabled").get_bg_color().a == 0.0,
 		"A disabled action button still draws an opaque mask.")
-	_assert((choice_one.get_node("DisabledCross") as Label).get_theme_font_size(
-		"font_size") >= 120
-		and (confirm.get_node("DisabledCross") as Label).get_theme_font_size(
-			"font_size") >= 180,
-		"The disabled X does not reach the surrounding frame.")
+	var choice_cross := choice_one.get_node("DisabledCross") as TextureRect
+	var confirm_cross := confirm.get_node("DisabledCross") as TextureRect
+	_assert(choice_cross.size.x >= choice_one.size.x - 8.0
+		and choice_cross.size.y >= choice_one.size.y - 8.0
+		and confirm_cross.size.x >= 100.0
+		and confirm_cross.size.y >= 100.0,
+		"The disabled X texture does not align with the surrounding frame.")
 	_assert(choice_one.scale == Vector2.ONE
 		and choice_two.scale == Vector2.ONE
 		and choice_three.scale == Vector2.ONE,

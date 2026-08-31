@@ -23,12 +23,15 @@
   - `_qa/formal-demo/comparison-text-effect.png`
   - `_qa/formal-demo/comparison-approved-effect.png`
   - `_qa/formal-demo/comparison-disabled-confirm-pass7.png`
+  - `_qa/formal-demo/comparison-disabled-icon-pass8.png`
 - Source pixels: 1832 x 1027 for dialogue, 1893 x 1050 for gameplay,
   and 978 x 722 for the phosphor-text reference.
 - Implementation pixels: 1920 x 1080 at density 1.
 - Pass 7 disabled-state source pixels: 210 x 210. The 1920 x 1080
   implementation was cropped to a 240 x 240 Confirm region, then normalized to
   210 x 210 and placed beside the source in one 420 x 210 comparison image.
+- Pass 8 reuses that 210 x 210 source crop and compares it with the final
+  pre-rendered icon implementation at the same scale.
 - Layout comparisons fit each full source and implementation capture into one
   960 x 540 half without cropping. The text-effect comparison uses focused
   source and dialogue-panel crops in a single 1920 x 520 image.
@@ -71,10 +74,11 @@ and former dark foreground text is fluorescent green.
 - The smoke test injects 80 overflow lines and verifies that the SYSTEM vertical
   scrollbar becomes visible with a range larger than one page.
 - `comparison-disabled-confirm-pass7.png` places the user's problematic masked
-  Confirm state beside the corrected state. It verifies removal of the blue
-  fill, removal of the underlying caption, and a dot-matrix X that reaches the
-  circular frame. `03b-tutor-locked.png` verifies the same transparent treatment
-  on all three rectangular choices.
+  Confirm state beside the first transparent correction. The final
+  `comparison-disabled-icon-pass8.png` verifies the thinner pre-rendered X,
+  hidden underlying caption, transparent interior, and precise intersection
+  with the circular frame. `03b-tutor-locked.png` verifies corner-to-corner
+  alignment on all three rectangular choices.
 
 ## Required fidelity surfaces
 
@@ -93,6 +97,9 @@ and former dark foreground text is fluorescent green.
 - Image quality and asset fidelity: Tutor and S-17 use the existing project-local
   1254 x 1254 portraits with preserved aspect ratio. The new project-local
   1920 x 1080 command-chamber background is sharp and free of UI/text artefacts.
+  Disabled controls use the project-local 512 x 512 transparent
+  `assets/ui/dot_matrix_x.png` bitmap with nearest-neighbour filtering and
+  runtime semantic tinting.
 - Copy and content: existing game copy, dialogue flow, S-17 identity switching,
   and the System execution history are unchanged.
 
@@ -187,6 +194,22 @@ and former dark foreground text is fluorescent green.
   side-by-side comparison contains no actionable P0/P1/P2 mismatch with the
   user's revised disabled-state direction.
 
+### Pass 8
+
+- P1: the stretched font glyph produced strokes that were too thick, covered
+  too much of the hidden-caption region, and did not place all four tips at the
+  frame corners. Fixed by replacing the glyph layer with one pre-rendered,
+  transparent, 512 x 512 dot-matrix X texture.
+- Rectangular choices place the texture 3 px inside the frame, making every tip
+  meet an inner corner. Circular Confirm uses a 22 px inset, so the diagonals
+  meet the circle at its four 45-degree intersections. The texture is tinted at
+  runtime to retain each control's green, yellow, or red semantic color.
+- D3D12 captures `03b-tutor-locked.png` and
+  `03d-limit-tutor-acting.png` confirm thin strokes, no caption overlap, fully
+  transparent disabled interiors, and invariant action-row geometry. The
+  focused `comparison-disabled-icon-pass8.png` contains no actionable
+  P0/P1/P2 mismatch with the revised direction.
+
 ## Interaction and runtime checks
 
 - Primary interactions tested: New Game, click-to-complete typewriter,
@@ -199,9 +222,9 @@ and former dark foreground text is fluorescent green.
   Tutor/dialogue frames, and distinct normal/hover/disabled StyleBoxes.
 - Result-flow checks: no gameplay Continue node, enlarged pulsing result text,
   click-anywhere advance, and sharp command-chamber result/SUMMARY textures.
-- Disabled-state checks: zero-alpha fills, shader material on all X overlays,
-  132/184 px cross glyphs, and invariant positions across Bash Tutor and Limit
-  Reveal states.
+- Disabled-state checks: zero-alpha fills, the imported 512 x 512 dot-matrix X
+  texture, nearest-neighbour filtering, correct rectangular/circular overlay
+  geometry, and invariant positions across Bash Tutor and Limit Reveal states.
 - Console errors checked in headless and D3D12 Forward Mobile runs: none.
 - Domain test result: 459 assertions passed.
 
