@@ -155,7 +155,7 @@ public partial class TutorDialogueUI : Control
 
     private void BeginTyping(string text)
     {
-        _dialogueText.Text = text;
+        _dialogueText.Text = CenterDialogue(text);
         _dialogueText.VisibleCharacters = 0;
         _visibleCharacterProgress = 0.0;
         _isTyping = _dialogueText.GetTotalCharacterCount() > 0;
@@ -164,6 +164,11 @@ public partial class TutorDialogueUI : Control
         {
             CompleteTyping();
         }
+    }
+
+    private static string CenterDialogue(string text)
+    {
+        return $"[center]{text.Replace("[", "[lb]")}[/center]";
     }
 
     private void CompleteTyping()

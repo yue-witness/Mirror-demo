@@ -12,7 +12,7 @@ border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(0.08, 0.68, 0.48, 0.8)
+border_color = Color(0.22, 1, 0.23, 0.8)
 corner_radius_top_left = 36
 corner_radius_top_right = 36
 corner_radius_bottom_right = 36
@@ -46,7 +46,7 @@ theme_override_constants/separation = 16
 
 [node name="Eyebrow" type="Label" parent="MenuGlass/MenuVBox" unique_id=715938548]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.12, 1, 0.48, 1)
+theme_override_colors/font_color = Color(0.22, 1, 0.23, 1)
 theme_override_font_sizes/font_size = 18
 text = "PROJECT X · SUBJECT S-17"
 
@@ -59,7 +59,7 @@ text = "PROJECT MIRROR"
 custom_minimum_size = Vector2(270, 3)
 layout_mode = 2
 size_flags_horizontal = 0
-color = Color(0.02, 0.75, 0.51, 0.9)
+color = Color(0.22, 1, 0.23, 0.9)
 
 [node name="Spacer" type="Control" parent="MenuGlass/MenuVBox" unique_id=1944670217]
 custom_minimum_size = Vector2(0, 34)
@@ -94,7 +94,7 @@ alignment = 0
 [node name="SaveStatus" type="Label" parent="MenuGlass/MenuVBox" unique_id=703430064]
 custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.12, 1, 0.48, 1)
+theme_override_colors/font_color = Color(0.22, 1, 0.23, 1)
 theme_override_font_sizes/font_size = 18
 text = "NO ACTIVE SAVE"
 vertical_alignment = 1

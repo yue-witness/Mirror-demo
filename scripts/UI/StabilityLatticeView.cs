@@ -10,12 +10,12 @@ using System.Collections.Generic;
 /// </summary>
 public partial class StabilityLatticeView : Control
 {
-    private static readonly Color ActiveGreen = new("31d894");
-    private static readonly Color ActiveMint = new("b9ffe3");
-    private static readonly Color GhostGreen = new("8ab9aa40");
+    private static readonly Color ActiveGreen = new("39ff3a");
+    private static readonly Color ActiveMint = new("c5ffc6");
+    private static readonly Color GhostGreen = new("74a97540");
     private static readonly Color PreviewGold = new("ffcb55");
     private static readonly Color WarningRed = new("ff5268");
-    private static readonly Color Ink = new("20ff78");
+    private static readonly Color Ink = new("39ff3a");
 
     private int _initialAnchors = 20;
     private int _remainingAnchors = 20;

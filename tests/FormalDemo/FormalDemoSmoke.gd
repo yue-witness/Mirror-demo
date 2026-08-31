@@ -25,6 +25,9 @@ func _ready() -> void:
 	await _settle_frames()
 	_assert(_main.get_node("TitleScreen").visible, "Title screen is not visible at startup.")
 	_assert(not _main.get_node("GameplayHUD").visible, "Gameplay HUD leaked onto the title screen.")
+	var background := _main.get_node("Background") as TextureRect
+	_assert(background.texture.resource_path.ends_with("sci_fi_command_chamber.png"),
+		"The confirmed sharp science-fiction background is not active.")
 	_assert(not _button("TitleScreen/MenuGlass/MenuVBox/ContinueButton").visible,
 		"Continue must remain hidden without an unfinished save.")
 	_capture("01-title.png")
@@ -50,6 +53,9 @@ func _ready() -> void:
 		"The obsolete dialogue continue button is still present.")
 	var dialogue_text := _main.get_node(
 		"TutorDialogueUI/SafeArea/Layout/Content/DialogueCard/DialogueVBox/DialogueText") as RichTextLabel
+	_assert(dialogue_text.get_theme_font_size("normal_font_size") >= 32
+		and dialogue_text.vertical_alignment == VERTICAL_ALIGNMENT_CENTER,
+		"TutorDialogue text is not enlarged and vertically centred.")
 	_assert(dialogue_text.visible_characters != -1,
 		"Tutor dialogue did not begin with the typewriter animation.")
 	_capture("02b-tutor-dialogue.png")
@@ -78,30 +84,80 @@ func _ready() -> void:
 
 	var choice_one := _button(
 		"GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ChoiceStack/ChoiceRow/Choice1")
+	var choice_two := _button(
+		"GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ChoiceStack/ChoiceRow/Choice2")
+	var choice_three := _button(
+		"GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ChoiceStack/ChoiceRow/Choice3")
 	var confirm := _button(
 		"GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ConfirmButton")
+	var choice_center_y := choice_one.global_position.y + choice_one.size.y / 2.0
+	var confirm_center_y := confirm.global_position.y + confirm.size.y / 2.0
+	_assert(is_equal_approx(choice_center_y, confirm_center_y),
+		"The three central choices are not vertically centred between the panels.")
+	_assert(choice_one.get_theme_color("font_color").is_equal_approx(
+		Color(0.22, 1.0, 0.23, 1.0))
+		and choice_two.get_theme_color("font_color").is_equal_approx(
+			Color(1.0, 0.76, 0.12, 1.0))
+		and choice_three.get_theme_color("font_color").is_equal_approx(
+			Color(1.0, 0.22, 0.38, 1.0)),
+		"Choice text colors no longer match their corresponding frames.")
 	var tutor_line: String = (_main.get_node(
 		"GameplayHUD/SafeArea/Layout/Content/Center/DialoguePanel/DialogueVBox/Text") as RichTextLabel).text
+	var gameplay_dialogue := _main.get_node(
+		"GameplayHUD/SafeArea/Layout/Content/Center/DialoguePanel/DialogueVBox/Text") as RichTextLabel
+	_assert(gameplay_dialogue.get_theme_font_size("normal_font_size") >= 30
+		and gameplay_dialogue.vertical_alignment == VERTICAL_ALIGNMENT_CENTER,
+		"Gameplay Tutor dialogue is not enlarged and vertically centred.")
 	_assert(not _main.has_node("GameplayHUD/SafeArea/Layout/Header/HeaderRow/ScoreLabel"),
 		"The removed top-centre score display is still present.")
 	_assert(_main.has_node("GameplayHUD/SafeArea/Layout/Header/HeaderRow/HeaderSpacer"),
 		"The top header no longer preserves its left/right alignment.")
 	_assert(_main.has_node(
-		"GameplayHUD/SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/LatticeView"),
+		"GameplayHUD/SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/StateRow/LatticeView"),
 		"The Stability Lattice visualization is missing from gameplay.")
+	var active_value := _main.get_node(
+		"GameplayHUD/SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/StateRow/ActiveStack/RemainingValue") as Label
+	var selection_value := _main.get_node(
+		"GameplayHUD/SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/StateRow/SelectionStack/SelectionLabel") as Label
+	_assert(active_value.global_position.x < selection_value.global_position.x,
+		"Active and selected quantities are no longer positioned on opposite sides of the lattice.")
+	_assert(active_value.material is ShaderMaterial,
+		"The fluorescent text no longer has its dot-matrix shader material.")
 	var system_log := _main.get_node(
 		"GameplayHUD/SafeArea/Layout/Content/RightColumn/RightLog/RightVBox/Log") as RichTextLabel
 	_assert(system_log.scroll_active,
 		"The fixed SYSTEM panel does not allow overflow scrolling.")
 	var system_panel := _main.get_node(
 		"GameplayHUD/SafeArea/Layout/Content/RightColumn/RightLog") as PanelContainer
-	_assert(system_panel.custom_minimum_size.y == 470.0,
+	_assert(system_panel.custom_minimum_size.y == 390.0,
 		"The SYSTEM panel no longer has its fixed reference height.")
+	var center_panel := _main.get_node(
+		"GameplayHUD/SafeArea/Layout/Content/Center/RemainingCard") as PanelContainer
+	_assert(is_equal_approx(system_panel.size.y, center_panel.size.y),
+		"The SYSTEM frame is not aligned with the central lattice frame.")
+	var tutor_panel := _main.get_node(
+		"GameplayHUD/SafeArea/Layout/Content/LeftColumn/TutorCard") as PanelContainer
+	var dialogue_panel := _main.get_node(
+		"GameplayHUD/SafeArea/Layout/Content/Center/DialoguePanel") as PanelContainer
+	_assert(is_equal_approx(tutor_panel.global_position.y, dialogue_panel.global_position.y)
+		and is_equal_approx(tutor_panel.size.y, dialogue_panel.size.y),
+		"The Tutor portrait and dialogue frames are not aligned: Tutor y/height "
+		+ str(tutor_panel.global_position.y) + "/" + str(tutor_panel.size.y)
+		+ ", dialogue y/height " + str(dialogue_panel.global_position.y)
+		+ "/" + str(dialogue_panel.size.y))
 	_assert(choice_one.visible and not choice_one.disabled,
 		"Bash gameplay did not open a legal player choice.")
+	for button in [choice_one, choice_two, choice_three, confirm]:
+		_assert(button.get_theme_stylebox("hover")
+			!= button.get_theme_stylebox("normal"),
+			"A central action button reuses its normal style while hovering.")
 	_assert(confirm.visible and confirm.disabled,
 		"Bash confirm must wait for an explicit player selection.")
 	_capture("03-bash-gameplay.png")
+	if DisplayServer.get_name() != "headless":
+		Input.warp_mouse(choice_two.global_position + choice_two.size / 2.0)
+		await _settle_frames()
+		_capture("03-hover-choice.png")
 	var live_system_log := system_log.text
 	system_log.text = ("OVERFLOW ENTRY / SCROLL VERIFICATION\n").repeat(80)
 	await _settle_frames()
@@ -118,6 +174,10 @@ func _ready() -> void:
 		"GameplayHUD/SafeArea/Layout/Content/Center/DialoguePanel/DialogueVBox/Text") as RichTextLabel).text.is_empty(),
 		"The optional selection-stage Tutor dialogue left the panel empty.")
 	_capture("03a-bash-selected.png")
+	if DisplayServer.get_name() != "headless":
+		Input.warp_mouse(confirm.global_position + confirm.size / 2.0)
+		await _settle_frames()
+		_capture("03a-confirm-hover.png")
 	_press("GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ConfirmButton")
 	await get_tree().create_timer(0.08).timeout
 	await _settle_frames()

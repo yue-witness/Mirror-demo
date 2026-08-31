@@ -14,11 +14,11 @@ border_width_left = 3
 border_width_top = 3
 border_width_right = 3
 border_width_bottom = 3
-border_color = Color(0.12, 1, 0.48, 0.95)
-corner_radius_top_left = 110
-corner_radius_top_right = 110
-corner_radius_bottom_right = 110
-corner_radius_bottom_left = 110
+border_color = Color(0.22, 1, 0.23, 0.95)
+corner_radius_top_left = 190
+corner_radius_top_right = 190
+corner_radius_bottom_right = 190
+corner_radius_bottom_left = 190
 shadow_color = Color(0, 0, 0, 0)
 shadow_size = 0
 
@@ -32,7 +32,7 @@ border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.12, 1, 0.48, 0.4)
+border_color = Color(0.22, 1, 0.23, 0.4)
 corner_radius_top_left = 26
 corner_radius_top_right = 26
 corner_radius_bottom_right = 26
@@ -48,7 +48,7 @@ border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(0.12, 1, 0.48, 0.82)
+border_color = Color(0.22, 1, 0.23, 0.82)
 corner_radius_top_left = 38
 corner_radius_top_right = 38
 corner_radius_bottom_right = 38
@@ -117,9 +117,10 @@ size_flags_vertical = 3
 theme_override_constants/separation = 22
 
 [node name="SpeakerCard" type="PanelContainer" parent="SafeArea/Layout/Content"]
-custom_minimum_size = Vector2(560, 326)
+custom_minimum_size = Vector2(720, 520)
 layout_mode = 2
 size_flags_horizontal = 4
+size_flags_vertical = 3
 theme_override_styles/panel = SubResource("SpeakerCard")
 
 [node name="SpeakerVBox" type="VBoxContainer" parent="SafeArea/Layout/Content/SpeakerCard"]
@@ -129,13 +130,13 @@ theme_override_constants/separation = 8
 
 [node name="PortraitFrame" type="PanelContainer" parent="SafeArea/Layout/Content/SpeakerCard/SpeakerVBox"]
 clip_contents = true
-custom_minimum_size = Vector2(220, 220)
+custom_minimum_size = Vector2(380, 380)
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_styles/panel = SubResource("PortraitFrame")
 
 [node name="PortraitTexture" type="TextureRect" parent="SafeArea/Layout/Content/SpeakerCard/SpeakerVBox/PortraitFrame"]
-custom_minimum_size = Vector2(208, 208)
+custom_minimum_size = Vector2(368, 368)
 layout_mode = 2
 mouse_filter = 2
 texture = ExtResource("2_tutor")
@@ -144,14 +145,13 @@ stretch_mode = 5
 
 [node name="SpeakerName" type="Label" parent="SafeArea/Layout/Content/SpeakerCard/SpeakerVBox"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 28
+theme_override_font_sizes/font_size = 30
 text = "THE TUTOR · ONLINE"
 horizontal_alignment = 1
 
 [node name="DialogueCard" type="PanelContainer" parent="SafeArea/Layout/Content"]
-custom_minimum_size = Vector2(0, 330)
+custom_minimum_size = Vector2(0, 250)
 layout_mode = 2
-size_flags_vertical = 3
 theme_override_styles/panel = SubResource("DialogueCard")
 
 [node name="DialogueVBox" type="VBoxContainer" parent="SafeArea/Layout/Content/DialogueCard"]
@@ -165,14 +165,16 @@ theme_override_font_sizes/font_size = 22
 text = "TUTOR"
 
 [node name="DialogueText" type="RichTextLabel" parent="SafeArea/Layout/Content/DialogueCard/DialogueVBox"]
-custom_minimum_size = Vector2(0, 150)
+custom_minimum_size = Vector2(0, 118)
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_font_sizes/normal_font_size = 30
-text = "Welcome to Project X."
+theme_override_font_sizes/normal_font_size = 32
+bbcode_enabled = true
+text = "[center]Welcome to Project X.[/center]"
 fit_content = false
 scroll_active = false
 autowrap_mode = 2
+vertical_alignment = 1
 
 [node name="SupplementaryText" type="RichTextLabel" parent="SafeArea/Layout/Content/DialogueCard/DialogueVBox"]
 visible = false

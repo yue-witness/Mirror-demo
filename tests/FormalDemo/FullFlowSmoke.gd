@@ -92,7 +92,7 @@ func _complete_bash_tutorial_gate() -> void:
 				"The Bash result screen cleared the SYSTEM action log.")
 			_capture("03c-bash-result.png")
 			var result := _label(
-				"GameplayHUD/SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/RemainingValue").text
+				"GameplayHUD/SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/StateRow/ActiveStack/RemainingValue").text
 			if result == "PLAYER WIN":
 				completed_rounds += 1
 			_press(
@@ -116,7 +116,7 @@ func _choose_optimal_bash_button() -> Button:
 		return null
 
 	var remaining_text := _label(
-		"GameplayHUD/SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/RemainingValue").text
+		"GameplayHUD/SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/StateRow/ActiveStack/RemainingValue").text
 	if not remaining_text.is_valid_int():
 		return null
 
@@ -172,7 +172,7 @@ func _complete_limit_bash() -> void:
 		if continue_button.visible:
 			if banner.text.contains("GAME RESULT") and not captured_result:
 				var selection := _label(
-					"GameplayHUD/SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/SelectionLabel")
+					"GameplayHUD/SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/StateRow/SelectionStack/SelectionLabel")
 				var system_log := _main.get_node(
 					"GameplayHUD/SafeArea/Layout/Content/RightColumn/RightLog/RightVBox/Log") as RichTextLabel
 				_assert(selection.text.contains("FINAL REQUESTS · PLAYER")

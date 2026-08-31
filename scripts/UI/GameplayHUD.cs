@@ -50,11 +50,14 @@ public partial class GameplayHUD : Control
         _leftDetails = GetNode<RichTextLabel>(
             "SafeArea/Layout/Content/LeftColumn/LeftStatus/LeftVBox/Details");
         _remainingLabel = GetNode<Label>(
-            "SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/RemainingValue");
+            "SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/StateRow/"
+            + "ActiveStack/RemainingValue");
         _selectionLabel = GetNode<Label>(
-            "SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/SelectionLabel");
+            "SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/StateRow/"
+            + "SelectionStack/SelectionLabel");
         _latticeView = GetNode<StabilityLatticeView>(
-            "SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/LatticeView");
+            "SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/StateRow/"
+            + "LatticeView");
         _dialogueText = GetNode<RichTextLabel>(
             "SafeArea/Layout/Content/Center/DialoguePanel/DialogueVBox/Text");
         _systemStatus = GetNode<Label>(
@@ -162,7 +165,7 @@ public partial class GameplayHUD : Control
             selectedChoice,
             requestLocked: !inputOpen && selectedChoice.HasValue,
             limitMode: false);
-        _dialogueText.Text = tutorDialogue;
+        SetTutorDialogue(tutorDialogue);
         _systemLog.Text = $"{systemLog}\n\nACTIONS THIS ROUND: {turns}";
 
         _choiceVerb = "DISENGAGE";
@@ -211,7 +214,7 @@ public partial class GameplayHUD : Control
             selectedChoice,
             requestLocked: waiting,
             limitMode: true);
-        _dialogueText.Text = tutorDialogue;
+        SetTutorDialogue(tutorDialogue);
         _systemLog.Text =
             $"{systemLog}\n\n"
             + "[EXECUTION LOG]\n"
@@ -295,7 +298,7 @@ public partial class GameplayHUD : Control
             ? $"FINAL REQUESTS · PLAYER {finalChoice.Value.PlayerTake}"
                 + $" / TUTOR {finalChoice.Value.TutorTake}"
             : $"{gameName} · {result}";
-        _dialogueText.Text = tutorDialogue;
+        SetTutorDialogue(tutorDialogue);
         string resultMessage = willContinue
             ? "The end condition has not been reached. Continue to the next game."
             : "Continue to the final summary.";
@@ -342,6 +345,11 @@ public partial class GameplayHUD : Control
                 ? $"✓ {choice}\nSTAGED"
                 : $"{choice}\n{_choiceVerb} {choice}";
         }
+    }
+
+    private void SetTutorDialogue(string text)
+    {
+        _dialogueText.Text = $"[center]{text.Replace("[", "[lb]")}[/center]";
     }
 
     private static string FormatPrevious(int? previous)

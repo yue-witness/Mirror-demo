@@ -141,7 +141,8 @@ public partial class DemoFlowController : Control
         _selectedChoice = null;
         _chapterPending = false;
         _currentTutorDialogue = string.Empty;
-        _background.Texture = GD.Load<Texture2D>("res://assets/backgrounds/bright_lab.png");
+        _background.Texture = GD.Load<Texture2D>(
+            "res://assets/backgrounds/sci_fi_command_chamber.png");
         _titleScreen.Visible = true;
         _hud.Visible = false;
         _dialogueUI.Visible = false;
@@ -221,7 +222,8 @@ public partial class DemoFlowController : Control
         _titleScreen.Visible = false;
         _hud.Visible = showChapter;
         _dialogueUI.Visible = false;
-        _background.Texture = GD.Load<Texture2D>("res://assets/backgrounds/bright_lab.png");
+        _background.Texture = GD.Load<Texture2D>(
+            "res://assets/backgrounds/sci_fi_command_chamber.png");
         WriteCheckpoint();
 
         if (showChapter)
@@ -399,7 +401,7 @@ public partial class DemoFlowController : Control
         _hud.Visible = false;
         _dialogueUI.Visible = true;
         _background.Texture = GD.Load<Texture2D>(
-            "res://assets/backgrounds/bright_lab.png");
+            "res://assets/backgrounds/sci_fi_command_chamber.png");
         WriteCheckpoint();
         RenderDialogue();
     }
@@ -454,7 +456,8 @@ public partial class DemoFlowController : Control
         _titleScreen.Visible = false;
         _hud.Visible = true;
         _dialogueUI.Visible = false;
-        _background.Texture = GD.Load<Texture2D>("res://assets/backgrounds/bright_lab.png");
+        _background.Texture = GD.Load<Texture2D>(
+            "res://assets/backgrounds/sci_fi_command_chamber.png");
 
         int[] candidates = roundIndex == 1
             ? _rules.Bash.Round1InitialUnits
@@ -686,7 +689,8 @@ public partial class DemoFlowController : Control
         _titleScreen.Visible = false;
         _hud.Visible = true;
         _dialogueUI.Visible = false;
-        _background.Texture = GD.Load<Texture2D>("res://assets/backgrounds/bright_lab.png");
+        _background.Texture = GD.Load<Texture2D>(
+            "res://assets/backgrounds/sci_fi_command_chamber.png");
 
         if (!preserveDirective)
         {
@@ -1024,7 +1028,7 @@ public partial class DemoFlowController : Control
             _background.Texture = GD.Load<Texture2D>(
                 _phase == DemoPhase.Summary
                     ? "res://assets/backgrounds/result_shards.png"
-                    : "res://assets/backgrounds/bright_lab.png");
+                    : "res://assets/backgrounds/sci_fi_command_chamber.png");
             RenderDialogue();
             return;
         }
@@ -1094,7 +1098,8 @@ public partial class DemoFlowController : Control
             return;
         }
 
-        _background.Texture = GD.Load<Texture2D>("res://assets/backgrounds/bright_lab.png");
+        _background.Texture = GD.Load<Texture2D>(
+            "res://assets/backgrounds/sci_fi_command_chamber.png");
         _hud.Visible = true;
         ResetTurnDialogueState();
 
