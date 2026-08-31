@@ -41,6 +41,10 @@ func _ready() -> void:
 		"TutorDialogueUI/SafeArea/Layout/Header/HeaderRow/PhaseLabel")
 	_assert(summary_phase.text == "SUMMARY",
 		"The complete session did not reach the final summary.")
+	var summary_background := _main.get_node("Background") as TextureRect
+	_assert(summary_background.texture.resource_path.ends_with(
+		"sci_fi_command_chamber.png"),
+		"SUMMARY still uses the retired background resource.")
 	_assert(FileAccess.file_exists(SAVE_PATH),
 		"The complete flow did not retain its session save.")
 	var summary_dialogue := _main.get_node(
@@ -82,9 +86,8 @@ func _complete_bash_tutorial_gate() -> void:
 			await _advance_dialogue_page()
 			continue
 
-		var continue_button := _button(
-			"GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ChoiceStack/ContinueButton")
-		if continue_button.visible:
+		var banner := _label("GameplayHUD/SafeArea/Layout/Header/HeaderRow/PhaseBanner")
+		if banner.text.contains("GAME RESULT"):
 			var bash_result_log := _main.get_node(
 				"GameplayHUD/SafeArea/Layout/Content/RightColumn/RightLog/RightVBox/Log") as RichTextLabel
 			_assert(bash_result_log.text.contains("keystone anchor was disengaged")
@@ -93,10 +96,23 @@ func _complete_bash_tutorial_gate() -> void:
 			_capture("03c-bash-result.png")
 			var result := _label(
 				"GameplayHUD/SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/StateRow/ActiveStack/RemainingValue").text
+			_assert(not _main.has_node(
+				"GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ChoiceStack/ContinueButton"),
+				"The obsolete result Continue button is still present.")
+			var result_background := _main.get_node("Background") as TextureRect
+			_assert(result_background.texture.resource_path.ends_with(
+				"sci_fi_command_chamber.png"),
+				"The Bash result still uses the retired background resource.")
+			var tutor_panel := _main.get_node(
+				"GameplayHUD/SafeArea/Layout/Content/LeftColumn/TutorCard") as PanelContainer
+			var dialogue_panel := _main.get_node(
+				"GameplayHUD/SafeArea/Layout/Content/Center/DialoguePanel") as PanelContainer
+			_assert(is_equal_approx(tutor_panel.global_position.y, dialogue_panel.global_position.y)
+				and is_equal_approx(tutor_panel.size.y, dialogue_panel.size.y),
+				"Result Tutor portrait and dialogue frames are not aligned.")
 			if result == "PLAYER WIN":
 				completed_rounds += 1
-			_press(
-				"GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ChoiceStack/ContinueButton")
+			_left_click()
 			continue
 
 		var choice := _choose_optimal_bash_button()
@@ -162,15 +178,13 @@ func _complete_limit_bash() -> void:
 
 		var banner := _label("GameplayHUD/SafeArea/Layout/Header/HeaderRow/PhaseBanner")
 
-		var continue_button := _button(
-			"GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ChoiceStack/ContinueButton")
 		var current_log := _main.get_node(
 			"GameplayHUD/SafeArea/Layout/Content/RightColumn/RightLog/RightVBox/Log") as RichTextLabel
 		if current_log.text.contains("R01") and current_log.text.contains("PLAYER"):
 			observed_live_log = true
 
-		if continue_button.visible:
-			if banner.text.contains("GAME RESULT") and not captured_result:
+		if banner.text.contains("GAME RESULT"):
+			if not captured_result:
 				var selection := _label(
 					"GameplayHUD/SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/StateRow/SelectionStack/SelectionLabel")
 				var system_log := _main.get_node(
@@ -184,8 +198,7 @@ func _complete_limit_bash() -> void:
 					"Limit Bash result did not retain its execution log.")
 				_capture("03b-limit-result.png")
 				captured_result = true
-			_press(
-				"GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ChoiceStack/ContinueButton")
+			_left_click()
 			continue
 
 		for index in range(1, 4):

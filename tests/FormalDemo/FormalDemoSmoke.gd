@@ -30,6 +30,12 @@ func _ready() -> void:
 		"The confirmed sharp science-fiction background is not active.")
 	_assert(not _button("TitleScreen/MenuGlass/MenuVBox/ContinueButton").visible,
 		"Continue must remain hidden without an unfinished save.")
+	_assert((_main.get_node(
+		"TitleScreen/MenuGlass/MenuVBox/NewGameButton/DotMatrixText") as Label).material is ShaderMaterial,
+		"Title button text is not rendered through the dot-matrix shader.")
+	_assert((_main.get_node(
+		"TitleScreen/MenuGlass/MenuVBox/LaserRule") as ColorRect).material is ShaderMaterial,
+		"The title divider is not rendered through the dot-matrix line shader.")
 	_capture("01-title.png")
 
 	_press("TitleScreen/MenuGlass/MenuVBox/NewGameButton")
@@ -94,13 +100,26 @@ func _ready() -> void:
 	var confirm_center_y := confirm.global_position.y + confirm.size.y / 2.0
 	_assert(is_equal_approx(choice_center_y, confirm_center_y),
 		"The three central choices are not vertically centred between the panels.")
-	_assert(choice_one.get_theme_color("font_color").is_equal_approx(
+	var choice_one_text := choice_one.get_node("DotMatrixText") as Label
+	var choice_two_text := choice_two.get_node("DotMatrixText") as Label
+	var choice_three_text := choice_three.get_node("DotMatrixText") as Label
+	_assert(choice_one_text.get_theme_color("font_color").is_equal_approx(
 		Color(0.22, 1.0, 0.23, 1.0))
-		and choice_two.get_theme_color("font_color").is_equal_approx(
+		and choice_two_text.get_theme_color("font_color").is_equal_approx(
 			Color(1.0, 0.76, 0.12, 1.0))
-		and choice_three.get_theme_color("font_color").is_equal_approx(
+		and choice_three_text.get_theme_color("font_color").is_equal_approx(
 			Color(1.0, 0.22, 0.38, 1.0)),
 		"Choice text colors no longer match their corresponding frames.")
+	_assert(choice_one.text.begins_with("A\n")
+		and choice_two.text.begins_with("B\n")
+		and choice_three.text.begins_with("C\n"),
+		"The fixed A/B/C choice headings are missing.")
+	for button in [choice_one, choice_two, choice_three, confirm]:
+		var shader_text := button.get_node("DotMatrixText") as Label
+		var disabled_cross := shader_text.get_node("DisabledCross") as Label
+		_assert(shader_text.material is ShaderMaterial
+			and disabled_cross.material is ShaderMaterial,
+			"A central button caption or disabled X is missing its dot-matrix shader.")
 	var tutor_line: String = (_main.get_node(
 		"GameplayHUD/SafeArea/Layout/Content/Center/DialoguePanel/DialogueVBox/Text") as RichTextLabel).text
 	var gameplay_dialogue := _main.get_node(
@@ -123,6 +142,11 @@ func _ready() -> void:
 		"Active and selected quantities are no longer positioned on opposite sides of the lattice.")
 	_assert(active_value.material is ShaderMaterial,
 		"The fluorescent text no longer has its dot-matrix shader material.")
+	_assert((_main.get_node(
+		"GameplayHUD/SafeArea/Layout/Content/LeftColumn/LeftStatus/LeftVBox/Rule") as ColorRect).material is ShaderMaterial
+		and (_main.get_node(
+			"GameplayHUD/SafeArea/Layout/Content/RightColumn/RightLog/RightVBox/Rule") as ColorRect).material is ShaderMaterial,
+		"CURRENT STATUS or SYSTEM divider is missing its dot-matrix line shader.")
 	var system_log := _main.get_node(
 		"GameplayHUD/SafeArea/Layout/Content/RightColumn/RightLog/RightVBox/Log") as RichTextLabel
 	_assert(system_log.scroll_active,
@@ -170,6 +194,12 @@ func _ready() -> void:
 		"GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ChoiceStack/ChoiceRow/Choice1")
 	await _settle_frames()
 	_assert(not confirm.disabled, "Selecting a legal Bash action did not enable confirm.")
+	_assert(choice_one.text == "A\nSTAGED" and not choice_one.text.contains("✓"),
+		"The selected choice changed its fixed A heading or retained a checkmark.")
+	_assert(choice_one.scale == Vector2.ONE
+		and choice_two.scale == Vector2.ONE
+		and choice_three.scale == Vector2.ONE,
+		"Selecting a choice changed the three-button geometry.")
 	_assert(not (_main.get_node(
 		"GameplayHUD/SafeArea/Layout/Content/Center/DialoguePanel/DialogueVBox/Text") as RichTextLabel).text.is_empty(),
 		"The optional selection-stage Tutor dialogue left the panel empty.")
@@ -178,9 +208,23 @@ func _ready() -> void:
 		Input.warp_mouse(confirm.global_position + confirm.size / 2.0)
 		await _settle_frames()
 		_capture("03a-confirm-hover.png")
+	_main.set("FastMode", false)
 	_press("GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ConfirmButton")
-	await get_tree().create_timer(0.08).timeout
+	await get_tree().process_frame
+	_assert(choice_one.disabled and choice_two.disabled and choice_three.disabled,
+		"Tutor selection did not immediately lock all three player choices.")
+	_assert((choice_one.get_node("DotMatrixText/DisabledCross") as Label).visible
+		and (choice_two.get_node("DotMatrixText/DisabledCross") as Label).visible
+		and (choice_three.get_node("DotMatrixText/DisabledCross") as Label).visible,
+		"Tutor selection did not expose the disabled X overlays.")
+	_assert(choice_one.scale == Vector2.ONE
+		and choice_two.scale == Vector2.ONE
+		and choice_three.scale == Vector2.ONE,
+		"Tutor selection changed the three-button geometry.")
+	_capture("03b-tutor-locked.png")
+	await get_tree().create_timer(0.9).timeout
 	await _settle_frames()
+	_main.set("FastMode", true)
 	_assert((_main.get_node(
 		"GameplayHUD/SafeArea/Layout/Content/Center/DialoguePanel/DialogueVBox/Text") as RichTextLabel).text != tutor_line,
 		"Tutor dialogue did not advance after a confirmed gameplay event.")

@@ -95,7 +95,7 @@ public partial class DemoFlowController : Control
         _titleScreen.QuitRequested += () => GetTree().Quit();
         _hud.ChoiceSelected += SelectChoice;
         _hud.ConfirmRequested += ConfirmChoice;
-        _hud.ContinueRequested += AdvanceCurrentPage;
+        _hud.ResultAdvanceRequested += AdvanceCurrentPage;
         _hud.BackToTitleRequested += BackToTitle;
         _hud.ChapterContinueRequested += ContinueChapter;
         _dialogueUI.ContinueRequested += AdvanceCurrentPage;
@@ -662,7 +662,8 @@ public partial class DemoFlowController : Control
         _lastGameIndex = _bashRoundIndex;
         _lastGameTurns = _currentGameTurns;
         _phase = DemoPhase.RoundResult;
-        _background.Texture = GD.Load<Texture2D>("res://assets/backgrounds/result_shards.png");
+        _background.Texture = GD.Load<Texture2D>(
+            "res://assets/backgrounds/sci_fi_command_chamber.png");
         _currentTutorDialogue = PickBashResultDialogue(outcome);
         WriteCheckpoint();
         _hud.ShowRoundResult(
@@ -854,7 +855,8 @@ public partial class DemoFlowController : Control
         _lastGameIndex = _limitGameIndex;
         _lastGameTurns = _currentGameTurns;
         _phase = DemoPhase.RoundResult;
-        _background.Texture = GD.Load<Texture2D>("res://assets/backgrounds/result_shards.png");
+        _background.Texture = GD.Load<Texture2D>(
+            "res://assets/backgrounds/sci_fi_command_chamber.png");
         _currentTutorDialogue = PickLimitResultDialogue(outcome);
         WriteCheckpoint();
         _hud.ShowRoundResult(
@@ -955,7 +957,8 @@ public partial class DemoFlowController : Control
         _limitBash = null;
         _selectedChoice = null;
         _inputLocked = false;
-        _background.Texture = GD.Load<Texture2D>("res://assets/backgrounds/result_shards.png");
+        _background.Texture = GD.Load<Texture2D>(
+            "res://assets/backgrounds/sci_fi_command_chamber.png");
         _hud.Visible = false;
         _dialogueUI.Visible = true;
         WriteCheckpoint();
@@ -1026,9 +1029,7 @@ public partial class DemoFlowController : Control
             or DemoPhase.Summary)
         {
             _background.Texture = GD.Load<Texture2D>(
-                _phase == DemoPhase.Summary
-                    ? "res://assets/backgrounds/result_shards.png"
-                    : "res://assets/backgrounds/sci_fi_command_chamber.png");
+                "res://assets/backgrounds/sci_fi_command_chamber.png");
             RenderDialogue();
             return;
         }
@@ -1074,7 +1075,8 @@ public partial class DemoFlowController : Control
                 ? snapshot.BashRoundIndex
                 : snapshot.LimitGameIndex;
             _lastGameTurns = snapshot.RoundIndex;
-            _background.Texture = GD.Load<Texture2D>("res://assets/backgrounds/result_shards.png");
+            _background.Texture = GD.Load<Texture2D>(
+                "res://assets/backgrounds/sci_fi_command_chamber.png");
             _hud.ShowRoundResult(
                 snapshot.Game,
                 snapshot.Result,

@@ -133,6 +133,28 @@ and former dark foreground text is fluorescent green.
 - Final side-by-side review found no actionable P0, P1, or P2 differences from
   the user-confirmed visual direction.
 
+### Pass 6
+
+- P1: native Button captions bypassed the glyph shader. Fixed with independent
+  caption layers that preserve each normal, hover, pressed, and disabled color
+  while applying the same phosphor dot-matrix material used by other text.
+- P1: Title, CURRENT STATUS, and SYSTEM divider lines remained solid. Fixed
+  with a screen-space dot-matrix line shader; the chapter divider shares it.
+- P1: choices still used 1/2/3 and enlarged after selection. Fixed with stable
+  A/B/C headings, unchanged button geometry, and removal of the selected tick.
+- P1: Tutor turns left a selected choice visually interactive. Fixed by locking
+  every choice for the full Tutor turn and adding a large shader-driven X plus
+  darker semantic disabled styles.
+- P1: result screens depended on a visible Continue button and retained the old
+  result background. Fixed with pulsing enlarged outcome text and click-anywhere
+  skip; removing the button also restores Tutor/dialogue frame alignment.
+- P1: result and SUMMARY phases referenced the retired bright/result artwork.
+  Both now use the sharp command chamber, and all four old PNG/import files were
+  removed after a repository-wide reference check.
+- Final OpenGL captures confirm readable dot-matrix button captions, visibly
+  locked Tutor controls, aligned result panels, enlarged result animation text,
+  and the command-chamber SUMMARY background.
+
 ## Interaction and runtime checks
 
 - Primary interactions tested: New Game, click-to-complete typewriter,
@@ -141,7 +163,10 @@ and former dark foreground text is fluorescent green.
   scrolling, Save & Back, Continue, overwrite guard, and completed summary return.
 - Geometry checks: lateral active/selection ordering, 390 px top-row alignment,
   matched Tutor/dialogue position and size, shared action-button centre line,
-  semantic choice text colors, and distinct hover/normal StyleBoxes.
+  semantic choice text colors, stable A/B/C button geometry, aligned result
+  Tutor/dialogue frames, and distinct normal/hover/disabled StyleBoxes.
+- Result-flow checks: no gameplay Continue node, enlarged pulsing result text,
+  click-anywhere advance, and sharp command-chamber result/SUMMARY textures.
 - Console errors checked in headless and OpenGL Compatibility runs: none.
 - Domain test result: 459 assertions passed.
 

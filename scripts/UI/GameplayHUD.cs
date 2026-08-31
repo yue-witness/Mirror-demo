@@ -22,18 +22,19 @@ public partial class GameplayHUD : Control
     private RichTextLabel _systemLog = null!;
     private Button[] _choiceButtons = null!;
     private Button _confirmButton = null!;
-    private Button _continueButton = null!;
     private Button _backButton = null!;
     private Control _chapterOverlay = null!;
     private Label _chapterNumber = null!;
     private Label _chapterTitle = null!;
     private string _choiceVerb = "DISENGAGE";
+    private bool _resultAwaitingSkip;
+    private Tween? _resultTween;
 
     public event Action<int>? ChoiceSelected;
 
     public event Action? ConfirmRequested;
 
-    public event Action? ContinueRequested;
+    public event Action? ResultAdvanceRequested;
 
     public event Action? BackToTitleRequested;
 
@@ -66,8 +67,6 @@ public partial class GameplayHUD : Control
             "SafeArea/Layout/Content/RightColumn/RightLog/RightVBox/Log");
         _confirmButton = GetNode<Button>(
             "SafeArea/Layout/Content/Center/ActionRow/ConfirmButton");
-        _continueButton = GetNode<Button>(
-            "SafeArea/Layout/Content/Center/ActionRow/ChoiceStack/ContinueButton");
         _backButton = GetNode<Button>(
             "SafeArea/Layout/Content/RightColumn/BackButton");
         _chapterOverlay = GetNode<Control>("ChapterOverlay");
@@ -92,26 +91,38 @@ public partial class GameplayHUD : Control
         }
 
         _confirmButton.Pressed += () => ConfirmRequested?.Invoke();
-        _continueButton.Pressed += () => ContinueRequested?.Invoke();
         _backButton.Pressed += () => BackToTitleRequested?.Invoke();
     }
 
     public override void _Input(InputEvent @event)
     {
-        if (!_chapterOverlay.Visible
-            || @event is not InputEventMouseButton mouseButton
+        if (@event is not InputEventMouseButton mouseButton
             || mouseButton.ButtonIndex != MouseButton.Left
             || !mouseButton.Pressed)
         {
             return;
         }
 
-        GetViewport().SetInputAsHandled();
-        ChapterContinueRequested?.Invoke();
+        if (_chapterOverlay.Visible)
+        {
+            GetViewport().SetInputAsHandled();
+            ChapterContinueRequested?.Invoke();
+            return;
+        }
+
+        if (_resultAwaitingSkip
+            && !_backButton.GetGlobalRect().HasPoint(mouseButton.GlobalPosition))
+        {
+            _resultAwaitingSkip = false;
+            StopResultAnimation();
+            GetViewport().SetInputAsHandled();
+            ResultAdvanceRequested?.Invoke();
+        }
     }
 
     public void ShowChapter(string number, string title)
     {
+        StopResultAnimation();
         _chapterNumber.Text = number;
         _chapterTitle.Text = title;
         _safeArea.Visible = false;
@@ -143,6 +154,7 @@ public partial class GameplayHUD : Control
         string systemLog,
         string tutorDialogue)
     {
+        StopResultAnimation();
         _phaseBanner.Text = $"CHAPTER 1.1 / BASH ROUND {bashRoundIndex}";
         _systemStatus.Text = game.CurrentTurn == Actor.Player
             ? inputOpen
@@ -176,7 +188,6 @@ public partial class GameplayHUD : Control
         _confirmButton.Text = selectedChoice.HasValue
             ? $"CONFIRM\nDISENGAGE {selectedChoice.Value}"
             : "SELECT\nFIRST";
-        _continueButton.Visible = false;
     }
 
     public void ShowLimitBash(
@@ -190,6 +201,7 @@ public partial class GameplayHUD : Control
         string tutorDialogue,
         ChoicePair? pendingReveal = null)
     {
+        StopResultAnimation();
         _phaseBanner.Text = "CHAPTER 1.2 / LIMIT BASH";
         _systemStatus.Text = waiting
             ? "STATUS · PLAYER LOCKED · WAITING TO REVEAL"
@@ -231,7 +243,6 @@ public partial class GameplayHUD : Control
             : selectedChoice.HasValue
                 ? $"CONFIRM\nREQUEST {selectedChoice.Value}"
                 : "SELECT\nFIRST";
-        _continueButton.Visible = false;
     }
 
     public void ShowLimitReveal(
@@ -277,8 +288,8 @@ public partial class GameplayHUD : Control
 
         _phaseBanner.Text = $"{gameName} / GAME RESULT";
         _systemStatus.Text = willContinue
-            ? "STATUS · GAME COMPLETE · WAITING TO CONTINUE"
-            : "STATUS · END CONDITION REACHED";
+            ? "STATUS · RESULT ANIMATION · CLICK TO SKIP"
+            : "STATUS · END CONDITION · CLICK TO SKIP";
         _leftTitle.Text = "GAME STATISTICS";
         _leftDetails.Text = game == GameKind.Bash
             ? $"• {FormatOutcomeDescription(outcome)}\n\n"
@@ -300,8 +311,8 @@ public partial class GameplayHUD : Control
             : $"{gameName} · {result}";
         SetTutorDialogue(tutorDialogue);
         string resultMessage = willContinue
-            ? "The end condition has not been reached. Continue to the next game."
-            : "Continue to the final summary.";
+            ? "The end condition has not been reached. Click anywhere to continue."
+            : "Click anywhere to view the final summary.";
         _systemLog.Text = game == GameKind.LimitBash
             ? $"{resultMessage}\n\n[EXECUTION LOG]\n"
                 + FormatChoiceLog(choiceHistory ?? Array.Empty<ChoicePair>())
@@ -311,11 +322,7 @@ public partial class GameplayHUD : Control
 
         ConfigureChoices(Array.Empty<int>(), null, locked: true);
         _confirmButton.Visible = false;
-        _continueButton.Visible = true;
-        _continueButton.Text = willContinue
-            ? "CONTINUE"
-            : "VIEW FINAL SUMMARY";
-        _continueButton.GrabFocus();
+        StartResultAnimation(outcome);
     }
 
     private void ConfigureChoices(
@@ -332,18 +339,70 @@ public partial class GameplayHUD : Control
             Button button = _choiceButtons[index];
             button.Visible = legal.Count > 0;
             button.ButtonPressed = selected;
-            button.Disabled = !selected && (locked || !legal.Contains(choice));
+            button.Disabled = locked || !legal.Contains(choice);
             button.MouseFilter = locked
                 ? MouseFilterEnum.Ignore
                 : MouseFilterEnum.Stop;
             button.FocusMode = locked
                 ? FocusModeEnum.None
                 : FocusModeEnum.All;
-            button.Scale = selected ? new Vector2(1.035f, 1.035f) : Vector2.One;
-            button.ZIndex = selected ? 2 : 0;
+            button.Scale = Vector2.One;
+            button.ZIndex = 0;
+            string optionLetter = ((char)('A' + index)).ToString();
             button.Text = selected
-                ? $"✓ {choice}\nSTAGED"
-                : $"{choice}\n{_choiceVerb} {choice}";
+                ? $"{optionLetter}\nSTAGED"
+                : $"{optionLetter}\n{_choiceVerb} {choice}";
+        }
+    }
+
+    private void StartResultAnimation(RoundOutcome outcome)
+    {
+        StopResultAnimation();
+        _resultAwaitingSkip = true;
+        _remainingLabel.AddThemeFontSizeOverride("font_size", 68);
+        _remainingLabel.AddThemeColorOverride(
+            "font_color",
+            outcome switch
+            {
+                RoundOutcome.PlayerWin => new Color("39ff3a"),
+                RoundOutcome.PlayerLose => new Color("ff3861"),
+                _ => new Color("ffc21f")
+            });
+        _remainingLabel.PivotOffset = _remainingLabel.Size / 2.0f;
+        _remainingLabel.Scale = new Vector2(0.84f, 0.84f);
+
+        _resultTween = CreateTween().SetLoops();
+        _resultTween.TweenProperty(
+                _remainingLabel,
+                "scale",
+                new Vector2(1.08f, 1.08f),
+                0.55)
+            .SetTrans(Tween.TransitionType.Back)
+            .SetEase(Tween.EaseType.Out);
+        _resultTween.TweenProperty(
+                _remainingLabel,
+                "scale",
+                new Vector2(0.96f, 0.96f),
+                0.55)
+            .SetTrans(Tween.TransitionType.Sine)
+            .SetEase(Tween.EaseType.InOut);
+    }
+
+    private void StopResultAnimation()
+    {
+        if (_resultTween is not null
+            && GodotObject.IsInstanceValid(_resultTween))
+        {
+            _resultTween.Kill();
+        }
+
+        _resultTween = null;
+        _resultAwaitingSkip = false;
+        if (GodotObject.IsInstanceValid(_remainingLabel))
+        {
+            _remainingLabel.Scale = Vector2.One;
+            _remainingLabel.RemoveThemeFontSizeOverride("font_size");
+            _remainingLabel.RemoveThemeColorOverride("font_color");
         }
     }
 
