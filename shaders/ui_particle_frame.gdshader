@@ -1,17 +1,20 @@
 shader_type canvas_item;
 render_mode unshaded, blend_add;
 
-uniform vec4 matrix_color : source_color = vec4(0.22, 1.0, 0.23, 0.58);
+uniform vec4 matrix_color : source_color = vec4(0.22, 1.0, 0.23, 0.18);
 uniform vec4 particle_color : source_color = vec4(0.68, 1.0, 0.72, 1.0);
 uniform float aspect_ratio = 1.0;
+uniform vec2 border_inset_uv = vec2(0.02);
+uniform float pixel_size_y = 0.004;
 uniform float phase_offset = 0.0;
-uniform float speed : hint_range(0.01, 1.0) = 0.075;
+uniform float speed : hint_range(0.01, 1.0) = 0.16;
 uniform float corner_radius : hint_range(0.01, 0.40) = 0.11;
-uniform float line_width : hint_range(0.001, 0.08) = 0.007;
-uniform float dot_density : hint_range(12.0, 180.0) = 92.0;
-uniform float trail_length : hint_range(0.02, 0.50) = 0.14;
-uniform float trail_decay : hint_range(2.0, 40.0) = 24.0;
-uniform float diffusion : hint_range(0.0, 10.0) = 1.8;
+uniform float line_width : hint_range(0.001, 0.08) = 0.004;
+uniform float dot_density : hint_range(12.0, 180.0) = 72.0;
+uniform float trail_length : hint_range(0.02, 0.50) = 0.22;
+uniform float trail_decay : hint_range(2.0, 40.0) = 14.0;
+uniform float diffusion : hint_range(0.0, 10.0) = 3.0;
+uniform float particle_width_scale : hint_range(1.0, 3.0) = 1.65;
 
 float rounded_box_distance(vec2 point, vec2 half_size, float radius) {
     vec2 q = abs(point) - half_size + vec2(radius);
@@ -51,9 +54,10 @@ float circular_distance(float from_value, float to_value) {
 
 float particle_stream(
     float path_position,
-    float border_distance,
+    float signed_distance,
     float head_position,
-    float stream_seed) {
+    float stream_seed,
+    float core_width) {
     float behind = fract(head_position - path_position);
     float active = 1.0 - smoothstep(
         trail_length * 0.82,
@@ -61,19 +65,38 @@ float particle_stream(
         behind);
     float fade = exp(-behind * trail_decay) * active;
 
-    // Discrete bright particles sit inside a continuous, widening trail.
+    // The tail travels backward along the perimeter. Its centre drifts only
+    // outward as it ages, so no light ray can project into the frame centre.
     float particle_wave = 0.5 + 0.5 * cos(
         behind * dot_density * 1.35 * TAU + stream_seed);
-    float particles = pow(particle_wave, 18.0) * fade;
-    float trail_width = line_width * (1.25 + behind * diffusion * 4.0);
-    float normalized_border = border_distance / max(0.0001, trail_width);
-    float trail_glow = exp(-normalized_border * normalized_border) * fade;
+    float particle_beads = pow(particle_wave, 12.0);
+    float outward_offset = behind * core_width * diffusion * 4.0;
+    float trail_width = core_width * (1.0 + behind * diffusion * 3.2);
+    float lateral = (signed_distance - outward_offset)
+        / max(0.0001, trail_width);
+    float outward_gate = smoothstep(
+        -core_width * 0.55,
+        core_width * 0.45,
+        signed_distance);
+    float diffused_tail = exp(-lateral * lateral) * fade * outward_gate;
 
     float head_distance = circular_distance(path_position, head_position);
-    float head = exp(-head_distance * head_distance * 15000.0)
-        * exp(-border_distance / max(0.0001, line_width * 2.8));
+    float head = exp(-head_distance * head_distance * 9000.0)
+        * exp(-pow(
+            signed_distance / max(0.0001, core_width * 1.22),
+            2.0));
+    float head_halo = exp(-head_distance * head_distance * 3000.0)
+        * exp(-pow(
+            signed_distance / max(0.0001, core_width * 2.2),
+            2.0));
 
-    return particles * 0.58 + trail_glow * 0.32 + head * 0.92;
+    // A second fade factor prevents isolated bright beads from surviving near
+    // the tail cutoff after the surrounding glow has already disappeared.
+    float bead_fade = fade * fade;
+    return particle_beads * diffused_tail * bead_fade * 0.72
+        + diffused_tail * 0.42
+        + head * 1.38
+        + head_halo * 0.28;
 }
 
 void fragment() {
@@ -81,29 +104,53 @@ void fragment() {
     vec2 point = UV * 2.0 - 1.0;
     point.x *= safe_aspect;
 
-    vec2 half_size = vec2(safe_aspect, 1.0) - vec2(0.055);
+    vec2 half_size = vec2(
+        safe_aspect * (1.0 - border_inset_uv.x * 2.0),
+        1.0 - border_inset_uv.y * 2.0);
     float radius = min(corner_radius, min(half_size.x, half_size.y) * 0.48);
     float signed_distance = rounded_box_distance(point, half_size, radius);
     float border_distance = abs(signed_distance);
     float path_position = perimeter_coordinate(point, half_size);
+    float core_width = max(line_width, pixel_size_y * 1.25);
+    float particle_core_width = core_width * particle_width_scale;
+
+    // Hard safety boundary: the particle field may straddle the original line
+    // by about one pixel, but can never project toward the frame centre.
+    if (signed_distance < -core_width * 1.25) {
+        discard;
+    }
 
     float matrix_wave = 0.5 + 0.5 * cos(path_position * dot_density * TAU);
     float matrix_dots = pow(matrix_wave, 22.0);
-    float matrix_line = exp(-border_distance / max(0.0001, line_width * 0.62));
+    float normalized_matrix_distance = border_distance
+        / max(0.0001, core_width * 0.72);
+    float matrix_line = exp(
+        -normalized_matrix_distance * normalized_matrix_distance);
     float matrix_intensity = matrix_dots * matrix_line * matrix_color.a;
 
     float time_phase = fract(TIME * speed + phase_offset);
     float first_stream = particle_stream(
         path_position,
-        border_distance,
+        signed_distance,
         time_phase,
-        0.0);
+        0.0,
+        particle_core_width);
     float second_stream = particle_stream(
         path_position,
-        border_distance,
+        signed_distance,
         fract(time_phase + 0.47),
-        2.17);
-    float particle_intensity = (first_stream + second_stream * 0.64) * 0.66;
+        2.17,
+        particle_core_width);
+    float third_stream = particle_stream(
+        path_position,
+        signed_distance,
+        fract(time_phase + 0.69),
+        4.31,
+        particle_core_width);
+    float particle_intensity = (
+        first_stream
+        + second_stream * 0.76
+        + third_stream * 0.64) * 0.92;
 
     vec3 rgb = matrix_color.rgb * matrix_intensity
         + particle_color.rgb * particle_intensity;

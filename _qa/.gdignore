@@ -1,0 +1,2 @@
+# QA screenshots are review artefacts, not runtime Godot resources.
+# Excluding this tree prevents disposable PNG import sidecars from returning.

@@ -1,5 +1,5 @@
 param(
-    [string]$BaseBackground = "assets/backgrounds/command_chamber_powered_down.png",
+    [string]$BaseBackground = "assets/backgrounds/command_chamber_static_scanner.png",
 
     [Parameter(Mandatory = $true)]
     [string]$TutorAtlas,
@@ -7,11 +7,7 @@ param(
     [Parameter(Mandatory = $true)]
     [string]$S17Atlas,
 
-    [Parameter(Mandatory = $true)]
-    [string]$ContainerGlow,
-
-    [Parameter(Mandatory = $true)]
-    [string]$ScannerGlow,
+    [string]$ContainerGlow = "assets/vfx/container_glow_30f.png",
 
     [string]$OutputDirectory = "_qa/art-preview"
 )
@@ -150,10 +146,34 @@ $resolvedOutput = Join-Path (Get-Location) $OutputDirectory
 $background = [System.Drawing.Image]::FromFile((Resolve-Path $BaseBackground))
 $tutor = [System.Drawing.Image]::FromFile((Resolve-Path $TutorAtlas))
 $s17 = [System.Drawing.Image]::FromFile((Resolve-Path $S17Atlas))
-$containerGlowImage = [System.Drawing.Image]::FromFile(
+$containerGlowAtlas = [System.Drawing.Image]::FromFile(
     (Resolve-Path $ContainerGlow))
-$scannerGlowImage = [System.Drawing.Image]::FromFile(
-    (Resolve-Path $ScannerGlow))
+$containerFrameWidth = [int]($containerGlowAtlas.Width / 6)
+$containerFrameHeight = [int]($containerGlowAtlas.Height / 5)
+$containerGlowImage = [System.Drawing.Bitmap]::new(
+    $containerFrameWidth,
+    $containerFrameHeight,
+    [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
+$containerFrameGraphics = [System.Drawing.Graphics]::FromImage(
+    $containerGlowImage)
+try {
+    $containerFrameGraphics.DrawImage(
+        $containerGlowAtlas,
+        [System.Drawing.Rectangle]::new(
+            0,
+            0,
+            $containerFrameWidth,
+            $containerFrameHeight),
+        [System.Drawing.Rectangle]::new(
+            0,
+            0,
+            $containerFrameWidth,
+            $containerFrameHeight),
+        [System.Drawing.GraphicsUnit]::Pixel)
+}
+finally {
+    $containerFrameGraphics.Dispose()
+}
 
 try {
     $sceneParts = New-Canvas 1920 1080 ([System.Drawing.Color]::Black)
@@ -171,13 +191,8 @@ try {
         Draw-ImageWithOpacity `
             -Graphics $sceneGraphics `
             -Image $containerGlowImage `
-            -Destination ([System.Drawing.Rectangle]::new(1510, 112, 380, 450)) `
-            -Opacity 0.68
-        Draw-ImageWithOpacity `
-            -Graphics $sceneGraphics `
-            -Image $scannerGlowImage `
-            -Destination ([System.Drawing.Rectangle]::new(1260, 615, 650, 245)) `
-            -Opacity 0.62
+            -Destination ([System.Drawing.Rectangle]::new(1595, 157, 330, 380)) `
+            -Opacity 0.84
 
         $borderPen = [System.Drawing.Pen]::new(
             [System.Drawing.Color]::FromArgb(210, 56, 255, 59),
@@ -279,7 +294,7 @@ finally {
     $tutor.Dispose()
     $s17.Dispose()
     $containerGlowImage.Dispose()
-    $scannerGlowImage.Dispose()
+    $containerGlowAtlas.Dispose()
 }
 
 Write-Output (Join-Path $resolvedOutput "background-vfx-preview.png")

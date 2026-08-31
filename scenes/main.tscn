@@ -1,16 +1,23 @@
-[gd_scene load_steps=12 format=3 uid="uid://bgranncpwtngt"]
+[gd_scene load_steps=13 format=3 uid="uid://bgranncpwtngt"]
 
 [ext_resource type="Theme" path="res://themes/ProjectMirrorLightTheme.tres" id="1_theme"]
 [ext_resource type="Script" path="res://scripts/Core/DemoFlowController.cs" id="2_flow"]
-[ext_resource type="Texture2D" path="res://assets/backgrounds/command_chamber_powered_down.png" id="3_background"]
+[ext_resource type="Texture2D" path="res://assets/backgrounds/command_chamber_static_scanner.png" id="3_background"]
 [ext_resource type="PackedScene" path="res://scenes/ui/TitleScreen.tscn" id="4_title"]
 [ext_resource type="PackedScene" path="res://scenes/ui/GameplayHUD.tscn" id="5_hud"]
 [ext_resource type="PackedScene" path="res://scenes/ui/TutorDialogueUI.tscn" id="6_dialogue"]
 [ext_resource type="Script" path="res://scripts/UI/DotMatrixTextStyler.cs" id="7_text_styler"]
 [ext_resource type="Script" path="res://scripts/UI/BackgroundVfx.cs" id="8_background_vfx"]
-[ext_resource type="Texture2D" path="res://assets/vfx/container_glow.png" id="9_container_glow"]
-[ext_resource type="Texture2D" path="res://assets/vfx/scanner_glow.png" id="10_scanner_glow"]
+[ext_resource type="Texture2D" path="res://assets/vfx/container_glow_30f.png" id="9_container_glow"]
 [ext_resource type="Script" path="res://scripts/UI/FrameParticleEffectsInstaller.cs" id="11_frame_effects"]
+[ext_resource type="Shader" path="res://shaders/background_vfx_cleanup.gdshader" id="12_vfx_cleanup"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_container_cleanup"]
+shader = ExtResource("12_vfx_cleanup")
+shader_parameter/luminance_cutoff = 0.02
+shader_parameter/transition_width = 0.08
+shader_parameter/maximum_brightness = 0.84
+shader_parameter/highlight_suppression = 0.08
 
 [node name="Main" type="Control"]
 layout_mode = 3
@@ -55,26 +62,16 @@ mouse_filter = 2
 script = ExtResource("8_background_vfx")
 
 [node name="ContainerGlow" type="TextureRect" parent="BackgroundVfx"]
+material = SubResource("ShaderMaterial_container_cleanup")
 layout_mode = 0
-offset_left = 1510.0
-offset_top = 112.0
-offset_right = 1890.0
-offset_bottom = 562.0
+offset_left = 1595.0
+offset_top = 157.0
+offset_right = 1925.0
+offset_bottom = 537.0
 mouse_filter = 2
 texture = ExtResource("9_container_glow")
 expand_mode = 1
-stretch_mode = 5
-
-[node name="ScannerGlow" type="TextureRect" parent="BackgroundVfx"]
-layout_mode = 0
-offset_left = 1260.0
-offset_top = 615.0
-offset_right = 1910.0
-offset_bottom = 860.0
-mouse_filter = 2
-texture = ExtResource("10_scanner_glow")
-expand_mode = 1
-stretch_mode = 5
+stretch_mode = 0
 
 [node name="TitleScreen" parent="." instance=ExtResource("4_title")]
 layout_mode = 1

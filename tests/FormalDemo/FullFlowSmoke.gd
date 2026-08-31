@@ -43,7 +43,7 @@ func _ready() -> void:
 		"The complete session did not reach the final summary.")
 	var summary_background := _main.get_node("Background") as TextureRect
 	_assert(summary_background.texture.resource_path.ends_with(
-		"command_chamber_powered_down.png"),
+		"command_chamber_static_scanner.png"),
 		"SUMMARY still uses the retired background resource.")
 	_assert(FileAccess.file_exists(SAVE_PATH),
 		"The complete flow did not retain its session save.")
@@ -108,7 +108,7 @@ func _complete_bash_tutorial_gate() -> void:
 				"The obsolete result Continue button is still present.")
 			var result_background := _main.get_node("Background") as TextureRect
 			_assert(result_background.texture.resource_path.ends_with(
-				"command_chamber_powered_down.png"),
+				"command_chamber_static_scanner.png"),
 				"The Bash result still uses the retired background resource.")
 			var tutor_panel := _main.get_node(
 				"GameplayHUD/SafeArea/Layout/Content/LeftColumn/TutorCard") as PanelContainer

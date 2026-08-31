@@ -16,7 +16,7 @@ public partial class DemoFlowController : Control
     private const int DialogueHistoryLimit = 2;
     private const int SelectionDialoguePercent = 35;
     private const string BackgroundTexturePath =
-        "res://assets/backgrounds/command_chamber_powered_down.png";
+        "res://assets/backgrounds/command_chamber_static_scanner.png";
 
     private readonly StrategyEngine _strategy = new();
     private readonly OutcomeDirector _outcomeDirector = new();

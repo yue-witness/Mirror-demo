@@ -26,15 +26,32 @@ func _ready() -> void:
 	_assert(_main.get_node("TitleScreen").visible, "Title screen is not visible at startup.")
 	_assert(not _main.get_node("GameplayHUD").visible, "Gameplay HUD leaked onto the title screen.")
 	var background := _main.get_node("Background") as TextureRect
-	_assert(background.texture.resource_path.ends_with("command_chamber_powered_down.png"),
-		"The confirmed sharp science-fiction background is not active.")
+	_assert(background.texture.resource_path.ends_with(
+		"command_chamber_static_scanner.png"),
+		"The chamber background with the restored static scanner is not active.")
+	_assert(background.texture.get_width() == 1920
+		and background.texture.get_height() == 1080,
+		"The active chamber background is not stored at 1920x1080.")
 	var container_glow := _main.get_node(
 		"BackgroundVfx/ContainerGlow") as TextureRect
-	var scanner_glow := _main.get_node(
-		"BackgroundVfx/ScannerGlow") as TextureRect
-	_assert(container_glow.texture.resource_path.ends_with("container_glow.png")
-		and scanner_glow.texture.resource_path.ends_with("scanner_glow.png"),
-		"The LLM-extracted animated background glow layers are missing.")
+	_assert(is_equal_approx(container_glow.position.x, 1595.0)
+		and container_glow.size.is_equal_approx(Vector2(330.0, 380.0)),
+		"The upper cage is no longer horizontally aligned with its ceiling mount.")
+	var container_frame := container_glow.texture as AtlasTexture
+	_assert(container_frame != null
+		and container_frame.atlas.resource_path.ends_with("container_glow_30f.png"),
+		"The authored upper-container 30-frame sequence is missing.")
+	_assert(container_frame.atlas.get_width() == 1536
+		and container_frame.atlas.get_height() == 2560
+		and container_frame.region.size == Vector2(256.0, 512.0),
+		"The upper-container atlas is not laid out as 30 frames in a 6x5 grid.")
+	_assert(not _main.has_node("BackgroundVfx/ScannerGlow"),
+		"A dynamic scanner layer still covers the original static background disk.")
+	var container_cleanup := container_glow.material as ShaderMaterial
+	_assert(container_cleanup != null
+		and container_cleanup.shader.resource_path.ends_with(
+			"background_vfx_cleanup.gdshader"),
+		"The upper sequence no longer suppresses non-node glow wash.")
 	var title_particle_frame := _main.get_node(
 		"TitleScreen/MenuGlass/ParticleFrame") as ColorRect
 	var title_particle_material := title_particle_frame.material as ShaderMaterial
@@ -46,14 +63,31 @@ func _ready() -> void:
 		"trail_length")
 	var trail_diffusion: float = title_particle_material.get_shader_parameter(
 		"diffusion")
-	_assert(trail_length >= 0.10 and trail_diffusion > 1.0,
+	var particle_width_scale: float = title_particle_material.get_shader_parameter(
+		"particle_width_scale")
+	var matrix_color: Color = title_particle_material.get_shader_parameter(
+		"matrix_color")
+	_assert(trail_length >= 0.20 and trail_diffusion >= 2.99
+		and particle_width_scale >= 1.5 and matrix_color.a <= 0.181,
 		"The frame shader no longer has a visible diffusing fade trail.")
-	var initial_container_scale := container_glow.scale
-	var initial_scanner_rotation := scanner_glow.rotation
-	await get_tree().create_timer(0.16).timeout
-	_assert(not container_glow.scale.is_equal_approx(initial_container_scale)
-		and not is_equal_approx(scanner_glow.rotation, initial_scanner_rotation),
-		"The extracted background layers are present but not animated.")
+	var border_inset: Vector2 = title_particle_material.get_shader_parameter(
+		"border_inset_uv")
+	var expected_inset := Vector2(
+		17.0 / title_particle_frame.size.x,
+		17.0 / title_particle_frame.size.y)
+	_assert(border_inset.is_equal_approx(expected_inset),
+		"The moving particles are not centred on the original frame border.")
+	var initial_container_region := container_frame.region
+	var fixed_container_position := container_glow.position
+	var fixed_container_rotation := container_glow.rotation
+	await get_tree().create_timer(0.24).timeout
+	_assert(container_frame.region != initial_container_region,
+		"The upper-container 30-frame sequence is present but not advancing.")
+	_assert(container_glow.position == fixed_container_position
+		and container_glow.scale == Vector2.ONE
+		and container_glow.rotation == fixed_container_rotation
+		and is_zero_approx(container_glow.rotation),
+		"The upper background VFX still bobs, scales, or rotates as a whole node.")
 	_assert(not _button("TitleScreen/MenuGlass/MenuVBox/ContinueButton").visible,
 		"Continue must remain hidden without an unfinished save.")
 	_assert((_main.get_node(
@@ -63,6 +97,8 @@ func _ready() -> void:
 		"TitleScreen/MenuGlass/MenuVBox/LaserRule") as ColorRect).material is ShaderMaterial,
 		"The title divider is not rendered through the dot-matrix line shader.")
 	_capture("01-title.png")
+	await get_tree().create_timer(0.42).timeout
+	_capture("01b-title-motion.png")
 
 	_press("TitleScreen/MenuGlass/MenuVBox/NewGameButton")
 	await get_tree().create_timer(0.25).timeout
