@@ -15,7 +15,7 @@ public partial class StabilityLatticeView : Control
     private static readonly Color GhostGreen = new("8ab9aa40");
     private static readonly Color PreviewGold = new("ffcb55");
     private static readonly Color WarningRed = new("ff5268");
-    private static readonly Color Ink = new("14362f");
+    private static readonly Color Ink = new("20ff78");
 
     private int _initialAnchors = 20;
     private int _remainingAnchors = 20;

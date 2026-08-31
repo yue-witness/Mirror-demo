@@ -54,7 +54,7 @@ func _ready() -> void:
 		await _advance_dialogue_page()
 		if index == 2:
 			var tutor_name := _label(
-				"TutorDialogueUI/SafeArea/Layout/Content/TutorCard/TutorVBox/TutorName")
+				"TutorDialogueUI/SafeArea/Layout/Content/SpeakerCard/SpeakerVBox/SpeakerName")
 			_assert(tutor_name.text.contains("SIGNAL ANOMALY"),
 				"The final observer line did not activate the Tutor red-eye anomaly.")
 	_assert(_main.get_node("TitleScreen").visible,
@@ -83,10 +83,10 @@ func _complete_bash_tutorial_gate() -> void:
 			continue
 
 		var continue_button := _button(
-			"GameplayHUD/SafeArea/Layout/Content/Center/ContinueButton")
+			"GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ChoiceStack/ContinueButton")
 		if continue_button.visible:
 			var bash_result_log := _main.get_node(
-				"GameplayHUD/SafeArea/Layout/Content/RightLog/RightVBox/Log") as RichTextLabel
+				"GameplayHUD/SafeArea/Layout/Content/RightColumn/RightLog/RightVBox/Log") as RichTextLabel
 			_assert(bash_result_log.text.contains("keystone anchor was disengaged")
 				and bash_result_log.text.contains("ACTIONS THIS ROUND"),
 				"The Bash result screen cleared the SYSTEM action log.")
@@ -95,21 +95,23 @@ func _complete_bash_tutorial_gate() -> void:
 				"GameplayHUD/SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/RemainingValue").text
 			if result == "PLAYER WIN":
 				completed_rounds += 1
-			_press("GameplayHUD/SafeArea/Layout/Content/Center/ContinueButton")
+			_press(
+				"GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ChoiceStack/ContinueButton")
 			continue
 
 		var choice := _choose_optimal_bash_button()
 		if choice != null:
 			choice.emit_signal("pressed")
 			await _frames()
-			_press("GameplayHUD/SafeArea/Layout/Content/Center/ConfirmButton")
+			_press("GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ConfirmButton")
 
 	_assert(completed_rounds == 2,
 		"Both required Bash wins were not completed within the safety bound.")
 
 
 func _choose_optimal_bash_button() -> Button:
-	var confirm := _button("GameplayHUD/SafeArea/Layout/Content/Center/ConfirmButton")
+	var confirm := _button(
+		"GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ConfirmButton")
 	if not confirm.visible:
 		return null
 
@@ -124,7 +126,7 @@ func _choose_optimal_bash_button() -> Button:
 
 	for index in range(1, 4):
 		var button := _button(
-			"GameplayHUD/SafeArea/Layout/Content/Center/ChoiceRow/Choice%d" % index)
+			"GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ChoiceStack/ChoiceRow/Choice%d" % index)
 		if button.visible and not button.disabled:
 			if index == desired:
 				return button
@@ -161,9 +163,9 @@ func _complete_limit_bash() -> void:
 		var banner := _label("GameplayHUD/SafeArea/Layout/Header/HeaderRow/PhaseBanner")
 
 		var continue_button := _button(
-			"GameplayHUD/SafeArea/Layout/Content/Center/ContinueButton")
+			"GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ChoiceStack/ContinueButton")
 		var current_log := _main.get_node(
-			"GameplayHUD/SafeArea/Layout/Content/RightLog/RightVBox/Log") as RichTextLabel
+			"GameplayHUD/SafeArea/Layout/Content/RightColumn/RightLog/RightVBox/Log") as RichTextLabel
 		if current_log.text.contains("R01") and current_log.text.contains("PLAYER"):
 			observed_live_log = true
 
@@ -172,7 +174,7 @@ func _complete_limit_bash() -> void:
 				var selection := _label(
 					"GameplayHUD/SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/SelectionLabel")
 				var system_log := _main.get_node(
-					"GameplayHUD/SafeArea/Layout/Content/RightLog/RightVBox/Log") as RichTextLabel
+					"GameplayHUD/SafeArea/Layout/Content/RightColumn/RightLog/RightVBox/Log") as RichTextLabel
 				_assert(selection.text.contains("FINAL REQUESTS · PLAYER")
 					and selection.text.contains("TUTOR"),
 					"Limit Bash result did not show both final choices.")
@@ -182,16 +184,17 @@ func _complete_limit_bash() -> void:
 					"Limit Bash result did not retain its execution log.")
 				_capture("03b-limit-result.png")
 				captured_result = true
-			_press("GameplayHUD/SafeArea/Layout/Content/Center/ContinueButton")
+			_press(
+				"GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ChoiceStack/ContinueButton")
 			continue
 
 		for index in range(1, 4):
 			var choice := _button(
-				"GameplayHUD/SafeArea/Layout/Content/Center/ChoiceRow/Choice%d" % index)
+				"GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ChoiceStack/ChoiceRow/Choice%d" % index)
 			if choice.visible and not choice.disabled:
 				choice.emit_signal("pressed")
 				await _frames()
-				_press("GameplayHUD/SafeArea/Layout/Content/Center/ConfirmButton")
+				_press("GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ConfirmButton")
 				break
 
 	_assert(false, "Limit Bash did not settle within the safety bound.")

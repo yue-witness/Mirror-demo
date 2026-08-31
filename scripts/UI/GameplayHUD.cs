@@ -45,9 +45,10 @@ public partial class GameplayHUD : Control
         _phaseBanner = GetNode<Label>("SafeArea/Layout/Header/HeaderRow/PhaseBanner");
         _playTimeLabel = GetNode<Label>(
             "SafeArea/Layout/Header/HeaderRow/PlayTimeLabel");
-        _leftTitle = GetNode<Label>("SafeArea/Layout/Content/LeftStatus/LeftVBox/Title");
+        _leftTitle = GetNode<Label>(
+            "SafeArea/Layout/Content/LeftColumn/LeftStatus/LeftVBox/Title");
         _leftDetails = GetNode<RichTextLabel>(
-            "SafeArea/Layout/Content/LeftStatus/LeftVBox/Details");
+            "SafeArea/Layout/Content/LeftColumn/LeftStatus/LeftVBox/Details");
         _remainingLabel = GetNode<Label>(
             "SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/RemainingValue");
         _selectionLabel = GetNode<Label>(
@@ -57,12 +58,15 @@ public partial class GameplayHUD : Control
         _dialogueText = GetNode<RichTextLabel>(
             "SafeArea/Layout/Content/Center/DialoguePanel/DialogueVBox/Text");
         _systemStatus = GetNode<Label>(
-            "SafeArea/Layout/Content/RightLog/RightVBox/Status");
+            "SafeArea/Layout/Content/RightColumn/RightLog/RightVBox/Status");
         _systemLog = GetNode<RichTextLabel>(
-            "SafeArea/Layout/Content/RightLog/RightVBox/Log");
-        _confirmButton = GetNode<Button>("SafeArea/Layout/Content/Center/ConfirmButton");
-        _continueButton = GetNode<Button>("SafeArea/Layout/Content/Center/ContinueButton");
-        _backButton = GetNode<Button>("SafeArea/Layout/Footer/BackButton");
+            "SafeArea/Layout/Content/RightColumn/RightLog/RightVBox/Log");
+        _confirmButton = GetNode<Button>(
+            "SafeArea/Layout/Content/Center/ActionRow/ConfirmButton");
+        _continueButton = GetNode<Button>(
+            "SafeArea/Layout/Content/Center/ActionRow/ChoiceStack/ContinueButton");
+        _backButton = GetNode<Button>(
+            "SafeArea/Layout/Content/RightColumn/BackButton");
         _chapterOverlay = GetNode<Control>("ChapterOverlay");
         _chapterNumber = GetNode<Label>(
             "ChapterOverlay/ChapterGlass/ChapterVBox/ChapterNumber");
@@ -70,9 +74,12 @@ public partial class GameplayHUD : Control
             "ChapterOverlay/ChapterGlass/ChapterVBox/ChapterTitle");
         _choiceButtons = new[]
         {
-            GetNode<Button>("SafeArea/Layout/Content/Center/ChoiceRow/Choice1"),
-            GetNode<Button>("SafeArea/Layout/Content/Center/ChoiceRow/Choice2"),
-            GetNode<Button>("SafeArea/Layout/Content/Center/ChoiceRow/Choice3")
+            GetNode<Button>(
+                "SafeArea/Layout/Content/Center/ActionRow/ChoiceStack/ChoiceRow/Choice1"),
+            GetNode<Button>(
+                "SafeArea/Layout/Content/Center/ActionRow/ChoiceStack/ChoiceRow/Choice2"),
+            GetNode<Button>(
+                "SafeArea/Layout/Content/Center/ActionRow/ChoiceStack/ChoiceRow/Choice3")
         };
 
         for (int index = 0; index < _choiceButtons.Length; index++)
@@ -164,8 +171,8 @@ public partial class GameplayHUD : Control
         _confirmButton.Visible = true;
         _confirmButton.Disabled = !inputOpen || !selectedChoice.HasValue;
         _confirmButton.Text = selectedChoice.HasValue
-            ? $"CONFIRM · DISENGAGE {selectedChoice.Value}"
-            : "SELECT FIRST";
+            ? $"CONFIRM\nDISENGAGE {selectedChoice.Value}"
+            : "SELECT\nFIRST";
         _continueButton.Visible = false;
     }
 
@@ -217,10 +224,10 @@ public partial class GameplayHUD : Control
         _confirmButton.Visible = true;
         _confirmButton.Disabled = !inputOpen || !selectedChoice.HasValue;
         _confirmButton.Text = waiting
-            ? "LOCKED · WAITING"
+            ? "LOCKED\nWAITING"
             : selectedChoice.HasValue
-                ? $"CONFIRM · REQUEST {selectedChoice.Value}"
-                : "SELECT FIRST";
+                ? $"CONFIRM\nREQUEST {selectedChoice.Value}"
+                : "SELECT\nFIRST";
         _continueButton.Visible = false;
     }
 

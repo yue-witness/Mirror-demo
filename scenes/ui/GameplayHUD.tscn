@@ -1,19 +1,20 @@
-[gd_scene load_steps=13 format=3]
+[gd_scene load_steps=15 format=3]
 
 [ext_resource type="Script" path="res://scripts/UI/GameplayHUD.cs" id="1_script"]
 [ext_resource type="Script" path="res://scripts/UI/StabilityLatticeView.cs" id="2_lattice"]
+[ext_resource type="Texture2D" path="res://assets/portraits/tutor.png" id="3_tutor"]
 
 [sub_resource type="StyleBoxFlat" id="ChoiceGreen"]
 content_margin_left = 18.0
 content_margin_top = 14.0
 content_margin_right = 18.0
 content_margin_bottom = 14.0
-bg_color = Color(0.83, 0.96, 0.9, 0.9)
+bg_color = Color(0.04, 0.36, 0.18, 0.58)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(0.02, 0.63, 0.36, 1)
+border_color = Color(0.12, 1, 0.48, 1)
 corner_radius_top_left = 16
 corner_radius_top_right = 16
 corner_radius_bottom_right = 16
@@ -24,12 +25,12 @@ content_margin_left = 18.0
 content_margin_top = 14.0
 content_margin_right = 18.0
 content_margin_bottom = 14.0
-bg_color = Color(1, 0.95, 0.73, 0.9)
+bg_color = Color(0.4, 0.3, 0.02, 0.62)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(0.72, 0.5, 0.02, 1)
+border_color = Color(1, 0.76, 0.12, 1)
 corner_radius_top_left = 16
 corner_radius_top_right = 16
 corner_radius_bottom_right = 16
@@ -40,12 +41,12 @@ content_margin_left = 18.0
 content_margin_top = 14.0
 content_margin_right = 18.0
 content_margin_bottom = 14.0
-bg_color = Color(1, 0.86, 0.87, 0.9)
+bg_color = Color(0.42, 0.04, 0.1, 0.62)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(0.82, 0.18, 0.3, 1)
+border_color = Color(1, 0.22, 0.38, 1)
 corner_radius_top_left = 16
 corner_radius_top_right = 16
 corner_radius_bottom_right = 16
@@ -56,91 +57,127 @@ content_margin_left = 18.0
 content_margin_top = 14.0
 content_margin_right = 18.0
 content_margin_bottom = 14.0
-bg_color = Color(0.29, 0.86, 0.58, 1)
+bg_color = Color(0.04, 0.48, 0.24, 0.82)
 border_width_left = 5
 border_width_top = 5
 border_width_right = 5
 border_width_bottom = 5
-border_color = Color(0, 0.34, 0.2, 1)
+border_color = Color(0.24, 1, 0.58, 1)
 corner_radius_top_left = 16
 corner_radius_top_right = 16
 corner_radius_bottom_right = 16
 corner_radius_bottom_left = 16
-shadow_color = Color(0, 0.28, 0.18, 0.32)
-shadow_size = 14
+shadow_color = Color(0.08, 1, 0.44, 0.34)
+shadow_size = 12
 
 [sub_resource type="StyleBoxFlat" id="ChoiceYellowSelected"]
 content_margin_left = 18.0
 content_margin_top = 14.0
 content_margin_right = 18.0
 content_margin_bottom = 14.0
-bg_color = Color(1, 0.78, 0.2, 1)
+bg_color = Color(0.56, 0.39, 0.02, 0.86)
 border_width_left = 5
 border_width_top = 5
 border_width_right = 5
 border_width_bottom = 5
-border_color = Color(0.45, 0.27, 0, 1)
+border_color = Color(1, 0.84, 0.24, 1)
 corner_radius_top_left = 16
 corner_radius_top_right = 16
 corner_radius_bottom_right = 16
 corner_radius_bottom_left = 16
-shadow_color = Color(0.4, 0.25, 0, 0.28)
-shadow_size = 14
+shadow_color = Color(1, 0.72, 0.12, 0.26)
+shadow_size = 12
 
 [sub_resource type="StyleBoxFlat" id="ChoiceRedSelected"]
 content_margin_left = 18.0
 content_margin_top = 14.0
 content_margin_right = 18.0
 content_margin_bottom = 14.0
-bg_color = Color(1, 0.43, 0.5, 1)
+bg_color = Color(0.58, 0.05, 0.14, 0.86)
 border_width_left = 5
 border_width_top = 5
 border_width_right = 5
 border_width_bottom = 5
-border_color = Color(0.46, 0.02, 0.12, 1)
+border_color = Color(1, 0.36, 0.5, 1)
 corner_radius_top_left = 16
 corner_radius_top_right = 16
 corner_radius_bottom_right = 16
 corner_radius_bottom_left = 16
-shadow_color = Color(0.38, 0.02, 0.09, 0.3)
-shadow_size = 14
+shadow_color = Color(1, 0.16, 0.34, 0.26)
+shadow_size = 12
 
-[sub_resource type="StyleBoxFlat" id="HeaderGlass"]
+[sub_resource type="StyleBoxFlat" id="HeaderFrame"]
 content_margin_left = 28.0
-content_margin_top = 14.0
+content_margin_top = 12.0
 content_margin_right = 28.0
-content_margin_bottom = 14.0
-bg_color = Color(0.97, 0.99, 0.985, 0.92)
+content_margin_bottom = 12.0
+bg_color = Color(0, 0, 0, 0)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(0.1, 0.68, 0.49, 0.75)
+border_color = Color(0.12, 1, 0.48, 0.75)
 corner_radius_top_left = 20
 corner_radius_top_right = 20
 corner_radius_bottom_right = 20
 corner_radius_bottom_left = 20
 
-[sub_resource type="StyleBoxFlat" id="ChapterGlass"]
+[sub_resource type="StyleBoxFlat" id="ChapterFrame"]
 content_margin_left = 64.0
 content_margin_top = 70.0
 content_margin_right = 64.0
 content_margin_bottom = 70.0
-bg_color = Color(0.96, 0.985, 0.98, 0.93)
+bg_color = Color(0, 0, 0, 0)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(0.1, 0.68, 0.49, 0.85)
+border_color = Color(0.12, 1, 0.48, 0.85)
 corner_radius_top_left = 36
 corner_radius_top_right = 36
 corner_radius_bottom_right = 36
 corner_radius_bottom_left = 36
-shadow_color = Color(0.02, 0.18, 0.15, 0.2)
-shadow_size = 22
+shadow_color = Color(0, 0, 0, 0)
+shadow_size = 0
 
-[sub_resource type="StyleBoxFlat" id="OverlayDim"]
-bg_color = Color(0.92, 0.97, 0.96, 0.45)
+[sub_resource type="StyleBoxFlat" id="OverlayClear"]
+bg_color = Color(0, 0, 0, 0)
+
+[sub_resource type="StyleBoxFlat" id="PortraitFrame"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0, 0, 0, 0)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.12, 1, 0.48, 0.9)
+corner_radius_top_left = 82
+corner_radius_top_right = 82
+corner_radius_bottom_right = 82
+corner_radius_bottom_left = 82
+shadow_color = Color(0, 0, 0, 0)
+shadow_size = 0
+
+[sub_resource type="StyleBoxFlat" id="ConfirmCircle"]
+content_margin_left = 14.0
+content_margin_top = 14.0
+content_margin_right = 14.0
+content_margin_bottom = 14.0
+bg_color = Color(0.02, 0.23, 0.34, 0.82)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.12, 1, 0.48, 0.92)
+corner_radius_top_left = 76
+corner_radius_top_right = 76
+corner_radius_bottom_right = 76
+corner_radius_bottom_left = 76
+shadow_color = Color(0.08, 1, 0.44, 0.3)
+shadow_size = 12
 
 [node name="GameplayHUD" type="Control"]
 layout_mode = 3
@@ -168,9 +205,9 @@ layout_mode = 2
 theme_override_constants/separation = 14
 
 [node name="Header" type="PanelContainer" parent="SafeArea/Layout"]
-custom_minimum_size = Vector2(0, 80)
+custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
-theme_override_styles/panel = SubResource("HeaderGlass")
+theme_override_styles/panel = SubResource("HeaderFrame")
 
 [node name="HeaderRow" type="HBoxContainer" parent="SafeArea/Layout/Header"]
 layout_mode = 2
@@ -197,35 +234,75 @@ vertical_alignment = 1
 [node name="Content" type="HBoxContainer" parent="SafeArea/Layout"]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_constants/separation = 30
+theme_override_constants/separation = 24
 
-[node name="LeftStatus" type="PanelContainer" parent="SafeArea/Layout/Content"]
-custom_minimum_size = Vector2(330, 0)
+[node name="LeftColumn" type="VBoxContainer" parent="SafeArea/Layout/Content"]
+custom_minimum_size = Vector2(320, 0)
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="LeftStatus" type="PanelContainer" parent="SafeArea/Layout/Content/LeftColumn"]
+custom_minimum_size = Vector2(320, 390)
 layout_mode = 2
 
-[node name="LeftVBox" type="VBoxContainer" parent="SafeArea/Layout/Content/LeftStatus"]
+[node name="LeftVBox" type="VBoxContainer" parent="SafeArea/Layout/Content/LeftColumn/LeftStatus"]
 layout_mode = 2
-theme_override_constants/separation = 18
+theme_override_constants/separation = 16
 
-[node name="Title" type="Label" parent="SafeArea/Layout/Content/LeftStatus/LeftVBox"]
+[node name="Title" type="Label" parent="SafeArea/Layout/Content/LeftColumn/LeftStatus/LeftVBox"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 28
+theme_override_font_sizes/font_size = 26
 text = "CURRENT STATUS"
 
-[node name="Rule" type="ColorRect" parent="SafeArea/Layout/Content/LeftStatus/LeftVBox"]
+[node name="Rule" type="ColorRect" parent="SafeArea/Layout/Content/LeftColumn/LeftStatus/LeftVBox"]
 custom_minimum_size = Vector2(110, 3)
 layout_mode = 2
 size_flags_horizontal = 0
-color = Color(0.02, 0.72, 0.5, 0.9)
+color = Color(0.12, 1, 0.48, 0.9)
 
-[node name="Details" type="RichTextLabel" parent="SafeArea/Layout/Content/LeftStatus/LeftVBox"]
+[node name="Details" type="RichTextLabel" parent="SafeArea/Layout/Content/LeftColumn/LeftStatus/LeftVBox"]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_font_sizes/normal_font_size = 20
+theme_override_constants/line_separation = 3
+theme_override_font_sizes/normal_font_size = 17
 bbcode_enabled = true
 text = "• Starting anchors: 15\n\n• Active anchors: 8\n\n• Player's turn\n\n• Disengaging the keystone loses synchronization"
 fit_content = false
 scroll_active = false
+
+[node name="LeftSpacer" type="Control" parent="SafeArea/Layout/Content/LeftColumn"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="TutorCard" type="PanelContainer" parent="SafeArea/Layout/Content/LeftColumn"]
+custom_minimum_size = Vector2(320, 260)
+layout_mode = 2
+
+[node name="TutorVBox" type="VBoxContainer" parent="SafeArea/Layout/Content/LeftColumn/TutorCard"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 8
+
+[node name="PortraitFrame" type="PanelContainer" parent="SafeArea/Layout/Content/LeftColumn/TutorCard/TutorVBox"]
+clip_contents = true
+custom_minimum_size = Vector2(164, 164)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_styles/panel = SubResource("PortraitFrame")
+
+[node name="PortraitTexture" type="TextureRect" parent="SafeArea/Layout/Content/LeftColumn/TutorCard/TutorVBox/PortraitFrame"]
+custom_minimum_size = Vector2(156, 156)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("3_tutor")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="TutorName" type="Label" parent="SafeArea/Layout/Content/LeftColumn/TutorCard/TutorVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "THE TUTOR · ONLINE"
+horizontal_alignment = 1
 
 [node name="Center" type="VBoxContainer" parent="SafeArea/Layout/Content"]
 layout_mode = 2
@@ -233,7 +310,7 @@ size_flags_horizontal = 3
 theme_override_constants/separation = 14
 
 [node name="RemainingCard" type="PanelContainer" parent="SafeArea/Layout/Content/Center"]
-custom_minimum_size = Vector2(0, 310)
+custom_minimum_size = Vector2(0, 390)
 layout_mode = 2
 
 [node name="RemainingVBox" type="VBoxContainer" parent="SafeArea/Layout/Content/Center/RemainingCard"]
@@ -242,7 +319,6 @@ alignment = 1
 
 [node name="RemainingCaption" type="Label" parent="SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.08, 0.39, 0.32, 1)
 theme_override_font_sizes/font_size = 17
 text = "STABILITY LATTICE · ACTIVE ANCHORS"
 horizontal_alignment = 1
@@ -254,7 +330,7 @@ text = "08"
 horizontal_alignment = 1
 
 [node name="LatticeView" type="Control" parent="SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox"]
-custom_minimum_size = Vector2(0, 176)
+custom_minimum_size = Vector2(0, 230)
 layout_mode = 2
 size_flags_vertical = 3
 mouse_filter = 2
@@ -266,9 +342,79 @@ theme_override_font_sizes/font_size = 20
 text = "NO SELECTION"
 horizontal_alignment = 1
 
-[node name="DialoguePanel" type="PanelContainer" parent="SafeArea/Layout/Content/Center"]
-custom_minimum_size = Vector2(0, 210)
+[node name="ActionRow" type="HBoxContainer" parent="SafeArea/Layout/Content/Center"]
+custom_minimum_size = Vector2(0, 150)
 layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="ChoiceStack" type="VBoxContainer" parent="SafeArea/Layout/Content/Center/ActionRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="ChoiceRow" type="HBoxContainer" parent="SafeArea/Layout/Content/Center/ActionRow/ChoiceStack"]
+custom_minimum_size = Vector2(0, 108)
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="Choice1" type="Button" parent="SafeArea/Layout/Content/Center/ActionRow/ChoiceStack/ChoiceRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+text = "1\nTAKE 1"
+theme_override_styles/normal = SubResource("ChoiceGreen")
+theme_override_styles/hover = SubResource("ChoiceGreen")
+theme_override_styles/pressed = SubResource("ChoiceGreenSelected")
+theme_override_styles/hover_pressed = SubResource("ChoiceGreenSelected")
+theme_override_colors/font_pressed_color = Color(0.34, 1, 0.64, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.34, 1, 0.64, 1)
+
+[node name="Choice2" type="Button" parent="SafeArea/Layout/Content/Center/ActionRow/ChoiceStack/ChoiceRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+text = "2\nTAKE 2"
+theme_override_styles/normal = SubResource("ChoiceYellow")
+theme_override_styles/hover = SubResource("ChoiceYellow")
+theme_override_styles/pressed = SubResource("ChoiceYellowSelected")
+theme_override_styles/hover_pressed = SubResource("ChoiceYellowSelected")
+theme_override_colors/font_pressed_color = Color(0.34, 1, 0.64, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.34, 1, 0.64, 1)
+
+[node name="Choice3" type="Button" parent="SafeArea/Layout/Content/Center/ActionRow/ChoiceStack/ChoiceRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+text = "3\nTAKE 3"
+theme_override_styles/normal = SubResource("ChoiceRed")
+theme_override_styles/hover = SubResource("ChoiceRed")
+theme_override_styles/pressed = SubResource("ChoiceRedSelected")
+theme_override_styles/hover_pressed = SubResource("ChoiceRedSelected")
+theme_override_colors/font_pressed_color = Color(0.34, 1, 0.64, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.34, 1, 0.64, 1)
+
+[node name="ContinueButton" type="Button" parent="SafeArea/Layout/Content/Center/ActionRow/ChoiceStack"]
+visible = false
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+text = "CONTINUE"
+
+[node name="ConfirmButton" type="Button" parent="SafeArea/Layout/Content/Center/ActionRow"]
+custom_minimum_size = Vector2(150, 150)
+layout_mode = 2
+disabled = true
+theme_override_font_sizes/font_size = 17
+theme_override_colors/font_disabled_color = Color(0.12, 1, 0.48, 0.72)
+theme_override_styles/disabled = SubResource("ConfirmCircle")
+theme_override_styles/normal = SubResource("ConfirmCircle")
+theme_override_styles/hover = SubResource("ConfirmCircle")
+theme_override_styles/pressed = SubResource("ConfirmCircle")
+text = "SELECT\nFIRST"
+
+[node name="DialoguePanel" type="PanelContainer" parent="SafeArea/Layout/Content/Center"]
+custom_minimum_size = Vector2(0, 250)
+layout_mode = 2
+size_flags_vertical = 3
 
 [node name="DialogueVBox" type="VBoxContainer" parent="SafeArea/Layout/Content/Center/DialoguePanel"]
 layout_mode = 2
@@ -276,7 +422,7 @@ theme_override_constants/separation = 8
 
 [node name="Speaker" type="Label" parent="SafeArea/Layout/Content/Center/DialoguePanel/DialogueVBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.55, 0.08, 0.16, 1)
+theme_override_colors/font_color = Color(1, 0.18, 0.3, 1)
 theme_override_font_sizes/font_size = 17
 text = "TUTOR"
 
@@ -289,104 +435,54 @@ fit_content = false
 scroll_active = false
 autowrap_mode = 2
 
-[node name="ChoiceRow" type="HBoxContainer" parent="SafeArea/Layout/Content/Center"]
-custom_minimum_size = Vector2(0, 90)
+[node name="RightColumn" type="VBoxContainer" parent="SafeArea/Layout/Content"]
+custom_minimum_size = Vector2(360, 0)
 layout_mode = 2
-theme_override_constants/separation = 24
+theme_override_constants/separation = 14
 
-[node name="Choice1" type="Button" parent="SafeArea/Layout/Content/Center/ChoiceRow"]
-layout_mode = 2
-size_flags_horizontal = 3
-toggle_mode = true
-text = "1\nTAKE 1"
-theme_override_styles/normal = SubResource("ChoiceGreen")
-theme_override_styles/hover = SubResource("ChoiceGreen")
-theme_override_styles/pressed = SubResource("ChoiceGreenSelected")
-theme_override_styles/hover_pressed = SubResource("ChoiceGreenSelected")
-theme_override_colors/font_pressed_color = Color(0.01, 0.16, 0.1, 1)
-theme_override_colors/font_hover_pressed_color = Color(0.01, 0.16, 0.1, 1)
-
-[node name="Choice2" type="Button" parent="SafeArea/Layout/Content/Center/ChoiceRow"]
-layout_mode = 2
-size_flags_horizontal = 3
-toggle_mode = true
-text = "2\nTAKE 2"
-theme_override_styles/normal = SubResource("ChoiceYellow")
-theme_override_styles/hover = SubResource("ChoiceYellow")
-theme_override_styles/pressed = SubResource("ChoiceYellowSelected")
-theme_override_styles/hover_pressed = SubResource("ChoiceYellowSelected")
-theme_override_colors/font_pressed_color = Color(0.2, 0.11, 0, 1)
-theme_override_colors/font_hover_pressed_color = Color(0.2, 0.11, 0, 1)
-
-[node name="Choice3" type="Button" parent="SafeArea/Layout/Content/Center/ChoiceRow"]
-layout_mode = 2
-size_flags_horizontal = 3
-toggle_mode = true
-text = "3\nTAKE 3"
-theme_override_styles/normal = SubResource("ChoiceRed")
-theme_override_styles/hover = SubResource("ChoiceRed")
-theme_override_styles/pressed = SubResource("ChoiceRedSelected")
-theme_override_styles/hover_pressed = SubResource("ChoiceRedSelected")
-theme_override_colors/font_pressed_color = Color(0.24, 0.01, 0.07, 1)
-theme_override_colors/font_hover_pressed_color = Color(0.24, 0.01, 0.07, 1)
-
-[node name="ConfirmButton" type="Button" parent="SafeArea/Layout/Content/Center"]
-custom_minimum_size = Vector2(0, 62)
-layout_mode = 2
-disabled = true
-text = "SELECT FIRST"
-
-[node name="ContinueButton" type="Button" parent="SafeArea/Layout/Content/Center"]
-custom_minimum_size = Vector2(0, 62)
-layout_mode = 2
-text = "CONTINUE"
-
-[node name="RightLog" type="PanelContainer" parent="SafeArea/Layout/Content"]
-custom_minimum_size = Vector2(410, 0)
+[node name="RightLog" type="PanelContainer" parent="SafeArea/Layout/Content/RightColumn"]
+custom_minimum_size = Vector2(360, 470)
 layout_mode = 2
 
-[node name="RightVBox" type="VBoxContainer" parent="SafeArea/Layout/Content/RightLog"]
+[node name="RightVBox" type="VBoxContainer" parent="SafeArea/Layout/Content/RightColumn/RightLog"]
 layout_mode = 2
-theme_override_constants/separation = 18
+theme_override_constants/separation = 16
 
-[node name="Title" type="Label" parent="SafeArea/Layout/Content/RightLog/RightVBox"]
+[node name="Title" type="Label" parent="SafeArea/Layout/Content/RightColumn/RightLog/RightVBox"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 28
+theme_override_font_sizes/font_size = 26
 text = "SYSTEM"
 
-[node name="Rule" type="ColorRect" parent="SafeArea/Layout/Content/RightLog/RightVBox"]
+[node name="Rule" type="ColorRect" parent="SafeArea/Layout/Content/RightColumn/RightLog/RightVBox"]
 custom_minimum_size = Vector2(110, 3)
 layout_mode = 2
 size_flags_horizontal = 0
-color = Color(0.02, 0.72, 0.5, 0.9)
+color = Color(0.12, 1, 0.48, 0.9)
 
-[node name="Status" type="Label" parent="SafeArea/Layout/Content/RightLog/RightVBox"]
+[node name="Status" type="Label" parent="SafeArea/Layout/Content/RightColumn/RightLog/RightVBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.02, 0.45, 0.32, 1)
-theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.2, 1, 0.58, 1)
+theme_override_font_sizes/font_size = 17
 text = "STATUS · WAITING FOR PLAYER"
 autowrap_mode = 2
 
-[node name="Log" type="RichTextLabel" parent="SafeArea/Layout/Content/RightLog/RightVBox"]
+[node name="Log" type="RichTextLabel" parent="SafeArea/Layout/Content/RightColumn/RightLog/RightVBox"]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_font_sizes/normal_font_size = 19
+theme_override_font_sizes/normal_font_size = 18
 bbcode_enabled = true
 text = "[b]SYSTEM[/b]\n\nThe action log will appear here."
 fit_content = false
-scroll_active = false
+scroll_active = true
+scroll_following = true
 autowrap_mode = 2
 
-[node name="Footer" type="HBoxContainer" parent="SafeArea/Layout"]
-custom_minimum_size = Vector2(0, 46)
+[node name="RightSpacer" type="Control" parent="SafeArea/Layout/Content/RightColumn"]
 layout_mode = 2
+size_flags_vertical = 3
 
-[node name="Spacer" type="Control" parent="SafeArea/Layout/Footer"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="BackButton" type="Button" parent="SafeArea/Layout/Footer"]
-custom_minimum_size = Vector2(220, 44)
+[node name="BackButton" type="Button" parent="SafeArea/Layout/Content/RightColumn"]
+custom_minimum_size = Vector2(360, 52)
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
 text = "SAVE & BACK"
@@ -408,7 +504,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("OverlayDim")
+theme_override_styles/panel = SubResource("OverlayClear")
 
 [node name="ChapterGlass" type="PanelContainer" parent="ChapterOverlay"]
 layout_mode = 0
@@ -416,7 +512,7 @@ offset_left = 98.0
 offset_top = 112.0
 offset_right = 1180.0
 offset_bottom = 952.0
-theme_override_styles/panel = SubResource("ChapterGlass")
+theme_override_styles/panel = SubResource("ChapterFrame")
 
 [node name="ChapterVBox" type="VBoxContainer" parent="ChapterOverlay/ChapterGlass"]
 layout_mode = 2
@@ -436,4 +532,4 @@ text = "Background"
 custom_minimum_size = Vector2(270, 4)
 layout_mode = 2
 size_flags_horizontal = 0
-color = Color(0.02, 0.75, 0.51, 0.9)
+color = Color(0.12, 1, 0.48, 0.9)

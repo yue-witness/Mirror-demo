@@ -60,6 +60,11 @@ func _ready() -> void:
 			await _settle_frames()
 		if index < 3:
 			_capture("02c-background-%02d.png" % (index + 1))
+		if index == 2:
+			var speaker_name := _main.get_node(
+				"TutorDialogueUI/SafeArea/Layout/Content/SpeakerCard/SpeakerVBox/SpeakerName") as Label
+			_assert(speaker_name.text.contains("S-17"),
+				"S-17 dialogue did not switch the visible speaker identity.")
 		_left_click()
 		await _settle_frames()
 
@@ -71,8 +76,10 @@ func _ready() -> void:
 	for index in range(6):
 		await _advance_dialogue_page()
 
-	var choice_one := _button("GameplayHUD/SafeArea/Layout/Content/Center/ChoiceRow/Choice1")
-	var confirm := _button("GameplayHUD/SafeArea/Layout/Content/Center/ConfirmButton")
+	var choice_one := _button(
+		"GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ChoiceStack/ChoiceRow/Choice1")
+	var confirm := _button(
+		"GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ConfirmButton")
 	var tutor_line: String = (_main.get_node(
 		"GameplayHUD/SafeArea/Layout/Content/Center/DialoguePanel/DialogueVBox/Text") as RichTextLabel).text
 	_assert(not _main.has_node("GameplayHUD/SafeArea/Layout/Header/HeaderRow/ScoreLabel"),
@@ -82,20 +89,36 @@ func _ready() -> void:
 	_assert(_main.has_node(
 		"GameplayHUD/SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/LatticeView"),
 		"The Stability Lattice visualization is missing from gameplay.")
+	var system_log := _main.get_node(
+		"GameplayHUD/SafeArea/Layout/Content/RightColumn/RightLog/RightVBox/Log") as RichTextLabel
+	_assert(system_log.scroll_active,
+		"The fixed SYSTEM panel does not allow overflow scrolling.")
+	var system_panel := _main.get_node(
+		"GameplayHUD/SafeArea/Layout/Content/RightColumn/RightLog") as PanelContainer
+	_assert(system_panel.custom_minimum_size.y == 470.0,
+		"The SYSTEM panel no longer has its fixed reference height.")
 	_assert(choice_one.visible and not choice_one.disabled,
 		"Bash gameplay did not open a legal player choice.")
 	_assert(confirm.visible and confirm.disabled,
 		"Bash confirm must wait for an explicit player selection.")
 	_capture("03-bash-gameplay.png")
+	var live_system_log := system_log.text
+	system_log.text = ("OVERFLOW ENTRY / SCROLL VERIFICATION\n").repeat(80)
+	await _settle_frames()
+	var system_scroll := system_log.get_v_scroll_bar()
+	_assert(system_scroll.visible and system_scroll.max_value > system_scroll.page,
+		"SYSTEM overflow did not activate its vertical scrollbar.")
+	system_log.text = live_system_log
 
-	_press("GameplayHUD/SafeArea/Layout/Content/Center/ChoiceRow/Choice1")
+	_press(
+		"GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ChoiceStack/ChoiceRow/Choice1")
 	await _settle_frames()
 	_assert(not confirm.disabled, "Selecting a legal Bash action did not enable confirm.")
 	_assert(not (_main.get_node(
 		"GameplayHUD/SafeArea/Layout/Content/Center/DialoguePanel/DialogueVBox/Text") as RichTextLabel).text.is_empty(),
 		"The optional selection-stage Tutor dialogue left the panel empty.")
 	_capture("03a-bash-selected.png")
-	_press("GameplayHUD/SafeArea/Layout/Content/Center/ConfirmButton")
+	_press("GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ConfirmButton")
 	await get_tree().create_timer(0.08).timeout
 	await _settle_frames()
 	_assert((_main.get_node(
@@ -104,7 +127,7 @@ func _ready() -> void:
 	_assert(FileAccess.file_exists(SAVE_PATH), "A stable session checkpoint was not written.")
 	await get_tree().create_timer(1.0).timeout
 
-	_press("GameplayHUD/SafeArea/Layout/Footer/BackButton")
+	_press("GameplayHUD/SafeArea/Layout/Content/RightColumn/BackButton")
 	await _settle_frames()
 	_assert(_main.get_node("TitleScreen").visible,
 		"Save and Back did not return to the title screen.")

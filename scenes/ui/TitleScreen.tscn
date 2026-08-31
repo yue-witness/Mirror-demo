@@ -7,7 +7,7 @@ content_margin_left = 64.0
 content_margin_top = 52.0
 content_margin_right = 64.0
 content_margin_bottom = 52.0
-bg_color = Color(0.96, 0.985, 0.98, 0.9)
+bg_color = Color(0, 0, 0, 0)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
@@ -17,11 +17,11 @@ corner_radius_top_left = 36
 corner_radius_top_right = 36
 corner_radius_bottom_right = 36
 corner_radius_bottom_left = 36
-shadow_color = Color(0.02, 0.18, 0.15, 0.2)
-shadow_size = 22
+shadow_color = Color(0, 0, 0, 0)
+shadow_size = 0
 
 [sub_resource type="StyleBoxFlat" id="ConfirmDim"]
-bg_color = Color(0.82, 0.9, 0.89, 0.68)
+bg_color = Color(0, 0, 0, 0)
 
 [node name="TitleScreen" type="Control" unique_id=1899964472]
 layout_mode = 3
@@ -46,7 +46,7 @@ theme_override_constants/separation = 16
 
 [node name="Eyebrow" type="Label" parent="MenuGlass/MenuVBox" unique_id=715938548]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.05, 0.48, 0.36, 1)
+theme_override_colors/font_color = Color(0.12, 1, 0.48, 1)
 theme_override_font_sizes/font_size = 18
 text = "PROJECT X · SUBJECT S-17"
 
@@ -94,7 +94,7 @@ alignment = 0
 [node name="SaveStatus" type="Label" parent="MenuGlass/MenuVBox" unique_id=703430064]
 custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.08, 0.36, 0.3, 1)
+theme_override_colors/font_color = Color(0.12, 1, 0.48, 1)
 theme_override_font_sizes/font_size = 18
 text = "NO ACTIVE SAVE"
 vertical_alignment = 1

@@ -13,12 +13,15 @@ public partial class TutorDialogueUI : Control
     private Label _phaseLabel = null!;
     private Label _saveLabel = null!;
     private Label _playTimeLabel = null!;
+    private Label _speakerLabel = null!;
     private RichTextLabel _dialogueText = null!;
     private RichTextLabel _supplementaryText = null!;
     private PanelContainer _portrait = null!;
-    private Label _portraitText = null!;
-    private Label _tutorName = null!;
+    private TextureRect _portraitTexture = null!;
+    private Label _speakerName = null!;
     private Button _backButton = null!;
+    private Texture2D _tutorPortrait = null!;
+    private Texture2D _s17Portrait = null!;
     private double _visibleCharacterProgress;
     private bool _isTyping;
 
@@ -32,17 +35,23 @@ public partial class TutorDialogueUI : Control
         _saveLabel = GetNode<Label>("SafeArea/Layout/Header/HeaderRow/SaveLabel");
         _playTimeLabel = GetNode<Label>(
             "SafeArea/Layout/Header/HeaderRow/PlayTimeLabel");
+        _speakerLabel = GetNode<Label>(
+            "SafeArea/Layout/Content/DialogueCard/DialogueVBox/Speaker");
         _dialogueText = GetNode<RichTextLabel>(
             "SafeArea/Layout/Content/DialogueCard/DialogueVBox/DialogueText");
         _supplementaryText = GetNode<RichTextLabel>(
             "SafeArea/Layout/Content/DialogueCard/DialogueVBox/SupplementaryText");
         _portrait = GetNode<PanelContainer>(
-            "SafeArea/Layout/Content/TutorCard/TutorVBox/Portrait");
-        _portraitText = GetNode<Label>(
-            "SafeArea/Layout/Content/TutorCard/TutorVBox/Portrait/PortraitText");
-        _tutorName = GetNode<Label>(
-            "SafeArea/Layout/Content/TutorCard/TutorVBox/TutorName");
+            "SafeArea/Layout/Content/SpeakerCard/SpeakerVBox/PortraitFrame");
+        _portraitTexture = GetNode<TextureRect>(
+            "SafeArea/Layout/Content/SpeakerCard/SpeakerVBox/PortraitFrame/PortraitTexture");
+        _speakerName = GetNode<Label>(
+            "SafeArea/Layout/Content/SpeakerCard/SpeakerVBox/SpeakerName");
         _backButton = GetNode<Button>("SafeArea/Layout/Footer/BackButton");
+        _tutorPortrait = ResourceLoader.Load<Texture2D>(
+            "res://assets/portraits/tutor.png");
+        _s17Portrait = ResourceLoader.Load<Texture2D>(
+            "res://assets/portraits/s17.png");
 
         _backButton.Pressed += () => BackToTitleRequested?.Invoke();
     }
@@ -107,7 +116,7 @@ public partial class TutorDialogueUI : Control
             _ => phase.ToString().ToUpperInvariant()
         };
         _saveLabel.Text = $"SAVE · STABLE   {lineIndex + 1:00}/{totalLines:00}";
-        SetRedEye(active: false);
+        SetSpeaker(line.Speaker, redEye: false);
         BeginTyping(line.Text);
         _supplementaryText.Visible = false;
     }
@@ -121,7 +130,7 @@ public partial class TutorDialogueUI : Control
     {
         _phaseLabel.Text = "SUMMARY";
         _saveLabel.Text = $"SAVE · STABLE   {lineIndex + 1:00}/{totalLines:00}";
-        SetRedEye(redEye);
+        SetSpeaker(line.Speaker, redEye);
         BeginTyping(line.Text);
         _supplementaryText.Visible = true;
         _supplementaryText.Text =
@@ -163,19 +172,30 @@ public partial class TutorDialogueUI : Control
         _dialogueText.VisibleCharacters = -1;
     }
 
-    private void SetRedEye(bool active)
+    private void SetSpeaker(string speaker, bool redEye)
     {
-        if (!active)
+        bool isS17 = speaker.Equals("S-17", StringComparison.OrdinalIgnoreCase)
+            || speaker.Equals("S17", StringComparison.OrdinalIgnoreCase);
+
+        _portrait.RemoveThemeStyleboxOverride("panel");
+        _portraitTexture.Modulate = Colors.White;
+        _portraitTexture.Texture = isS17 ? _s17Portrait : _tutorPortrait;
+        _speakerLabel.Text = isS17 ? "S-17" : "TUTOR";
+        _speakerLabel.AddThemeColorOverride(
+            "font_color",
+            isS17 ? new Color("38eaff") : new Color("ff2e55"));
+        _speakerName.Text = isS17
+            ? "SUBJECT S-17 · ONLINE"
+            : "THE TUTOR · ONLINE";
+
+        if (!redEye || isS17)
         {
-            _portrait.RemoveThemeStyleboxOverride("panel");
-            _portraitText.RemoveThemeColorOverride("font_color");
-            _tutorName.Text = "THE TUTOR · ONLINE";
             return;
         }
 
         var anomalyStyle = new StyleBoxFlat
         {
-            BgColor = new Color("fff4f5"),
+            BgColor = Colors.Transparent,
             BorderColor = new Color("ff314d"),
             BorderWidthLeft = 4,
             BorderWidthTop = 4,
@@ -185,11 +205,11 @@ public partial class TutorDialogueUI : Control
             CornerRadiusTopRight = 90,
             CornerRadiusBottomRight = 90,
             CornerRadiusBottomLeft = 90,
-            ShadowColor = new Color("b000244d"),
-            ShadowSize = 24
+            ShadowColor = Colors.Transparent,
+            ShadowSize = 0
         };
         _portrait.AddThemeStyleboxOverride("panel", anomalyStyle);
-        _portraitText.AddThemeColorOverride("font_color", new Color("ff1738"));
-        _tutorName.Text = "THE TUTOR · SIGNAL ANOMALY";
+        _portraitTexture.Modulate = new Color("ff8192");
+        _speakerName.Text = "THE TUTOR · SIGNAL ANOMALY";
     }
 }

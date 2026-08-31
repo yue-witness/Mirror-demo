@@ -36,6 +36,12 @@ internal static class Program
 
         Assert(dialogue.Get(DemoPhase.Background).Count == 6,
             "The Stability Lattice introduction must contain six complete pages.");
+        Assert(dialogue.Get(DemoPhase.Background)
+                .Any(line => line.Speaker == "S-17"),
+            "The introduction must include a visible S-17 response.");
+        Assert(dialogue.Get(DemoPhase.Background)
+                .Any(line => line.Speaker == "TUTOR"),
+            "The introduction must retain Tutor-authored dialogue.");
         Assert(dialogue.Get(DemoPhase.BashTutorial).Count == 6,
             "The standard Bash tutorial must contain six complete pages.");
         Assert(dialogue.Get(DemoPhase.BashRound2Intro).Count == 3,

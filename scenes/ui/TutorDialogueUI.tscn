@@ -1,38 +1,60 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scripts/UI/TutorDialogueUI.cs" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/portraits/tutor.png" id="2_tutor"]
+[ext_resource type="Texture2D" path="res://assets/portraits/s17.png" id="3_s17"]
 
-[sub_resource type="StyleBoxFlat" id="PortraitCircle"]
-bg_color = Color(0.97, 0.985, 0.98, 0.96)
+[sub_resource type="StyleBoxFlat" id="PortraitFrame"]
+content_margin_left = 6.0
+content_margin_top = 6.0
+content_margin_right = 6.0
+content_margin_bottom = 6.0
+bg_color = Color(0, 0, 0, 0)
 border_width_left = 3
 border_width_top = 3
 border_width_right = 3
 border_width_bottom = 3
-border_color = Color(0.02, 0.72, 0.5, 0.9)
-corner_radius_top_left = 90
-corner_radius_top_right = 90
-corner_radius_bottom_right = 90
-corner_radius_bottom_left = 90
-shadow_color = Color(0.02, 0.18, 0.15, 0.18)
-shadow_size = 16
+border_color = Color(0.12, 1, 0.48, 0.95)
+corner_radius_top_left = 110
+corner_radius_top_right = 110
+corner_radius_bottom_right = 110
+corner_radius_bottom_left = 110
+shadow_color = Color(0, 0, 0, 0)
+shadow_size = 0
+
+[sub_resource type="StyleBoxFlat" id="SpeakerCard"]
+content_margin_left = 34.0
+content_margin_top = 24.0
+content_margin_right = 34.0
+content_margin_bottom = 24.0
+bg_color = Color(0, 0, 0, 0)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.12, 1, 0.48, 0.4)
+corner_radius_top_left = 26
+corner_radius_top_right = 26
+corner_radius_bottom_right = 26
+corner_radius_bottom_left = 26
 
 [sub_resource type="StyleBoxFlat" id="DialogueCard"]
 content_margin_left = 64.0
-content_margin_top = 54.0
+content_margin_top = 42.0
 content_margin_right = 64.0
-content_margin_bottom = 46.0
-bg_color = Color(0.965, 0.985, 0.98, 0.94)
+content_margin_bottom = 40.0
+bg_color = Color(0, 0, 0, 0)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(0.08, 0.68, 0.48, 0.82)
-corner_radius_top_left = 52
-corner_radius_top_right = 52
-corner_radius_bottom_right = 52
-corner_radius_bottom_left = 52
-shadow_color = Color(0.02, 0.18, 0.15, 0.2)
-shadow_size = 20
+border_color = Color(0.12, 1, 0.48, 0.82)
+corner_radius_top_left = 38
+corner_radius_top_right = 38
+corner_radius_bottom_right = 38
+corner_radius_bottom_left = 38
+shadow_color = Color(0, 0, 0, 0)
+shadow_size = 0
 
 [node name="TutorDialogueUI" type="Control"]
 layout_mode = 3
@@ -57,7 +79,7 @@ theme_override_constants/margin_bottom = 30
 
 [node name="Layout" type="VBoxContainer" parent="SafeArea"]
 layout_mode = 2
-theme_override_constants/separation = 28
+theme_override_constants/separation = 22
 
 [node name="Header" type="PanelContainer" parent="SafeArea/Layout"]
 custom_minimum_size = Vector2(0, 80)
@@ -89,55 +111,61 @@ text = "PLAY TIME · 00:00"
 horizontal_alignment = 2
 vertical_alignment = 1
 
-[node name="Content" type="HBoxContainer" parent="SafeArea/Layout"]
+[node name="Content" type="VBoxContainer" parent="SafeArea/Layout"]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_constants/separation = 80
+theme_override_constants/separation = 22
 
-[node name="TutorCard" type="PanelContainer" parent="SafeArea/Layout/Content"]
-custom_minimum_size = Vector2(620, 0)
-layout_mode = 2
-
-[node name="TutorVBox" type="VBoxContainer" parent="SafeArea/Layout/Content/TutorCard"]
-layout_mode = 2
-alignment = 1
-
-[node name="Portrait" type="PanelContainer" parent="SafeArea/Layout/Content/TutorCard/TutorVBox"]
-custom_minimum_size = Vector2(180, 180)
+[node name="SpeakerCard" type="PanelContainer" parent="SafeArea/Layout/Content"]
+custom_minimum_size = Vector2(560, 326)
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_styles/panel = SubResource("PortraitCircle")
+theme_override_styles/panel = SubResource("SpeakerCard")
 
-[node name="PortraitText" type="Label" parent="SafeArea/Layout/Content/TutorCard/TutorVBox/Portrait"]
+[node name="SpeakerVBox" type="VBoxContainer" parent="SafeArea/Layout/Content/SpeakerCard"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 66
-text = "T"
-horizontal_alignment = 1
-vertical_alignment = 1
+alignment = 1
+theme_override_constants/separation = 8
 
-[node name="TutorName" type="Label" parent="SafeArea/Layout/Content/TutorCard/TutorVBox"]
+[node name="PortraitFrame" type="PanelContainer" parent="SafeArea/Layout/Content/SpeakerCard/SpeakerVBox"]
+clip_contents = true
+custom_minimum_size = Vector2(220, 220)
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
+size_flags_horizontal = 4
+theme_override_styles/panel = SubResource("PortraitFrame")
+
+[node name="PortraitTexture" type="TextureRect" parent="SafeArea/Layout/Content/SpeakerCard/SpeakerVBox/PortraitFrame"]
+custom_minimum_size = Vector2(208, 208)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_tutor")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="SpeakerName" type="Label" parent="SafeArea/Layout/Content/SpeakerCard/SpeakerVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
 text = "THE TUTOR · ONLINE"
 horizontal_alignment = 1
 
 [node name="DialogueCard" type="PanelContainer" parent="SafeArea/Layout/Content"]
+custom_minimum_size = Vector2(0, 330)
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_vertical = 3
 theme_override_styles/panel = SubResource("DialogueCard")
 
 [node name="DialogueVBox" type="VBoxContainer" parent="SafeArea/Layout/Content/DialogueCard"]
 layout_mode = 2
-theme_override_constants/separation = 24
+theme_override_constants/separation = 20
 
 [node name="Speaker" type="Label" parent="SafeArea/Layout/Content/DialogueCard/DialogueVBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.55, 0.08, 0.16, 1)
+theme_override_colors/font_color = Color(1, 0.18, 0.3, 1)
 theme_override_font_sizes/font_size = 22
 text = "TUTOR"
 
 [node name="DialogueText" type="RichTextLabel" parent="SafeArea/Layout/Content/DialogueCard/DialogueVBox"]
-custom_minimum_size = Vector2(0, 180)
+custom_minimum_size = Vector2(0, 150)
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_font_sizes/normal_font_size = 30
