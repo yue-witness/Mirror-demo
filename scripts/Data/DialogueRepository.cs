@@ -15,6 +15,8 @@ public sealed record DialogueLine(
 /// </summary>
 public static class TutorDialoguePool
 {
+    public const string GuidedInputSelectB = "guided_input_select_b";
+    public const string GuidedInputConfirm = "guided_input_confirm";
     public const string BashRoundOneRetryHint1 = "bash_r1_retry_hint_1";
     public const string BashRoundOneRetryHint2 = "bash_r1_retry_hint_2";
     public const string BashRoundOneRetryHint3 = "bash_r1_retry_hint_3";
@@ -53,6 +55,8 @@ public static class TutorDialoguePool
 
     public static IReadOnlyList<string> All { get; } = new[]
     {
+        GuidedInputSelectB,
+        GuidedInputConfirm,
         BashRoundOneRetryHint1,
         BashRoundOneRetryHint2,
         BashRoundOneRetryHint3,

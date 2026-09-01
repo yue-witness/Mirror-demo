@@ -29,6 +29,7 @@ public partial class GameplayHUD : Control
     private Button[] _choiceButtons = null!;
     private Button _confirmButton = null!;
     private Button _backButton = null!;
+    private ForcedChoiceTutorialOverlay _forcedChoiceTutorial = null!;
     private Control _chapterOverlay = null!;
     private Label _chapterNumber = null!;
     private Label _chapterTitle = null!;
@@ -91,6 +92,8 @@ public partial class GameplayHUD : Control
             "SafeArea/Layout/Content/Center/ActionRow/ConfirmButton");
         _backButton = GetNode<Button>(
             "SafeArea/Layout/Content/RightColumn/BackButton");
+        _forcedChoiceTutorial = GetNode<ForcedChoiceTutorialOverlay>(
+            "ForcedChoiceTutorial");
         _chapterOverlay = GetNode<Control>("ChapterOverlay");
         _chapterNumber = GetNode<Label>(
             "ChapterOverlay/ChapterGlass/ChapterVBox/ChapterNumber");
@@ -116,6 +119,9 @@ public partial class GameplayHUD : Control
 
         _confirmButton.Pressed += () => ConfirmRequested?.Invoke();
         _backButton.Pressed += RequestBackToTitle;
+        _forcedChoiceTutorial.FocusActionRequested +=
+            HandleForcedTutorialAction;
+        _forcedChoiceTutorial.SaveAndBackRequested += RequestBackToTitle;
     }
 
     public override void _Process(double delta)
@@ -342,6 +348,7 @@ public partial class GameplayHUD : Control
         ChoicePair? finalChoice = null,
         IReadOnlyList<ChoicePair>? choiceHistory = null)
     {
+        HideForcedChoiceTutorial();
         string preservedSystemLog = _systemLog.Text.Trim();
         string gameName = game == GameKind.Bash ? "BASH" : "LIMIT BASH";
         string result = FormatOutcome(outcome);
@@ -383,6 +390,40 @@ public partial class GameplayHUD : Control
         ConfigureChoices(Array.Empty<int>(), null, locked: true);
         _confirmButton.Visible = false;
         StartResultAnimation(outcome);
+    }
+
+    /// <summary>
+    /// Locks the normal action row and delegates the one permitted click to the
+    /// full-screen tutorial overlay. SAVE &amp; BACK remains available there.
+    /// </summary>
+    public void ShowForcedChoiceTutorial(ForcedChoiceTutorialStage stage)
+    {
+        if (stage == ForcedChoiceTutorialStage.Hidden)
+        {
+            HideForcedChoiceTutorial();
+            return;
+        }
+
+        foreach (Button button in _choiceButtons)
+        {
+            // The transparent tutorial layer owns input. Keep the buttons'
+            // normal visual state intact so the rest of the HUD is not dimmed.
+            button.MouseFilter = MouseFilterEnum.Ignore;
+            button.FocusMode = FocusModeEnum.None;
+        }
+
+        _confirmButton.MouseFilter = MouseFilterEnum.Ignore;
+        _confirmButton.FocusMode = FocusModeEnum.None;
+
+        _forcedChoiceTutorial.ShowStage(stage);
+    }
+
+    public void HideForcedChoiceTutorial()
+    {
+        if (GodotObject.IsInstanceValid(_forcedChoiceTutorial))
+        {
+            _forcedChoiceTutorial.HideStage();
+        }
     }
 
     private void ConfigureChoices(
@@ -542,6 +583,22 @@ public partial class GameplayHUD : Control
     {
         StopTutorPresentation();
         BackToTitleRequested?.Invoke();
+    }
+
+    private void HandleForcedTutorialAction()
+    {
+        if (_forcedChoiceTutorial.Stage
+            == ForcedChoiceTutorialStage.SelectB)
+        {
+            ChoiceSelected?.Invoke(2);
+            return;
+        }
+
+        if (_forcedChoiceTutorial.Stage
+            == ForcedChoiceTutorialStage.Confirm)
+        {
+            ConfirmRequested?.Invoke();
+        }
     }
 
     private void ShowCompletionCue()

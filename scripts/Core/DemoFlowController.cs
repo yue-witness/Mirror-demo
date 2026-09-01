@@ -47,6 +47,7 @@ public partial class DemoFlowController : Control
     private int _flowVersion;
     private int? _selectedChoice;
     private bool _inputLocked;
+    private ForcedChoiceTutorialStage _forcedChoiceTutorialStage;
     private bool _chapterPending;
     private bool _selectionDialogueShown;
     private bool _revisionDialogueShown;
@@ -164,11 +165,13 @@ public partial class DemoFlowController : Control
         _flowVersion++;
         _phase = DemoPhase.TitleScreen;
         _inputLocked = false;
+        _forcedChoiceTutorialStage = ForcedChoiceTutorialStage.Hidden;
         _selectedChoice = null;
         _chapterPending = false;
         _currentTutorDialogueId = string.Empty;
         _currentTutorDialogue = string.Empty;
         _speechPlayer.StopDialogue();
+        _hud.HideForcedChoiceTutorial();
         _background.Texture = GD.Load<Texture2D>(BackgroundTexturePath);
         ShowPrimaryScreen(_titleScreen);
 
@@ -201,6 +204,7 @@ public partial class DemoFlowController : Control
         _bashRoundOneFailures = 0;
         _bashRoundTwoFailures = 0;
         _dialogueStep = 0;
+        _forcedChoiceTutorialStage = ForcedChoiceTutorialStage.Hidden;
         StartPlayClock(0);
         EnterDialoguePhase(DemoPhase.Background, showChapter: true);
     }
@@ -484,11 +488,23 @@ public partial class DemoFlowController : Control
             initialUnits,
             roundIndex == 1 ? Actor.Player : Actor.Tutor);
 
+        _forcedChoiceTutorialStage = RequiresForcedChoiceTutorial()
+            ? ForcedChoiceTutorialStage.SelectB
+            : ForcedChoiceTutorialStage.Hidden;
+
+        if (_forcedChoiceTutorialStage
+            == ForcedChoiceTutorialStage.SelectB)
+        {
+            SetTutorDialogue(TutorDialoguePool.GuidedInputSelectB);
+        }
+
         ResetTurnDialogueState();
         WriteCheckpoint();
         RenderBash(
             "A fresh Stability Lattice is active in the chamber.",
-            TutorDialoguePool.BashState);
+            _forcedChoiceTutorialStage == ForcedChoiceTutorialStage.Hidden
+                ? TutorDialoguePool.BashState
+                : null);
 
         if (_bash.CurrentTurn == Actor.Tutor)
         {
@@ -499,6 +515,19 @@ public partial class DemoFlowController : Control
     private void SelectChoice(int choice)
     {
         if (_inputLocked)
+        {
+            return;
+        }
+
+        if (_forcedChoiceTutorialStage
+                == ForcedChoiceTutorialStage.SelectB
+            && choice != 2)
+        {
+            return;
+        }
+
+        if (_forcedChoiceTutorialStage
+            == ForcedChoiceTutorialStage.Confirm)
         {
             return;
         }
@@ -514,6 +543,18 @@ public partial class DemoFlowController : Control
 
             int? previousChoice = _selectedChoice;
             _selectedChoice = choice;
+
+            if (_forcedChoiceTutorialStage
+                == ForcedChoiceTutorialStage.SelectB)
+            {
+                _forcedChoiceTutorialStage =
+                    ForcedChoiceTutorialStage.Confirm;
+                SetTutorDialogue(TutorDialoguePool.GuidedInputConfirm);
+                RenderBash(
+                    "Guided request B is staged. Confirmation is required.");
+                return;
+            }
+
             UpdateChoiceStageDialogue(
                 previousChoice,
                 choice,
@@ -549,6 +590,19 @@ public partial class DemoFlowController : Control
             return;
         }
 
+        if (_forcedChoiceTutorialStage
+            == ForcedChoiceTutorialStage.SelectB)
+        {
+            return;
+        }
+
+        if (_forcedChoiceTutorialStage
+                == ForcedChoiceTutorialStage.Confirm
+            && _selectedChoice.Value != 2)
+        {
+            return;
+        }
+
         if (_phase is DemoPhase.BashGame1Round1 or DemoPhase.BashGame1Round2)
         {
             ConfirmBashChoice(_selectedChoice.Value);
@@ -566,6 +620,12 @@ public partial class DemoFlowController : Control
             || !_bash.CanTake(choice))
         {
             return;
+        }
+
+        if (_forcedChoiceTutorialStage
+            == ForcedChoiceTutorialStage.Confirm)
+        {
+            _forcedChoiceTutorialStage = ForcedChoiceTutorialStage.Hidden;
         }
 
         _inputLocked = true;
@@ -661,6 +721,7 @@ public partial class DemoFlowController : Control
             systemLog: log,
             tutorDialogueId: _currentTutorDialogueId,
             tutorDialogue: _currentTutorDialogue);
+        _hud.ShowForcedChoiceTutorial(_forcedChoiceTutorialStage);
     }
 
     private void FinishBash(RoundOutcome outcome)
@@ -1045,6 +1106,7 @@ public partial class DemoFlowController : Control
         StartPlayClock(state.ElapsedPlayMilliseconds);
         _selectedChoice = null;
         _inputLocked = false;
+        _forcedChoiceTutorialStage = ForcedChoiceTutorialStage.Hidden;
         _chapterPending = false;
         _activePrimaryScreen = null;
         _titleScreen.Visible = false;
@@ -1080,6 +1142,12 @@ public partial class DemoFlowController : Control
             _bashRoundIndex = snapshot.BashRoundIndex;
             _currentGameTurns = snapshot.RoundIndex;
             _limitBash = null;
+
+            if (RequiresForcedChoiceTutorial())
+            {
+                _forcedChoiceTutorialStage =
+                    ForcedChoiceTutorialStage.SelectB;
+            }
         }
         else
         {
@@ -1154,9 +1222,18 @@ public partial class DemoFlowController : Control
         if (snapshot.Game == GameKind.Bash && _bash is not null)
         {
             _inputLocked = _bash.CurrentTurn == Actor.Tutor;
+
+            if (_forcedChoiceTutorialStage
+                == ForcedChoiceTutorialStage.SelectB)
+            {
+                SetTutorDialogue(TutorDialoguePool.GuidedInputSelectB);
+            }
+
             RenderBash(
                 "Restored from a stable checkpoint.",
-                TutorDialoguePool.Restore);
+                _forcedChoiceTutorialStage == ForcedChoiceTutorialStage.Hidden
+                    ? TutorDialoguePool.Restore
+                    : null);
 
             if (_inputLocked)
             {
@@ -1377,6 +1454,15 @@ public partial class DemoFlowController : Control
         _hesitationDialogueShown = false;
         uint spread = unchecked((uint)(_sessionRandom.Seed + _dialogueStep));
         _hesitationDueTicks = Time.GetTicksMsec() + 8_000u + spread % 4_001u;
+    }
+
+    private bool RequiresForcedChoiceTutorial()
+    {
+        return _phase == DemoPhase.BashGame1Round1
+            && _bashRoundIndex == 1
+            && _bashRoundOneFailures == 0
+            && _currentGameTurns == 0
+            && _bash?.CurrentTurn == Actor.Player;
     }
 
     private void TryShowHesitationDialogue()

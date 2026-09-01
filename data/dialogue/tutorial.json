@@ -1,6 +1,12 @@
 {
   "phases": {},
   "randomPools": {
+    "guided_input_select_b": [
+      { "id": "guided_input_select_b", "speaker": "TUTOR", "text": "Guided input is active, S-17. Select the middle option: B, DISENGAGE 2. All other controls are locked except SAVE AND BACK." }
+    ],
+    "guided_input_confirm": [
+      { "id": "guided_input_confirm", "speaker": "TUTOR", "text": "Good. B, DISENGAGE 2 is staged. Now press CONFIRM to commit the choice. After confirmation, the lattice will update and normal control will begin." }
+    ],
     "bash_r1_retry_hint_1": [
       { "id": "bash_r1_retry_hint_1", "speaker": "TUTOR", "text": "The lattice rules have not changed. A legal request can still leave an unsafe anchor count. Trace one reply further." }
     ],

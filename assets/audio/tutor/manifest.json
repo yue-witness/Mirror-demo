@@ -235,6 +235,24 @@
       "delivery": "anomaly"
     },
     {
+      "line_id": "guided_input_select_b",
+      "text": "Guided input is active, S-17. Select the middle option: B, DISENGAGE 2. All other controls are locked except SAVE AND BACK.",
+      "audio_path": "res://assets/audio/tutor/guided_input_select_b.ogg",
+      "duration_seconds": 10.8,
+      "visible_character_count": 123,
+      "characters_per_second": 11.3889,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "guided_input_confirm",
+      "text": "Good. B, DISENGAGE 2 is staged. Now press CONFIRM to commit the choice. After confirmation, the lattice will update and normal control will begin.",
+      "audio_path": "res://assets/audio/tutor/guided_input_confirm.ogg",
+      "duration_seconds": 11.352,
+      "visible_character_count": 146,
+      "characters_per_second": 12.8612,
+      "delivery": "instructional"
+    },
+    {
       "line_id": "bash_r1_retry_hint_1",
       "text": "The lattice rules have not changed. A legal request can still leave an unsafe anchor count. Trace one reply further.",
       "audio_path": "res://assets/audio/tutor/bash_r1_retry_hint_1.ogg",

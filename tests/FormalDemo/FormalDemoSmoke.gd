@@ -221,6 +221,8 @@ func _ready() -> void:
 		"GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ChoiceStack/ChoiceRow/Choice3")
 	var confirm := _button(
 		"GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ConfirmButton")
+	var save_and_back := _button(
+		"GameplayHUD/SafeArea/Layout/Content/RightColumn/BackButton")
 	var choice_center_y := choice_one.global_position.y + choice_one.size.y / 2.0
 	var confirm_center_y := confirm.global_position.y + confirm.size.y / 2.0
 	var choice_positions := [
@@ -233,13 +235,9 @@ func _ready() -> void:
 	var choice_one_text := choice_one.get_node("DotMatrixText") as Label
 	var choice_two_text := choice_two.get_node("DotMatrixText") as Label
 	var choice_three_text := choice_three.get_node("DotMatrixText") as Label
-	_assert(choice_one_text.get_theme_color("font_color").is_equal_approx(
-		Color(0.22, 1.0, 0.23, 1.0))
-		and choice_two_text.get_theme_color("font_color").is_equal_approx(
-			Color(1.0, 0.76, 0.12, 1.0))
-		and choice_three_text.get_theme_color("font_color").is_equal_approx(
-			Color(1.0, 0.22, 0.38, 1.0)),
-		"Choice text colors no longer match their corresponding frames.")
+	_assert(choice_two_text.get_theme_color("font_color").is_equal_approx(
+		Color(1.0, 0.76, 0.12, 1.0)),
+		"The highlighted B caption no longer matches its yellow frame.")
 	_assert(choice_one.text.begins_with("A\n")
 		and choice_two.text.begins_with("B\n")
 		and choice_three.text.begins_with("C\n"),
@@ -261,12 +259,28 @@ func _ready() -> void:
 		"GameplayHUD/SafeArea/Layout/Content/Center/DialoguePanel/DialogueVBox/Text") as RichTextLabel).text
 	var gameplay_dialogue := _main.get_node(
 		"GameplayHUD/SafeArea/Layout/Content/Center/DialoguePanel/DialogueVBox/Text") as RichTextLabel
+	var forced_tutorial := _main.get_node(
+		"GameplayHUD/ForcedChoiceTutorial") as Control
+	var tutorial_pointer := _main.get_node(
+		"GameplayHUD/ForcedChoiceTutorial/Pointer") as TextureRect
+	var tutorial_highlight := _main.get_node(
+		"GameplayHUD/ForcedChoiceTutorial/HighlightFrame") as Panel
 	_assert(gameplay_dialogue.get_theme_font_size("normal_font_size") >= 30
 		and gameplay_dialogue.vertical_alignment == VERTICAL_ALIGNMENT_CENTER,
 		"Gameplay Tutor dialogue is not enlarged and vertically centred.")
 	_assert(gameplay_dialogue.visible_characters != -1
-		and not tutor_speech.playing,
-		"High-frequency gameplay guidance must type without Tutor speech.")
+		and tutor_speech.playing
+		and gameplay_dialogue.text.contains("Select the middle option"),
+		"The mandatory first-choice Tutor line is not typing with voice guidance.")
+	_assert(forced_tutorial.visible
+		and forced_tutorial.mouse_filter == Control.MOUSE_FILTER_STOP
+		and tutorial_highlight.get_global_rect().encloses(choice_two.get_global_rect()),
+		"The mandatory tutorial did not begin at its B-selection gate.")
+	_assert(tutorial_pointer.texture.resource_path.ends_with(
+		"green_laser_dot_arrow.png")
+		and not forced_tutorial.has_node("DimMask")
+		and not forced_tutorial.has_node("StepCard"),
+		"The frame-and-arrow tutorial is not active or still adds extra visual masking.")
 	_assert(not _main.has_node("GameplayHUD/SafeArea/Layout/Header/HeaderRow/ScoreLabel"),
 		"The removed top-centre score display is still present.")
 	_assert(_main.has_node("GameplayHUD/SafeArea/Layout/Header/HeaderRow/HeaderSpacer"),
@@ -329,19 +343,48 @@ func _ready() -> void:
 		+ str(tutor_panel.global_position.y) + "/" + str(tutor_panel.size.y)
 		+ ", dialogue y/height " + str(dialogue_panel.global_position.y)
 		+ "/" + str(dialogue_panel.size.y))
-	_assert(choice_one.visible and not choice_one.disabled,
-		"Bash gameplay did not open a legal player choice.")
+	_assert(choice_one.visible and not choice_one.disabled
+		and not choice_two.disabled and not choice_three.disabled,
+		"The transparent tutorial changed the visual state of the choice buttons.")
 	for button in [choice_one, choice_two, choice_three, confirm]:
 		_assert(button.get_theme_stylebox("hover")
 			!= button.get_theme_stylebox("normal"),
 			"A central action button reuses its normal style while hovering.")
 	_assert(confirm.visible and confirm.disabled,
 		"Bash confirm must wait for an explicit player selection.")
-	_capture("03-bash-gameplay.png")
+	var gameplay_hud := _main.get_node("GameplayHUD") as Control
+	gameplay_hud.set_process(false)
+	gameplay_dialogue.visible_characters = -1
+	await get_tree().process_frame
+	_capture("03-bash-guided-select-b.png")
+	gameplay_hud.set_process(true)
 	if DisplayServer.get_name() != "headless":
 		Input.warp_mouse(choice_two.global_position + choice_two.size / 2.0)
 		await _settle_frames()
 		_capture("03-hover-choice.png")
+	_click_control(choice_one)
+	await _settle_frames()
+	_assert(confirm.disabled
+		and tutorial_highlight.get_global_rect().encloses(choice_two.get_global_rect()),
+		"The transparent input gate accepted a covered A choice.")
+	_click_control(choice_two)
+	await _settle_frames()
+	_assert(not confirm.disabled
+		and tutorial_highlight.get_global_rect().encloses(confirm.get_global_rect()),
+		"The transparent input gate did not route its highlighted B choice.")
+	_click_control(save_and_back)
+	await _settle_frames()
+	_assert(_main.get_node("TitleScreen").visible
+		and _button("TitleScreen/MenuGlass/MenuVBox/ContinueButton").visible,
+		"SAVE & BACK was not available through the mandatory tutorial mask.")
+	_press("TitleScreen/MenuGlass/MenuVBox/ContinueButton")
+	await get_tree().create_timer(0.46).timeout
+	await _settle_frames()
+	_assert(_main.get_node("GameplayHUD").visible
+		and forced_tutorial.visible
+		and tutorial_highlight.get_global_rect().encloses(choice_two.get_global_rect())
+		and confirm.disabled,
+		"Restoring a pre-confirmation save did not restart the guided B step.")
 	var live_system_log := system_log.text
 	system_log.text = ("OVERFLOW ENTRY / SCROLL VERIFICATION\n").repeat(80)
 	await _settle_frames()
@@ -353,9 +396,21 @@ func _ready() -> void:
 	_press(
 		"GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ChoiceStack/ChoiceRow/Choice1")
 	await _settle_frames()
-	_assert(not confirm.disabled, "Selecting a legal Bash action did not enable confirm.")
-	_assert(choice_one.text == "A\nSTAGED" and not choice_one.text.contains("✓"),
-		"The selected choice changed its fixed A heading or retained a checkmark.")
+	_assert(confirm.disabled
+		and tutorial_highlight.get_global_rect().encloses(choice_two.get_global_rect()),
+		"A covered choice bypassed the mandatory B-selection gate.")
+	_press(
+		"GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ChoiceStack/ChoiceRow/Choice2")
+	await _settle_frames()
+	_assert(not confirm.disabled,
+		"Selecting guided option B did not enable the required Confirm step.")
+	_assert(choice_two.text == "B\nSTAGED" and not choice_two.text.contains("✓"),
+		"The selected choice changed its fixed B heading or retained a checkmark.")
+	_assert(forced_tutorial.visible
+		and tutorial_highlight.get_global_rect().encloses(confirm.get_global_rect())
+		and gameplay_dialogue.text.contains("Now press CONFIRM")
+		and tutor_speech.playing,
+		"The guided B selection did not advance its Tutor text, voice, and arrow gate.")
 	_assert(choice_one.scale == Vector2.ONE
 		and choice_two.scale == Vector2.ONE
 		and choice_three.scale == Vector2.ONE,
@@ -363,7 +418,11 @@ func _ready() -> void:
 	_assert(not (_main.get_node(
 		"GameplayHUD/SafeArea/Layout/Content/Center/DialoguePanel/DialogueVBox/Text") as RichTextLabel).text.is_empty(),
 		"The optional selection-stage Tutor dialogue left the panel empty.")
-	_capture("03a-bash-selected.png")
+	gameplay_hud.set_process(false)
+	gameplay_dialogue.visible_characters = -1
+	await get_tree().process_frame
+	_capture("03a-bash-guided-confirm.png")
+	gameplay_hud.set_process(true)
 	if DisplayServer.get_name() != "headless":
 		Input.warp_mouse(confirm.global_position + confirm.size / 2.0)
 		await _settle_frames()
@@ -371,6 +430,8 @@ func _ready() -> void:
 	_main.set("FastMode", false)
 	_press("GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ConfirmButton")
 	await get_tree().process_frame
+	_assert(not forced_tutorial.visible,
+		"The mandatory tutorial mask remained after the guided confirmation.")
 	_assert(not tutor_speech.playing and tutor_speech.stream == null,
 		"Bash confirmation started overlapping intermediate Tutor speech.")
 	_assert(gameplay_dialogue.text.is_empty(),
@@ -449,6 +510,11 @@ func _ready() -> void:
 	var final_speech := _main.get_node("TutorSpeechPlayer") as AudioStreamPlayer
 	final_speech.stop()
 	final_speech.stream = null
+	for player_name in ["HoverPlayer", "ActionPlayer", "EventPlayer"]:
+		var ui_player := _main.get_node(
+			"UiAudioController/" + player_name) as AudioStreamPlayer
+		ui_player.stop()
+		ui_player.stream = null
 	await get_tree().create_timer(0.12).timeout
 	await _settle_frames()
 
@@ -493,6 +559,15 @@ func _left_click() -> void:
 	event.position = Vector2(640, 500)
 	event.global_position = event.position
 	Input.parse_input_event(event)
+
+
+func _click_control(control: Control) -> void:
+	var event := InputEventMouseButton.new()
+	event.button_index = MOUSE_BUTTON_LEFT
+	event.pressed = true
+	event.position = control.global_position + control.size / 2.0
+	event.global_position = event.position
+	(_main.get_node("GameplayHUD/ForcedChoiceTutorial") as Control)._gui_input(event)
 
 
 func _advance_dialogue_page() -> void:

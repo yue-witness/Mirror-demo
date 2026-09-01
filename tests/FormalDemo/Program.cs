@@ -69,8 +69,14 @@ internal static class Program
                 $"Tutor dialogue pool {poolId} contains the wrong speaker.");
         }
 
-        Assert(configuredLines == 138,
-            $"The approved Tutor script must contain 138 lines, got {configuredLines}.");
+        Assert(configuredLines == 140,
+            $"The approved Tutor script must contain 140 lines, got {configuredLines}.");
+
+        Assert(dialogue.GetRandomPool(TutorDialoguePool.GuidedInputSelectB)
+                .Single().Text.Contains("middle option: B", StringComparison.Ordinal)
+            && dialogue.GetRandomPool(TutorDialoguePool.GuidedInputConfirm)
+                .Single().Text.Contains("press CONFIRM", StringComparison.Ordinal),
+            "The mandatory two-step input instructions are incomplete.");
 
         DialogueLine first = dialogue.PickRandom(
             TutorDialoguePool.BashState,
@@ -107,8 +113,8 @@ internal static class Program
         TutorSpeechCatalog speech = TutorSpeechCatalog.Load(
             Path.Combine(root, "assets", "audio", "tutor", "manifest.json"));
 
-        Assert(speech.Count == 194,
-            $"Tutor speech manifest must contain 194 rendered cues, got {speech.Count}.");
+        Assert(speech.Count == 196,
+            $"Tutor speech manifest must contain 196 rendered cues, got {speech.Count}.");
         Assert(TutorPresentationPolicy.ResolveSpeechMode(
                 "choice_hesitation_wait") == TutorSpeechMode.Silent,
             "Repeated choice-time chatter must remain text-only.");
@@ -118,6 +124,11 @@ internal static class Program
         Assert(TutorPresentationPolicy.ResolveSpeechMode(
                 "background_arrival") == TutorSpeechMode.Essential,
             "The revised physical-space arrival must use its regenerated cue.");
+        Assert(TutorPresentationPolicy.ResolveSpeechMode(
+                "guided_input_select_b") == TutorSpeechMode.Essential
+            && TutorPresentationPolicy.ResolveSpeechMode(
+                "guided_input_confirm") == TutorSpeechMode.Essential,
+            "Both mandatory guided-input steps must retain Tutor speech.");
         Assert(TutorPresentationPolicy.ResolveEmotion(
                 "bash_r2_win_satisfied",
                 "You passed. I am satisfied.") == TutorEmotion.Encouraging,

@@ -1,9 +1,25 @@
-[gd_scene load_steps=24 format=3]
+[gd_scene load_steps=27 format=3]
 
 [ext_resource type="Script" path="res://scripts/UI/GameplayHUD.cs" id="1_script"]
 [ext_resource type="Script" path="res://scripts/UI/StabilityLatticeView.cs" id="2_lattice"]
 [ext_resource type="Texture2D" path="res://assets/portraits/tutor_states.png" id="3_tutor"]
 [ext_resource type="Script" path="res://scripts/UI/SpriteAtlasAnimator.cs" id="4_atlas_animator"]
+[ext_resource type="Script" path="res://scripts/UI/ForcedChoiceTutorialOverlay.cs" id="5_forced_tutorial"]
+[ext_resource type="Texture2D" path="res://assets/ui/green_laser_dot_arrow.png" id="6_tutorial_pointer"]
+
+[sub_resource type="StyleBoxFlat" id="TutorialHighlight"]
+bg_color = Color(0.02, 0.2, 0.12, 0.08)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.3, 1, 0.48, 1)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+shadow_color = Color(0.08, 1, 0.44, 0.58)
+shadow_size = 20
 
 [sub_resource type="StyleBoxFlat" id="ChoiceGreen"]
 content_margin_left = 18.0
@@ -756,3 +772,32 @@ custom_minimum_size = Vector2(270, 4)
 layout_mode = 2
 size_flags_horizontal = 0
 color = Color(0.22, 1, 0.23, 0.9)
+
+[node name="ForcedChoiceTutorial" type="Control" parent="."]
+visible = false
+z_index = 40
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 2
+mouse_filter = 0
+script = ExtResource("5_forced_tutorial")
+
+[node name="HighlightFrame" type="Panel" parent="ForcedChoiceTutorial"]
+layout_mode = 0
+offset_right = 160.0
+offset_bottom = 120.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("TutorialHighlight")
+
+[node name="Pointer" type="TextureRect" parent="ForcedChoiceTutorial"]
+layout_mode = 0
+offset_right = 118.0
+offset_bottom = 118.0
+mouse_filter = 2
+texture = ExtResource("6_tutorial_pointer")
+expand_mode = 1
+stretch_mode = 5

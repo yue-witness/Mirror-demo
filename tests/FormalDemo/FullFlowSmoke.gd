@@ -69,6 +69,11 @@ func _ready() -> void:
 	var final_speech := _main.get_node("TutorSpeechPlayer") as AudioStreamPlayer
 	final_speech.stop()
 	final_speech.stream = null
+	for player_name in ["HoverPlayer", "ActionPlayer", "EventPlayer"]:
+		var ui_player := _main.get_node(
+			"UiAudioController/" + player_name) as AudioStreamPlayer
+		ui_player.stop()
+		ui_player.stream = null
 	await get_tree().create_timer(0.12).timeout
 	await _frames()
 
