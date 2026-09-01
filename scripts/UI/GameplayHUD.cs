@@ -23,6 +23,7 @@ public partial class GameplayHUD : Control
     private Label _resultLabel = null!;
     private SpriteAtlasAnimator _tutorPortrait = null!;
     private RichTextLabel _dialogueText = null!;
+    private Label _completionCue = null!;
     private Label _systemStatus = null!;
     private RichTextLabel _systemLog = null!;
     private Button[] _choiceButtons = null!;
@@ -32,6 +33,7 @@ public partial class GameplayHUD : Control
     private Label _chapterNumber = null!;
     private Label _chapterTitle = null!;
     private TutorSpeechPlayer _speechPlayer = null!;
+    private UiAudioController _uiAudio = null!;
     private string _choiceVerb = "DISENGAGE";
     private string _currentTutorLineId = string.Empty;
     private string _currentTutorText = string.Empty;
@@ -40,6 +42,7 @@ public partial class GameplayHUD : Control
     private bool _isTutorTyping;
     private bool _resultAwaitingSkip;
     private Tween? _resultTween;
+    private Tween? _completionTween;
 
     public event Action<int>? ChoiceSelected;
 
@@ -77,6 +80,9 @@ public partial class GameplayHUD : Control
             + "PortraitFrame/PortraitTexture");
         _dialogueText = GetNode<RichTextLabel>(
             "SafeArea/Layout/Content/Center/DialoguePanel/DialogueVBox/Text");
+        _completionCue = GetNode<Label>(
+            "SafeArea/Layout/Content/Center/DialoguePanel/DialogueVBox/Text/"
+            + "CompletionCue");
         _systemStatus = GetNode<Label>(
             "SafeArea/Layout/Content/RightColumn/RightLog/RightVBox/Status");
         _systemLog = GetNode<RichTextLabel>(
@@ -91,6 +97,7 @@ public partial class GameplayHUD : Control
         _chapterTitle = GetNode<Label>(
             "ChapterOverlay/ChapterGlass/ChapterVBox/ChapterTitle");
         _speechPlayer = GetNode<TutorSpeechPlayer>("../TutorSpeechPlayer");
+        _uiAudio = GetNode<UiAudioController>("../UiAudioController");
         _choiceButtons = new[]
         {
             GetNode<Button>(
@@ -412,6 +419,7 @@ public partial class GameplayHUD : Control
     {
         StopResultAnimation();
         _resultAwaitingSkip = true;
+        _uiAudio.PlayResult(outcome);
         _resultOverlay.Visible = true;
         _resultLabel.Text = FormatOutcome(outcome);
         _resultLabel.AddThemeColorOverride(
@@ -440,6 +448,11 @@ public partial class GameplayHUD : Control
                 0.55)
             .SetTrans(Tween.TransitionType.Sine)
             .SetEase(Tween.EaseType.InOut);
+
+        if (!_isTutorTyping)
+        {
+            ShowCompletionCue();
+        }
     }
 
     private void StopResultAnimation()
@@ -452,6 +465,7 @@ public partial class GameplayHUD : Control
 
         _resultTween = null;
         _resultAwaitingSkip = false;
+        HideCompletionCue();
         if (GodotObject.IsInstanceValid(_remainingLabel))
         {
             _resultOverlay.Visible = false;
@@ -469,19 +483,25 @@ public partial class GameplayHUD : Control
             _dialogueText.Text = string.Empty;
             _dialogueText.VisibleCharacters = -1;
             _tutorPortrait.SetState(0);
+            HideCompletionCue();
             return;
         }
 
         if (lineId == _currentTutorLineId && text == _currentTutorText)
         {
-            _tutorPortrait.SetState(ResolveTutorState(text));
+            _tutorPortrait.SetState((int)TutorPresentationPolicy.ResolveEmotion(
+                lineId,
+                text));
             return;
         }
 
         _currentTutorLineId = lineId;
         _currentTutorText = text;
         _dialogueText.Text = $"[center]{text.Replace("[", "[lb]")}[/center]";
-        _tutorPortrait.SetState(ResolveTutorState(text));
+        _tutorPortrait.SetState((int)TutorPresentationPolicy.ResolveEmotion(
+            lineId,
+            text));
+        HideCompletionCue();
         _dialogueText.VisibleCharacters = 0;
         _tutorVisibleCharacterProgress = 0.0;
 
@@ -502,6 +522,11 @@ public partial class GameplayHUD : Control
     {
         _isTutorTyping = false;
         _dialogueText.VisibleCharacters = -1;
+
+        if (_resultAwaitingSkip)
+        {
+            ShowCompletionCue();
+        }
     }
 
     private void StopTutorPresentation()
@@ -510,6 +535,7 @@ public partial class GameplayHUD : Control
         _currentTutorLineId = string.Empty;
         _currentTutorText = string.Empty;
         _isTutorTyping = false;
+        HideCompletionCue();
     }
 
     private void RequestBackToTitle()
@@ -518,44 +544,41 @@ public partial class GameplayHUD : Control
         BackToTitleRequested?.Invoke();
     }
 
-    private static int ResolveTutorState(string text)
+    private void ShowCompletionCue()
     {
-        foreach (string fragment in new[]
+        HideCompletionCue();
+        _completionCue.Visible = true;
+        float restingY = _completionCue.Position.Y;
+        _completionTween = CreateTween().SetLoops();
+        _completionTween.TweenProperty(
+                _completionCue,
+                "position:y",
+                restingY + 7.0f,
+                0.34)
+            .SetTrans(Tween.TransitionType.Sine)
+            .SetEase(Tween.EaseType.InOut);
+        _completionTween.TweenProperty(
+                _completionCue,
+                "position:y",
+                restingY,
+                0.34)
+            .SetTrans(Tween.TransitionType.Sine)
+            .SetEase(Tween.EaseType.InOut);
+    }
+
+    private void HideCompletionCue()
+    {
+        if (_completionTween is not null
+            && GodotObject.IsInstanceValid(_completionTween))
         {
-            "alert",
-            "anomaly",
-            "error",
-            "fail",
-            "lost",
-            "threat",
-            "unstable",
-            "warning"
-        })
-        {
-            if (text.Contains(fragment, StringComparison.OrdinalIgnoreCase))
-            {
-                return 2;
-            }
+            _completionTween.Kill();
         }
 
-        foreach (string fragment in new[]
+        _completionTween = null;
+        if (GodotObject.IsInstanceValid(_completionCue))
         {
-            "clever",
-            "excellent",
-            "good",
-            "impressive",
-            "success",
-            "well done",
-            "you win"
-        })
-        {
-            if (text.Contains(fragment, StringComparison.OrdinalIgnoreCase))
-            {
-                return 1;
-            }
+            _completionCue.Visible = false;
         }
-
-        return 0;
     }
 
     private static string FormatPrevious(int? previous)

@@ -10,12 +10,12 @@
   ],
   "entries": [
     {
-      "line_id": "background_online",
-      "text": "Initialization complete. Visual and motor channels are stable. Welcome online, S-17.",
-      "audio_path": "res://assets/audio/tutor/background_online.ogg",
-      "duration_seconds": 7.56,
-      "visible_character_count": 84,
-      "characters_per_second": 11.1111,
+      "line_id": "background_arrival",
+      "text": "Initialization complete. Visual and motor responses are stable. Welcome to the evaluation chamber, S-17.",
+      "audio_path": "res://assets/audio/tutor/background_arrival.ogg",
+      "duration_seconds": 8.808,
+      "visible_character_count": 104,
+      "characters_per_second": 11.8074,
       "delivery": "instructional"
     },
     {

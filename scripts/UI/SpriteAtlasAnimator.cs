@@ -28,15 +28,14 @@ public partial class SpriteAtlasAnimator : TextureRect
     private Texture2D? _atlas;
     private double _elapsed;
     private int _visibleFrame = -1;
-    private Vector2 _layoutPosition;
 
     public override void _Ready()
     {
         _atlas = Texture;
         NormalizeGridForKnownAtlas();
-        _layoutPosition = Position;
         PivotOffset = Size / 2.0f;
         Resized += () => PivotOffset = Size / 2.0f;
+        Scale = Vector2.One;
         UpdateVisibleFrame(force: true);
     }
 
@@ -65,9 +64,10 @@ public partial class SpriteAtlasAnimator : TextureRect
 
         _elapsed += delta;
         UpdateVisibleFrame(force: false);
-        float hover = Mathf.Sin(
+        float pulse = Mathf.Sin(
             (float)(_elapsed * Math.Tau * HoverCyclesPerSecond));
-        Position = _layoutPosition + Vector2.Up * hover * HoverAmplitude;
+        float scale = 1.0f + pulse * HoverAmplitude * 0.0015f;
+        Scale = Vector2.One * scale;
     }
 
     public void ConfigureAtlas(

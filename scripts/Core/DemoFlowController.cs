@@ -28,6 +28,8 @@ public partial class DemoFlowController : Control
     private GameplayHUD _hud = null!;
     private TutorDialogueUI _dialogueUI = null!;
     private TutorSpeechPlayer _speechPlayer = null!;
+    private UiTransitionController _uiTransition = null!;
+    private Control? _activePrimaryScreen;
     private SaveGameService _saveService = null!;
     private DialogueRepository _dialogues = null!;
     private RuleConfiguration _rules = null!;
@@ -86,6 +88,7 @@ public partial class DemoFlowController : Control
         _hud = GetNode<GameplayHUD>("GameplayHUD");
         _dialogueUI = GetNode<TutorDialogueUI>("TutorDialogueUI");
         _speechPlayer = GetNode<TutorSpeechPlayer>("TutorSpeechPlayer");
+        _uiTransition = GetNode<UiTransitionController>("UiTransitionOverlay");
 
         _saveService = new SaveGameService(ResolvePersistentPath(SavePath));
         _dialogues = DialogueRepository.Load(
@@ -107,6 +110,19 @@ public partial class DemoFlowController : Control
         _dialogueUI.BackToTitleRequested += BackToTitle;
 
         ShowTitleScreen();
+    }
+
+    private void ShowPrimaryScreen(Control screen)
+    {
+        if (_activePrimaryScreen != screen)
+        {
+            _uiTransition.Play();
+        }
+
+        _titleScreen.Visible = screen == _titleScreen;
+        _hud.Visible = screen == _hud;
+        _dialogueUI.Visible = screen == _dialogueUI;
+        _activePrimaryScreen = screen;
     }
 
     public override void _Process(double delta)
@@ -154,9 +170,7 @@ public partial class DemoFlowController : Control
         _currentTutorDialogue = string.Empty;
         _speechPlayer.StopDialogue();
         _background.Texture = GD.Load<Texture2D>(BackgroundTexturePath);
-        _titleScreen.Visible = true;
-        _hud.Visible = false;
-        _dialogueUI.Visible = false;
+        ShowPrimaryScreen(_titleScreen);
 
         DemoSaveState? active = _saveService.LoadActive();
         string? warning = CombineWarnings(_saveService.LastWarning, extraWarning);
@@ -231,14 +245,12 @@ public partial class DemoFlowController : Control
         _inputLocked = false;
         _bash = null;
         _limitBash = null;
-        _titleScreen.Visible = false;
-        _hud.Visible = showChapter;
-        _dialogueUI.Visible = false;
         _background.Texture = GD.Load<Texture2D>(BackgroundTexturePath);
         WriteCheckpoint();
 
         if (showChapter)
         {
+            ShowPrimaryScreen(_hud);
             _chapterPending = true;
 
             if (phase == DemoPhase.Background)
@@ -282,8 +294,7 @@ public partial class DemoFlowController : Control
         }
 
         _dialogueIndex = Math.Clamp(_dialogueIndex, 0, lines.Count - 1);
-        _hud.Visible = false;
-        _dialogueUI.Visible = true;
+        ShowPrimaryScreen(_dialogueUI);
         DialogueLine line = lines[_dialogueIndex];
 
         if (_phase == DemoPhase.Summary)
@@ -408,9 +419,7 @@ public partial class DemoFlowController : Control
         _inputLocked = false;
         _bash = null;
         _limitBash = null;
-        _titleScreen.Visible = false;
-        _hud.Visible = false;
-        _dialogueUI.Visible = true;
+        ShowPrimaryScreen(_dialogueUI);
         _background.Texture = GD.Load<Texture2D>(BackgroundTexturePath);
         WriteCheckpoint();
         RenderDialogue();
@@ -463,9 +472,7 @@ public partial class DemoFlowController : Control
         _pendingGameStart = PendingGameStart.None;
         _pendingLimitDirective = null;
         _limitBash = null;
-        _titleScreen.Visible = false;
-        _hud.Visible = true;
-        _dialogueUI.Visible = false;
+        ShowPrimaryScreen(_hud);
         _background.Texture = GD.Load<Texture2D>(BackgroundTexturePath);
 
         int[] candidates = roundIndex == 1
@@ -480,7 +487,7 @@ public partial class DemoFlowController : Control
         ResetTurnDialogueState();
         WriteCheckpoint();
         RenderBash(
-            "A fresh Stability Lattice is online.",
+            "A fresh Stability Lattice is active in the chamber.",
             TutorDialoguePool.BashState);
 
         if (_bash.CurrentTurn == Actor.Tutor)
@@ -708,9 +715,7 @@ public partial class DemoFlowController : Control
         _inputLocked = false;
         _activeBriefingLineId = string.Empty;
         _pendingGameStart = PendingGameStart.None;
-        _titleScreen.Visible = false;
-        _hud.Visible = true;
-        _dialogueUI.Visible = false;
+        ShowPrimaryScreen(_hud);
         _background.Texture = GD.Load<Texture2D>(BackgroundTexturePath);
 
         if (!preserveDirective)
@@ -744,7 +749,7 @@ public partial class DemoFlowController : Control
         WriteCheckpoint();
         RenderLimitBash(
             waiting: false,
-            log: "A fresh simultaneous-request lattice is online.",
+            log: "A fresh simultaneous-request lattice is active in the chamber.",
             dialoguePool: TutorDialoguePool.LimitState);
     }
 
@@ -986,8 +991,7 @@ public partial class DemoFlowController : Control
         _selectedChoice = null;
         _inputLocked = false;
         _background.Texture = GD.Load<Texture2D>(BackgroundTexturePath);
-        _hud.Visible = false;
-        _dialogueUI.Visible = true;
+        ShowPrimaryScreen(_dialogueUI);
         WriteCheckpoint();
         RenderDialogue();
     }
@@ -1042,6 +1046,7 @@ public partial class DemoFlowController : Control
         _selectedChoice = null;
         _inputLocked = false;
         _chapterPending = false;
+        _activePrimaryScreen = null;
         _titleScreen.Visible = false;
         _hud.Visible = false;
         _dialogueUI.Visible = false;
@@ -1101,7 +1106,7 @@ public partial class DemoFlowController : Control
 
         if (_phase == DemoPhase.RoundResult)
         {
-            _hud.Visible = true;
+            ShowPrimaryScreen(_hud);
             _lastSettledGame = snapshot.Game;
             _lastOutcome = snapshot.Result;
             _lastGameIndex = snapshot.Game == GameKind.Bash
@@ -1143,7 +1148,7 @@ public partial class DemoFlowController : Control
         }
 
         _background.Texture = GD.Load<Texture2D>(BackgroundTexturePath);
-        _hud.Visible = true;
+        ShowPrimaryScreen(_hud);
         ResetTurnDialogueState();
 
         if (snapshot.Game == GameKind.Bash && _bash is not null)

@@ -7,6 +7,8 @@ using System;
 /// </summary>
 public partial class TutorSpeechPlayer : AudioStreamPlayer
 {
+    private const float StandardSpeechGapSeconds = 5.0f;
+
     [Export(PropertyHint.File, "*.json")]
     public string ManifestPath { get; set; } =
         "res://assets/audio/tutor/manifest.json";
@@ -14,6 +16,7 @@ public partial class TutorSpeechPlayer : AudioStreamPlayer
     private TutorSpeechCatalog? _catalog;
     private string _currentKey = string.Empty;
     private float _currentDurationSeconds;
+    private ulong _lastVoiceStartedTicks;
 
     public string CurrentLineId { get; private set; } = string.Empty;
 
@@ -43,6 +46,20 @@ public partial class TutorSpeechPlayer : AudioStreamPlayer
             return 0.0f;
         }
 
+        TutorSpeechMode speechMode =
+            TutorPresentationPolicy.ResolveSpeechMode(lineId);
+        ulong now = Time.GetTicksMsec();
+        bool standardCueTooSoon = speechMode == TutorSpeechMode.Standard
+            && _lastVoiceStartedTicks > 0
+            && now - _lastVoiceStartedTicks
+                < (ulong)(StandardSpeechGapSeconds * 1000.0f);
+
+        if (speechMode == TutorSpeechMode.Silent || standardCueTooSoon)
+        {
+            StopDialogue();
+            return 0.0f;
+        }
+
         TutorSpeechCue? cue = _catalog.Find(lineId, text);
         if (cue is null)
         {
@@ -63,6 +80,7 @@ public partial class TutorSpeechPlayer : AudioStreamPlayer
         _currentKey = key;
         CurrentLineId = cue.LineId;
         _currentDurationSeconds = cue.DurationSeconds;
+        _lastVoiceStartedTicks = now;
         Play();
         return _currentDurationSeconds;
     }

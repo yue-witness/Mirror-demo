@@ -16,6 +16,7 @@ public partial class TutorDialogueUI : Control
     private Label _speakerLabel = null!;
     private RichTextLabel _dialogueText = null!;
     private RichTextLabel _supplementaryText = null!;
+    private Label _completionCue = null!;
     private PanelContainer _portrait = null!;
     private SpriteAtlasAnimator _portraitTexture = null!;
     private Label _speakerName = null!;
@@ -26,6 +27,7 @@ public partial class TutorDialogueUI : Control
     private double _visibleCharacterProgress;
     private float _activeCharactersPerSecond;
     private bool _isTyping;
+    private Tween? _completionTween;
 
     public event Action? ContinueRequested;
 
@@ -43,6 +45,9 @@ public partial class TutorDialogueUI : Control
             "SafeArea/Layout/Content/DialogueCard/DialogueVBox/DialogueText");
         _supplementaryText = GetNode<RichTextLabel>(
             "SafeArea/Layout/Content/DialogueCard/DialogueVBox/SupplementaryText");
+        _completionCue = GetNode<Label>(
+            "SafeArea/Layout/Content/DialogueCard/DialogueVBox/DialogueText/"
+            + "CompletionCue");
         _portrait = GetNode<PanelContainer>(
             "SafeArea/Layout/Content/SpeakerCard/SpeakerVBox/PortraitFrame");
         _portraitTexture = GetNode<SpriteAtlasAnimator>(
@@ -120,7 +125,7 @@ public partial class TutorDialogueUI : Control
             _ => phase.ToString().ToUpperInvariant()
         };
         _saveLabel.Text = $"SAVE · STABLE   {lineIndex + 1:00}/{totalLines:00}";
-        SetSpeaker(line.Speaker, redEye: false, line.Text);
+        SetSpeaker(line.Id, line.Speaker, redEye: false, line.Text);
         BeginTyping(line);
         _supplementaryText.Visible = false;
     }
@@ -134,7 +139,7 @@ public partial class TutorDialogueUI : Control
     {
         _phaseLabel.Text = "SUMMARY";
         _saveLabel.Text = $"SAVE · STABLE   {lineIndex + 1:00}/{totalLines:00}";
-        SetSpeaker(line.Speaker, redEye, line.Text);
+        SetSpeaker(line.Id, line.Speaker, redEye, line.Text);
         BeginTyping(line);
         _supplementaryText.Visible = true;
         _supplementaryText.Text =
@@ -159,6 +164,7 @@ public partial class TutorDialogueUI : Control
 
     private void BeginTyping(DialogueLine line)
     {
+        HideCompletionCue();
         _dialogueText.Text = CenterDialogue(line.Text);
         _dialogueText.VisibleCharacters = 0;
         _visibleCharacterProgress = 0.0;
@@ -187,6 +193,7 @@ public partial class TutorDialogueUI : Control
     {
         _isTyping = false;
         _dialogueText.VisibleCharacters = -1;
+        ShowCompletionCue();
     }
 
     private void RequestBackToTitle()
@@ -196,6 +203,7 @@ public partial class TutorDialogueUI : Control
     }
 
     private void SetSpeaker(
+        string lineId,
         string speaker,
         bool redEye,
         string dialogueText)
@@ -216,16 +224,17 @@ public partial class TutorDialogueUI : Control
                 _tutorPortrait,
                 4,
                 3,
-                ResolveTutorState(dialogueText, redEye));
+                (int)TutorPresentationPolicy.ResolveEmotion(
+                    lineId,
+                    dialogueText,
+                    redEye));
             _portraitTexture.HoverAmplitude = 6.0f;
         }
         _speakerLabel.Text = isS17 ? "S-17" : "TUTOR";
         _speakerLabel.AddThemeColorOverride(
             "font_color",
             isS17 ? new Color("38eaff") : new Color("ff2e55"));
-        _speakerName.Text = isS17
-            ? "SUBJECT S-17 · ONLINE"
-            : "THE TUTOR · ONLINE";
+        _speakerName.Text = isS17 ? "SUBJECT S-17" : "THE TUTOR";
 
         if (!redEye || isS17)
         {
@@ -252,48 +261,40 @@ public partial class TutorDialogueUI : Control
         _speakerName.Text = "THE TUTOR · SIGNAL ANOMALY";
     }
 
-    private static int ResolveTutorState(string text, bool redEye)
+    private void ShowCompletionCue()
     {
-        if (redEye || ContainsAny(
-            text,
-            "alert",
-            "anomaly",
-            "error",
-            "fail",
-            "lost",
-            "threat",
-            "unstable",
-            "warning"))
-        {
-            return 2;
-        }
-
-        if (ContainsAny(
-            text,
-            "clever",
-            "excellent",
-            "good",
-            "impressive",
-            "success",
-            "well done",
-            "you win"))
-        {
-            return 1;
-        }
-
-        return 0;
+        HideCompletionCue();
+        _completionCue.Visible = true;
+        float restingY = _completionCue.Position.Y;
+        _completionTween = CreateTween().SetLoops();
+        _completionTween.TweenProperty(
+                _completionCue,
+                "position:y",
+                restingY + 7.0f,
+                0.34)
+            .SetTrans(Tween.TransitionType.Sine)
+            .SetEase(Tween.EaseType.InOut);
+        _completionTween.TweenProperty(
+                _completionCue,
+                "position:y",
+                restingY,
+                0.34)
+            .SetTrans(Tween.TransitionType.Sine)
+            .SetEase(Tween.EaseType.InOut);
     }
 
-    private static bool ContainsAny(string text, params string[] fragments)
+    private void HideCompletionCue()
     {
-        foreach (string fragment in fragments)
+        if (_completionTween is not null
+            && GodotObject.IsInstanceValid(_completionTween))
         {
-            if (text.Contains(fragment, StringComparison.OrdinalIgnoreCase))
-            {
-                return true;
-            }
+            _completionTween.Kill();
         }
 
-        return false;
+        _completionTween = null;
+        if (GodotObject.IsInstanceValid(_completionCue))
+        {
+            _completionCue.Visible = false;
+        }
     }
 }

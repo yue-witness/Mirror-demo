@@ -36,6 +36,7 @@ func _ready() -> void:
 	await _complete_bash_tutorial_gate()
 	await _complete_rule_transition()
 	await _complete_limit_bash()
+	await get_tree().create_timer(0.44).timeout
 
 	var summary_phase := _label(
 		"TutorDialogueUI/SafeArea/Layout/Header/HeaderRow/PhaseLabel")
@@ -317,6 +318,9 @@ func _advance_result_page() -> void:
 		await _frames()
 		_assert(dialogue.visible_characters == -1,
 			"The first result click did not reveal the complete Tutor line.")
+		var completion_cue := dialogue.get_node("CompletionCue") as Label
+		_assert(completion_cue.visible,
+			"A completed result line did not expose the animated advance cue.")
 		_assert(speech.playing and speech.stream == active_stream,
 			"The first result click interrupted Tutor speech.")
 

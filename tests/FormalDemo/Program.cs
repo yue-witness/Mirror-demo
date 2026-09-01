@@ -11,6 +11,7 @@ internal static class Program
             VerifyFormalRuleConfiguration();
             VerifyDialogueConfiguration();
             VerifyTutorSpeechConfiguration();
+            VerifyUiAudioAssets();
             VerifyMisereBash();
             VerifyLimitBashSettlement();
             VerifyOutcomeDirectives();
@@ -51,6 +52,10 @@ internal static class Program
             "The Limit Bash transition must contain seven complete pages.");
         Assert(dialogue.Get(DemoPhase.Summary).Count == 4,
             "The final evaluation must contain four complete pages.");
+        Assert(dialogue.GetAll().All(line => !line.Text.Contains(
+                "online",
+                StringComparison.OrdinalIgnoreCase)),
+            "Dialogue must remain grounded in the physical evaluation chamber.");
 
         int configuredLines = 26;
 
@@ -104,6 +109,31 @@ internal static class Program
 
         Assert(speech.Count == 194,
             $"Tutor speech manifest must contain 194 rendered cues, got {speech.Count}.");
+        Assert(TutorPresentationPolicy.ResolveSpeechMode(
+                "choice_hesitation_wait") == TutorSpeechMode.Silent,
+            "Repeated choice-time chatter must remain text-only.");
+        Assert(TutorPresentationPolicy.ResolveSpeechMode(
+                "summary_complete") == TutorSpeechMode.Essential,
+            "Narrative outcomes must retain Tutor speech.");
+        Assert(TutorPresentationPolicy.ResolveSpeechMode(
+                "background_arrival") == TutorSpeechMode.Essential,
+            "The revised physical-space arrival must use its regenerated cue.");
+        Assert(TutorPresentationPolicy.ResolveEmotion(
+                "bash_r2_win_satisfied",
+                "You passed. I am satisfied.") == TutorEmotion.Encouraging,
+            "Successful Tutor dialogue must select the encouraging portrait row.");
+        Assert(TutorPresentationPolicy.ResolveEmotion(
+                "bash_loss_tier_1",
+                "Round evaluation: unsuccessful.") == TutorEmotion.Stern,
+            "Failure dialogue must select the stern portrait row.");
+        DialogueLine arrival = dialogue.Get(DemoPhase.Background)
+            .Single(line => line.Id == "background_arrival");
+        TutorSpeechCue? arrivalCue = speech.Find(arrival.Id, arrival.Text);
+        Assert(arrivalCue is not null
+            && arrivalCue.AudioPath.EndsWith(
+                "background_arrival.ogg",
+                StringComparison.Ordinal),
+            "The revised physical-space arrival has no matching generated cue.");
 
         foreach (DialogueLine line in dialogue.GetAll())
         {
@@ -143,6 +173,36 @@ internal static class Program
                         - renderedText.Length / cue.DurationSeconds) < 0.02f,
                     $"Tutor text speed does not match audio duration for {line.Id}.");
             }
+        }
+    }
+
+    private static void VerifyUiAudioAssets()
+    {
+        string audioRoot = Path.Combine(
+            FindProjectRoot(),
+            "assets",
+            "audio",
+            "ui");
+        string[] fileNames =
+        {
+            "hover.wav",
+            "select.wav",
+            "submit.wav",
+            "success.wav",
+            "failure.wav",
+            "draw.wav",
+            "transition.wav"
+        };
+
+        foreach (string fileName in fileNames)
+        {
+            string path = Path.Combine(audioRoot, fileName);
+            Assert(File.Exists(path), $"UI sound asset is missing: {fileName}");
+            byte[] bytes = File.ReadAllBytes(path);
+            Assert(bytes.Length > 44
+                && Encoding.ASCII.GetString(bytes, 0, 4) == "RIFF"
+                && Encoding.ASCII.GetString(bytes, 8, 4) == "WAVE",
+                $"UI sound asset is not a valid PCM WAV file: {fileName}");
         }
     }
 

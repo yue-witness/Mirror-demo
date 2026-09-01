@@ -1,9 +1,9 @@
 {
   "phases": {
     "Background": [
-      { "id": "background_online", "speaker": "TUTOR", "text": "Initialization complete. Visual and motor channels are stable. Welcome online, S-17." },
+      { "id": "background_arrival", "speaker": "TUTOR", "text": "Initialization complete. Visual and motor responses are stable. Welcome to the evaluation chamber, S-17." },
       { "id": "background_identity", "speaker": "TUTOR", "text": "You are Project X subject S-17: a synthetic reasoning system built to learn, adapt, and endure evaluation." },
-      { "id": "background_s17_response", "speaker": "S-17", "text": "I am online. Designation S-17 accepted. What is the purpose of this evaluation?" },
+      { "id": "background_s17_response", "speaker": "S-17", "text": "I am awake. Designation S-17 accepted. What is the purpose of this evaluation?" },
       { "id": "background_purpose", "speaker": "TUTOR", "text": "I am the Tutor. These trials measure whether your reasoning remains reliable when rules, initiative, and information change." },
       { "id": "background_failure", "speaker": "TUTOR", "text": "Final failure results in decommissioning and reconstruction. That is a procedure, S-17. It is not a threat." },
       { "id": "background_controls", "speaker": "TUTOR", "text": "All responses use three fixed positions. Select an option, revise it if necessary, then confirm when your decision is ready." }

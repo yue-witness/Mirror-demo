@@ -432,7 +432,7 @@ hover_cycles_per_second = 0.34
 [node name="TutorName" type="Label" parent="SafeArea/Layout/Content/LeftColumn/TutorCard/TutorVBox"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
-text = "THE TUTOR · ONLINE"
+text = "THE TUTOR"
 horizontal_alignment = 1
 
 [node name="Center" type="VBoxContainer" parent="SafeArea/Layout/Content"]
@@ -609,6 +609,27 @@ text = "[center]You can change your choice before confirming. After you confirm,
 fit_content = false
 scroll_active = false
 autowrap_mode = 2
+vertical_alignment = 1
+
+[node name="CompletionCue" type="Label" parent="SafeArea/Layout/Content/Center/DialoguePanel/DialogueVBox/Text"]
+visible = false
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -26.0
+offset_top = -42.0
+offset_right = 26.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.22, 1, 0.23, 1)
+theme_override_font_sizes/font_size = 24
+text = "▼"
+horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="RightColumn" type="VBoxContainer" parent="SafeArea/Layout/Content"]

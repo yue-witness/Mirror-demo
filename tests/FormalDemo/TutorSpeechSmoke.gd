@@ -26,7 +26,7 @@ func _ready() -> void:
 		"TutorDialogueUI/SafeArea/Layout/Content/DialogueCard/DialogueVBox/DialogueText") as RichTextLabel
 	var speech := _main.get_node("TutorSpeechPlayer") as AudioStreamPlayer
 	_assert(speech.playing and speech.stream != null,
-		"The first Tutor cue did not begin playback.")
+		"The regenerated chamber-arrival cue did not begin playback.")
 
 	var duration := speech.stream.get_length()
 	var total_characters := dialogue.get_total_character_count()
@@ -83,15 +83,14 @@ func _ready() -> void:
 
 	await get_tree().create_timer(0.35).timeout
 	await _frames()
-	_assert(speech.playing and speech.stream != null
+	_assert(not speech.playing and speech.stream == null
 		and not gameplay_dialogue.text.is_empty(),
-		"Bash resolution did not start its single final Tutor cue.")
-	var resolved_stream := speech.stream
+		"Routine post-action guidance must remain visible but text-only.")
 
 	await get_tree().create_timer(0.3).timeout
 	await _frames()
-	_assert(speech.playing and speech.stream == resolved_stream,
-		"Bash resolution replaced its final Tutor cue with another dialogue.")
+	_assert(not speech.playing and speech.stream == null,
+		"Routine post-action guidance unexpectedly started a delayed voice cue.")
 
 	_press("GameplayHUD/SafeArea/Layout/Content/RightColumn/BackButton")
 	await _frames()
@@ -102,7 +101,7 @@ func _ready() -> void:
 
 	var exit_code := 1 if _failed else 0
 	if not _failed:
-		print("Tutor speech smoke passed: timing aligned and Bash resolution emitted one cue.")
+		print("Tutor speech smoke passed: narrative timing aligned and tactical chatter stayed silent.")
 	_main.queue_free()
 	await _frames()
 	get_tree().quit(exit_code)

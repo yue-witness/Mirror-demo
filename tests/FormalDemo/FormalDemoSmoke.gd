@@ -25,6 +25,13 @@ func _ready() -> void:
 	await _settle_frames()
 	_assert(_main.get_node("TitleScreen").visible, "Title screen is not visible at startup.")
 	_assert(not _main.get_node("GameplayHUD").visible, "Gameplay HUD leaked onto the title screen.")
+	var transition_overlay := _main.get_node("UiTransitionOverlay") as Control
+	_assert(transition_overlay.visible,
+		"The primary-screen transition did not cover the startup cut.")
+	_assert(_main.has_node("UiAudioController/HoverPlayer")
+		and _main.has_node("UiAudioController/ActionPlayer")
+		and _main.has_node("UiAudioController/EventPlayer"),
+		"The UI sound router did not create its three playback channels.")
 	var background := _main.get_node("Background") as TextureRect
 	_assert(background.texture.resource_path.ends_with(
 		"command_chamber_static_scanner.png"),
@@ -101,10 +108,12 @@ func _ready() -> void:
 		"The title divider is not rendered through the dot-matrix line shader.")
 	_capture("01-title.png")
 	await get_tree().create_timer(0.42).timeout
+	_assert(not transition_overlay.visible,
+		"The primary-screen transition did not release input after its reveal.")
 	_capture("01b-title-motion.png")
 
 	_press("TitleScreen/MenuGlass/MenuVBox/NewGameButton")
-	await get_tree().create_timer(0.25).timeout
+	await get_tree().create_timer(0.46).timeout
 	await _settle_frames()
 	_assert(_main.get_node("GameplayHUD/ChapterOverlay").visible,
 		"New Game did not route to the Chapter 0 splash.")
@@ -114,6 +123,7 @@ func _ready() -> void:
 	_capture("02-chapter-0.png")
 
 	_left_click()
+	await get_tree().create_timer(0.44).timeout
 	await _settle_frames()
 	_assert(_main.get_node("TutorDialogueUI").visible,
 		"Dialogue-only phase did not use TutorDialogueUI.")
@@ -125,13 +135,25 @@ func _ready() -> void:
 	var dialogue_text := _main.get_node(
 		"TutorDialogueUI/SafeArea/Layout/Content/DialogueCard/DialogueVBox/DialogueText") as RichTextLabel
 	var tutor_speech := _main.get_node("TutorSpeechPlayer") as AudioStreamPlayer
+	var completion_cue := _main.get_node(
+		"TutorDialogueUI/SafeArea/Layout/Content/DialogueCard/DialogueVBox/DialogueText/CompletionCue") as Label
+	var opening_speaker_name := _main.get_node(
+		"TutorDialogueUI/SafeArea/Layout/Content/SpeakerCard/SpeakerVBox/SpeakerName") as Label
+	var opening_portrait_frame := _main.get_node(
+		"TutorDialogueUI/SafeArea/Layout/Content/SpeakerCard/SpeakerVBox/PortraitFrame") as Control
+	var opening_portrait := opening_portrait_frame.get_node("PortraitTexture") as Control
+	_assert(not opening_speaker_name.text.to_lower().contains("online"),
+		"The dialogue-only Tutor identity still exposes ONLINE wording.")
+	_assert(_visual_center(opening_portrait).distance_to(
+			_visual_center(opening_portrait_frame)) <= 1.0,
+		"The dialogue-only Tutor portrait is not centred in its frame.")
 	_assert(dialogue_text.get_theme_font_size("normal_font_size") >= 32
 		and dialogue_text.vertical_alignment == VERTICAL_ALIGNMENT_CENTER,
 		"TutorDialogue text is not enlarged and vertically centred.")
 	_assert(dialogue_text.visible_characters != -1,
 		"Tutor dialogue did not begin with the typewriter animation.")
 	_assert(tutor_speech.playing and tutor_speech.stream != null,
-		"The opening Tutor line did not start its configured voice cue.")
+		"The revised physical-space arrival did not use its regenerated cue.")
 	_capture("02b-tutor-dialogue.png")
 
 	for index in range(6):
@@ -142,9 +164,11 @@ func _ready() -> void:
 			if index == 0:
 				_assert(dialogue_text.visible_characters == -1,
 					"The first dialogue click did not reveal the complete line.")
+				_assert(completion_cue.visible,
+					"The completed Tutor line did not reveal the animated advance cue.")
 				_assert(tutor_speech.playing
 					and tutor_speech.stream == stream_before_click,
-					"The first dialogue click interrupted or replaced Tutor speech.")
+					"Completing the arrival text interrupted its regenerated cue.")
 		if index < 3:
 			_capture("02c-background-%02d.png" % (index + 1))
 		if index == 2:
@@ -168,6 +192,7 @@ func _ready() -> void:
 
 	for index in range(6):
 		await _advance_dialogue_page()
+	await get_tree().create_timer(0.44).timeout
 
 	var choice_one := _button(
 		"GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ChoiceStack/ChoiceRow/Choice1")
@@ -220,8 +245,9 @@ func _ready() -> void:
 	_assert(gameplay_dialogue.get_theme_font_size("normal_font_size") >= 30
 		and gameplay_dialogue.vertical_alignment == VERTICAL_ALIGNMENT_CENTER,
 		"Gameplay Tutor dialogue is not enlarged and vertically centred.")
-	_assert(gameplay_dialogue.visible_characters != -1 and tutor_speech.playing,
-		"Gameplay Tutor dialogue did not synchronize typewriter text with speech.")
+	_assert(gameplay_dialogue.visible_characters != -1
+		and not tutor_speech.playing,
+		"High-frequency gameplay guidance must type without Tutor speech.")
 	_assert(not _main.has_node("GameplayHUD/SafeArea/Layout/Header/HeaderRow/ScoreLabel"),
 		"The removed top-centre score display is still present.")
 	_assert(_main.has_node("GameplayHUD/SafeArea/Layout/Header/HeaderRow/HeaderSpacer"),
@@ -256,6 +282,16 @@ func _ready() -> void:
 		"The SYSTEM frame is not aligned with the central lattice frame.")
 	var tutor_panel := _main.get_node(
 		"GameplayHUD/SafeArea/Layout/Content/LeftColumn/TutorCard") as PanelContainer
+	var gameplay_portrait_frame := _main.get_node(
+		"GameplayHUD/SafeArea/Layout/Content/LeftColumn/TutorCard/TutorVBox/PortraitFrame") as Control
+	var gameplay_portrait := gameplay_portrait_frame.get_node("PortraitTexture") as Control
+	var gameplay_tutor_name := _main.get_node(
+		"GameplayHUD/SafeArea/Layout/Content/LeftColumn/TutorCard/TutorVBox/TutorName") as Label
+	_assert(not gameplay_tutor_name.text.to_lower().contains("online"),
+		"The gameplay Tutor identity still exposes ONLINE wording.")
+	_assert(_visual_center(gameplay_portrait).distance_to(
+			_visual_center(gameplay_portrait_frame)) <= 1.0,
+		"The gameplay Tutor portrait is not centred in its frame.")
 	var dialogue_panel := _main.get_node(
 		"GameplayHUD/SafeArea/Layout/Content/Center/DialoguePanel") as PanelContainer
 	_assert(is_equal_approx(tutor_panel.global_position.y, dialogue_panel.global_position.y)
@@ -354,8 +390,9 @@ func _ready() -> void:
 	_assert(FileAccess.file_exists(SAVE_PATH), "A stable session checkpoint was not written.")
 	await get_tree().create_timer(0.35).timeout
 	await _settle_frames()
-	_assert(tutor_speech.playing and not gameplay_dialogue.text.is_empty(),
-		"Bash resolution did not start its single final Tutor cue.")
+	_assert(not tutor_speech.playing and tutor_speech.stream == null
+		and not gameplay_dialogue.text.is_empty(),
+		"Routine post-action guidance must remain visible but text-only.")
 
 	_press("GameplayHUD/SafeArea/Layout/Content/RightColumn/BackButton")
 	await _settle_frames()
@@ -407,6 +444,10 @@ func _prepare_test_paths() -> void:
 
 func _button(path: String) -> Button:
 	return _main.get_node(path) as Button
+
+
+func _visual_center(control: Control) -> Vector2:
+	return control.get_global_transform() * (control.size / 2.0)
 
 
 func _press(path: String) -> void:
