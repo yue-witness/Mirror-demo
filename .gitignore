@@ -5,3 +5,10 @@
 # Standalone C# test/build output
 **/bin/
 **/obj/
+
+# Local QA captures, generated reports, and review-only helpers.
+# Keep these available for local verification without publishing them as game content.
+/_qa/
+/design-qa.md
+/tools/build_art_preview.ps1
+/tools/build_ui_ux_report.py
