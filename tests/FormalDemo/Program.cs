@@ -10,6 +10,7 @@ internal static class Program
         {
             VerifyFormalRuleConfiguration();
             VerifyDialogueConfiguration();
+            VerifyTutorSpeechConfiguration();
             VerifyMisereBash();
             VerifyLimitBashSettlement();
             VerifyOutcomeDirectives();
@@ -90,6 +91,59 @@ internal static class Program
         Assert(rules.LimitBash.MinimumInitialUnits == 20
             && rules.LimitBash.MaximumInitialUnits == 30,
             "Limit Bash initial range differs from the formal design.");
+    }
+
+    private static void VerifyTutorSpeechConfiguration()
+    {
+        string root = FindProjectRoot();
+        DialogueRepository dialogue = DialogueRepository.Load(
+            Path.Combine(root, "data", "dialogue", "intro.json"),
+            Path.Combine(root, "data", "dialogue", "tutorial.json"));
+        TutorSpeechCatalog speech = TutorSpeechCatalog.Load(
+            Path.Combine(root, "assets", "audio", "tutor", "manifest.json"));
+
+        Assert(speech.Count == 194,
+            $"Tutor speech manifest must contain 194 rendered cues, got {speech.Count}.");
+
+        foreach (DialogueLine line in dialogue.GetAll())
+        {
+            if (line.Speaker == "S-17")
+            {
+                Assert(speech.Find(line.Id, line.Text) is null,
+                    "S-17 must not have a generated voice cue.");
+                continue;
+            }
+
+            string placeholder = line.Text.Contains("{turn_count}", StringComparison.Ordinal)
+                ? "{turn_count}"
+                : line.Text.Contains("{reveal_count}", StringComparison.Ordinal)
+                    ? "{reveal_count}"
+                    : string.Empty;
+            int maximum = string.IsNullOrEmpty(placeholder) ? 1 : 20;
+
+            for (int value = 1; value <= maximum; value++)
+            {
+                string renderedText = string.IsNullOrEmpty(placeholder)
+                    ? line.Text
+                    : line.Text.Replace(
+                        placeholder,
+                        value.ToString(),
+                        StringComparison.Ordinal);
+                TutorSpeechCue? cue = speech.Find(line.Id, renderedText);
+                Assert(cue is not null,
+                    $"Tutor speech cue is missing for {line.Id}: {renderedText}");
+
+                string relativeAudioPath = cue!.AudioPath
+                    .Replace("res://", string.Empty, StringComparison.Ordinal)
+                    .Replace('/', Path.DirectorySeparatorChar);
+                Assert(File.Exists(Path.Combine(root, relativeAudioPath)),
+                    $"Tutor speech asset does not exist: {cue.AudioPath}");
+                Assert(Math.Abs(
+                        cue.CharactersPerSecond
+                        - renderedText.Length / cue.DurationSeconds) < 0.02f,
+                    $"Tutor text speed does not match audio duration for {line.Id}.");
+            }
+        }
     }
 
     private static void VerifyMisereBash()

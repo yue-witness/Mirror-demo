@@ -27,6 +27,7 @@ public partial class DemoFlowController : Control
     private TitleScreen _titleScreen = null!;
     private GameplayHUD _hud = null!;
     private TutorDialogueUI _dialogueUI = null!;
+    private TutorSpeechPlayer _speechPlayer = null!;
     private SaveGameService _saveService = null!;
     private DialogueRepository _dialogues = null!;
     private RuleConfiguration _rules = null!;
@@ -50,6 +51,7 @@ public partial class DemoFlowController : Control
     private bool _hesitationDialogueShown;
     private ulong _hesitationDueTicks;
     private string _activeBriefingLineId = string.Empty;
+    private string _currentTutorDialogueId = string.Empty;
     private string _currentTutorDialogue = string.Empty;
     private PendingGameStart _pendingGameStart;
     private OutcomeDirective? _pendingLimitDirective;
@@ -83,6 +85,7 @@ public partial class DemoFlowController : Control
         _titleScreen = GetNode<TitleScreen>("TitleScreen");
         _hud = GetNode<GameplayHUD>("GameplayHUD");
         _dialogueUI = GetNode<TutorDialogueUI>("TutorDialogueUI");
+        _speechPlayer = GetNode<TutorSpeechPlayer>("TutorSpeechPlayer");
 
         _saveService = new SaveGameService(ResolvePersistentPath(SavePath));
         _dialogues = DialogueRepository.Load(
@@ -126,6 +129,11 @@ public partial class DemoFlowController : Control
 
     public override void _ExitTree()
     {
+        if (GodotObject.IsInstanceValid(_speechPlayer))
+        {
+            _speechPlayer.StopDialogue();
+        }
+
         if (_phase != DemoPhase.TitleScreen
             && _phase != DemoPhase.Complete
             && !_inputLocked)
@@ -142,7 +150,9 @@ public partial class DemoFlowController : Control
         _inputLocked = false;
         _selectedChoice = null;
         _chapterPending = false;
+        _currentTutorDialogueId = string.Empty;
         _currentTutorDialogue = string.Empty;
+        _speechPlayer.StopDialogue();
         _background.Texture = GD.Load<Texture2D>(BackgroundTexturePath);
         _titleScreen.Visible = true;
         _hud.Visible = false;
@@ -170,6 +180,7 @@ public partial class DemoFlowController : Control
         _controlledRestarts = 0;
         _dialogueHistory.Clear();
         _activeBriefingLineId = string.Empty;
+        _currentTutorDialogueId = string.Empty;
         _currentTutorDialogue = string.Empty;
         _pendingGameStart = PendingGameStart.None;
         _pendingLimitDirective = null;
@@ -558,14 +569,15 @@ public partial class DemoFlowController : Control
         if (outcome != RoundOutcome.Continue)
         {
             RenderBash(
-                $"Player disengaged {choice}; the keystone anchor was disengaged.");
+                $"Player disengaged {choice}; the keystone anchor was disengaged.",
+                suppressTutorDialogue: true);
             FinishBash(outcome);
             return;
         }
 
         RenderBash(
             $"Player disengaged {choice}; {_bash.Remaining} anchors remain active.",
-            TutorDialoguePool.BashPlayerConfirmed);
+            suppressTutorDialogue: true);
         RunBashTutorTurn(_flowVersion);
     }
 
@@ -613,14 +625,24 @@ public partial class DemoFlowController : Control
                     : TutorDialoguePool.BashRoundTwoTutorActed);
     }
 
-    private void RenderBash(string log, string? dialoguePool = null)
+    private void RenderBash(
+        string log,
+        string? dialoguePool = null,
+        bool suppressTutorDialogue = false)
     {
         if (_bash is null)
         {
             return;
         }
 
-        UpdateTutorDialogue(dialoguePool, TutorDialoguePool.BashState);
+        if (suppressTutorDialogue)
+        {
+            ClearCurrentTutorDialogue();
+        }
+        else
+        {
+            UpdateTutorDialogue(dialoguePool, TutorDialoguePool.BashState);
+        }
 
         _hud.ShowBash(
             _bash,
@@ -630,6 +652,7 @@ public partial class DemoFlowController : Control
             _selectedChoice,
             inputOpen: !_inputLocked && _bash.CurrentTurn == Actor.Player,
             systemLog: log,
+            tutorDialogueId: _currentTutorDialogueId,
             tutorDialogue: _currentTutorDialogue);
     }
 
@@ -661,7 +684,7 @@ public partial class DemoFlowController : Control
         _lastGameTurns = _currentGameTurns;
         _phase = DemoPhase.RoundResult;
         _background.Texture = GD.Load<Texture2D>(BackgroundTexturePath);
-        _currentTutorDialogue = PickBashResultDialogue(outcome);
+        SetBashResultDialogue(outcome);
         WriteCheckpoint();
         _hud.ShowRoundResult(
             GameKind.Bash,
@@ -670,6 +693,7 @@ public partial class DemoFlowController : Control
             _currentGameTurns,
             _stats,
             willContinue: true,
+            tutorDialogueId: _currentTutorDialogueId,
             tutorDialogue: _currentTutorDialogue);
     }
 
@@ -738,7 +762,7 @@ public partial class DemoFlowController : Control
         RenderLimitBash(
             waiting: true,
             log: "Player request locked. Waiting for the simultaneous reveal.",
-            dialoguePool: TutorDialoguePool.LimitChoiceLocked);
+            suppressTutorDialogue: true);
 
         int tutorChoice;
 
@@ -772,15 +796,14 @@ public partial class DemoFlowController : Control
             return;
         }
 
-        UpdateTutorDialogue(
-            TutorDialoguePool.LimitReveal,
-            TutorDialoguePool.LimitReveal);
+        ClearCurrentTutorDialogue();
         _hud.ShowLimitReveal(
             _limitBash,
             _limitGameIndex,
             _stats,
             playerChoice,
             tutorChoice,
+            _currentTutorDialogueId,
             _currentTutorDialogue);
 
         await ToSignal(
@@ -817,14 +840,22 @@ public partial class DemoFlowController : Control
     private void RenderLimitBash(
         bool waiting,
         string log,
-        string? dialoguePool = null)
+        string? dialoguePool = null,
+        bool suppressTutorDialogue = false)
     {
         if (_limitBash is null)
         {
             return;
         }
 
-        UpdateTutorDialogue(dialoguePool, TutorDialoguePool.LimitState);
+        if (suppressTutorDialogue)
+        {
+            ClearCurrentTutorDialogue();
+        }
+        else
+        {
+            UpdateTutorDialogue(dialoguePool, TutorDialoguePool.LimitState);
+        }
 
         _hud.ShowLimitBash(
             _limitBash,
@@ -834,6 +865,7 @@ public partial class DemoFlowController : Control
             inputOpen: !_inputLocked,
             waiting: waiting,
             systemLog: log,
+            tutorDialogueId: _currentTutorDialogueId,
             tutorDialogue: _currentTutorDialogue);
     }
 
@@ -852,7 +884,7 @@ public partial class DemoFlowController : Control
         _lastGameTurns = _currentGameTurns;
         _phase = DemoPhase.RoundResult;
         _background.Texture = GD.Load<Texture2D>(BackgroundTexturePath);
-        _currentTutorDialogue = PickLimitResultDialogue(outcome);
+        SetLimitResultDialogue(outcome);
         WriteCheckpoint();
         _hud.ShowRoundResult(
             GameKind.LimitBash,
@@ -861,6 +893,7 @@ public partial class DemoFlowController : Control
             _currentGameTurns,
             _stats,
             willContinue: !_stats.IsLimitBashComplete,
+            tutorDialogueId: _currentTutorDialogueId,
             tutorDialogue: _currentTutorDialogue,
             finalChoice: _limitBash.ChoicePairs.Count > 0
                 ? _limitBash.ChoicePairs[^1]
@@ -987,6 +1020,7 @@ public partial class DemoFlowController : Control
         _phase = state.ResumePhase;
         _dialogueIndex = state.DialogueIndex;
         _activeBriefingLineId = state.ActiveBriefingLineId;
+        _currentTutorDialogueId = string.Empty;
         _currentTutorDialogue = state.CurrentTutorDialogue;
         _pendingGameStart = state.PendingGameStart;
         _pendingLimitDirective = state.PendingLimitDirective;
@@ -1059,6 +1093,12 @@ public partial class DemoFlowController : Control
             _bash = null;
         }
 
+        if (!string.IsNullOrWhiteSpace(_currentTutorDialogue))
+        {
+            _currentTutorDialogueId = ResolveTutorDialogueId(
+                _currentTutorDialogue);
+        }
+
         if (_phase == DemoPhase.RoundResult)
         {
             _hud.Visible = true;
@@ -1069,6 +1109,19 @@ public partial class DemoFlowController : Control
                 : snapshot.LimitGameIndex;
             _lastGameTurns = snapshot.RoundIndex;
             _background.Texture = GD.Load<Texture2D>(BackgroundTexturePath);
+
+            if (string.IsNullOrWhiteSpace(_currentTutorDialogue))
+            {
+                if (snapshot.Game == GameKind.Bash)
+                {
+                    SetBashResultDialogue(snapshot.Result);
+                }
+                else
+                {
+                    SetLimitResultDialogue(snapshot.Result);
+                }
+            }
+
             _hud.ShowRoundResult(
                 snapshot.Game,
                 snapshot.Result,
@@ -1077,11 +1130,8 @@ public partial class DemoFlowController : Control
                 _stats,
                 willContinue: snapshot.Game == GameKind.Bash
                     || !_stats.IsLimitBashComplete,
-                tutorDialogue: string.IsNullOrWhiteSpace(_currentTutorDialogue)
-                    ? snapshot.Game == GameKind.Bash
-                        ? PickBashResultDialogue(snapshot.Result)
-                        : PickLimitResultDialogue(snapshot.Result)
-                    : _currentTutorDialogue,
+                tutorDialogueId: _currentTutorDialogueId,
+                tutorDialogue: _currentTutorDialogue,
                 finalChoice: snapshot.Game == GameKind.LimitBash
                     && snapshot.ChoicePairs.Count > 0
                         ? snapshot.ChoicePairs[^1]
@@ -1123,15 +1173,21 @@ public partial class DemoFlowController : Control
     {
         if (!string.IsNullOrWhiteSpace(dialoguePool))
         {
-            _currentTutorDialogue = PickTutorDialogue(dialoguePool);
+            SetTutorDialogue(dialoguePool);
         }
         else if (string.IsNullOrWhiteSpace(_currentTutorDialogue))
         {
-            _currentTutorDialogue = PickTutorDialogue(fallbackPool);
+            SetTutorDialogue(fallbackPool);
         }
     }
 
-    private string PickBashResultDialogue(RoundOutcome outcome)
+    private void ClearCurrentTutorDialogue()
+    {
+        _currentTutorDialogueId = string.Empty;
+        _currentTutorDialogue = string.Empty;
+    }
+
+    private void SetBashResultDialogue(RoundOutcome outcome)
     {
         string pool;
 
@@ -1159,10 +1215,10 @@ public partial class DemoFlowController : Control
                 "Standard Bash does not support a draw result.");
         }
 
-        return PickTutorDialogue(pool);
+        SetTutorDialogue(pool);
     }
 
-    private string PickLimitResultDialogue(RoundOutcome outcome)
+    private void SetLimitResultDialogue(RoundOutcome outcome)
     {
         ChoicePair? finalPair = _limitBash?.ChoicePairs.Count > 0
             ? _limitBash.ChoicePairs[^1]
@@ -1184,12 +1240,14 @@ public partial class DemoFlowController : Control
                 "A result dialogue requires a settled outcome.")
         };
 
-        return PickTutorDialogue(pool);
+        SetTutorDialogue(pool);
     }
 
-    private string PickTutorDialogue(string poolId)
+    private void SetTutorDialogue(string poolId)
     {
-        return FormatDialogue(PickTutorLine(poolId).Text);
+        DialogueLine line = PickTutorLine(poolId);
+        _currentTutorDialogueId = line.Id;
+        _currentTutorDialogue = FormatDialogue(line.Text);
     }
 
     private DialogueLine PickTutorLine(string poolId)
@@ -1257,6 +1315,22 @@ public partial class DemoFlowController : Control
                 StringComparison.Ordinal);
     }
 
+    private string ResolveTutorDialogueId(string renderedText)
+    {
+        DialogueLine? matchingLine = _dialogues.GetAll()
+            .FirstOrDefault(line => line.Speaker == "TUTOR"
+                && FormatDialogue(line.Text) == renderedText);
+
+        if (matchingLine is null)
+        {
+            GD.PushWarning(
+                $"Could not restore a Tutor dialogue ID for: {renderedText}");
+            return string.Empty;
+        }
+
+        return matchingLine.Id;
+    }
+
     private void UpdateChoiceStageDialogue(
         int? previousChoice,
         int currentChoice,
@@ -1266,7 +1340,7 @@ public partial class DemoFlowController : Control
         {
             if (!_selectionDialogueShown && ShouldShowSelectionDialogue(currentChoice))
             {
-                _currentTutorDialogue = PickTutorDialogue(firstSelectionPool);
+                SetTutorDialogue(firstSelectionPool);
             }
 
             _selectionDialogueShown = true;
@@ -1276,8 +1350,7 @@ public partial class DemoFlowController : Control
         if (previousChoice.Value != currentChoice && !_revisionDialogueShown)
         {
             _revisionDialogueShown = true;
-            _currentTutorDialogue = PickTutorDialogue(
-                TutorDialoguePool.ChoiceRevision);
+            SetTutorDialogue(TutorDialoguePool.ChoiceRevision);
         }
     }
 
@@ -1324,8 +1397,7 @@ public partial class DemoFlowController : Control
         }
 
         _hesitationDialogueShown = true;
-        _currentTutorDialogue = PickTutorDialogue(
-            TutorDialoguePool.ChoiceHesitation);
+        SetTutorDialogue(TutorDialoguePool.ChoiceHesitation);
 
         if (bashInputOpen)
         {

@@ -1,6 +1,6 @@
 param(
     [string]$OutputPath = (
-        Join-Path $PSScriptRoot '..\assets\vfx\container_glow_30f.png')
+        Join-Path $PSScriptRoot '..\assets\vfx\container_glow_120f.png')
 )
 
 Set-StrictMode -Version Latest
@@ -10,9 +10,9 @@ Add-Type -AssemblyName System.Drawing
 
 $frameWidth = 256
 $frameHeight = 512
-$columns = 6
-$rows = 5
-$frameCount = 30
+$columns = 15
+$rows = 8
+$frameCount = 120
 $supersample = 4
 $nodeCount = 6
 
@@ -108,10 +108,10 @@ function Draw-CageLine {
 
     $visibility = ($From.Visibility + $To.Visibility) * 0.5
     $flicker = 0.72 + 0.28 * (($From.Flicker + $To.Flicker) * 0.5)
-    $alpha = 138.0 * $visibility * $flicker * $Strength
-    $width = $supersample * (0.54 + 0.28 * $visibility)
+    $alpha = 162.0 * $visibility * $flicker * $Strength
+    $width = $supersample * (0.68 + 0.34 * $visibility)
     $pen = [System.Drawing.Pen]::new(
-        (New-Color $alpha 52 218 232),
+        (New-Color $alpha 68 228 240),
         [single]$width)
     try {
         $Graphics.DrawLine(
@@ -139,14 +139,14 @@ function Draw-Node {
     # Concentric circles form a compact soft glow. There are deliberately no
     # rays or diamonds, so a node can never become an LLM-style starburst.
     $layers = @(
-        [pscustomobject]@{ Radius = 5.0; Alpha = 18.0 },
-        [pscustomobject]@{ Radius = 3.4; Alpha = 50.0 },
-        [pscustomobject]@{ Radius = 1.75; Alpha = 235.0 }
+        [pscustomobject]@{ Radius = 5.4; Alpha = 28.0 },
+        [pscustomobject]@{ Radius = 3.7; Alpha = 76.0 },
+        [pscustomobject]@{ Radius = 1.9; Alpha = 255.0 }
     )
     foreach ($layer in $layers) {
         $radius = $layer.Radius * $supersample
         $brush = [System.Drawing.SolidBrush]::new(
-            (New-Color ($layer.Alpha * $strength) 110 244 248))
+            (New-Color ($layer.Alpha * $strength) 132 250 255))
         try {
             $Graphics.FillEllipse(
                 $brush,
@@ -302,7 +302,7 @@ try {
     $outputDirectory = [System.IO.Path]::GetDirectoryName($resolvedOutput)
     [System.IO.Directory]::CreateDirectory($outputDirectory) | Out-Null
     $atlas.Save($resolvedOutput, [System.Drawing.Imaging.ImageFormat]::Png)
-    Write-Output "Generated 30-frame transparent atlas: $resolvedOutput"
+    Write-Output "Generated 120-frame transparent atlas: $resolvedOutput"
 }
 finally {
     $atlasGraphics.Dispose()

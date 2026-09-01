@@ -39,12 +39,12 @@ func _ready() -> void:
 		"The upper cage is no longer horizontally aligned with its ceiling mount.")
 	var container_frame := container_glow.texture as AtlasTexture
 	_assert(container_frame != null
-		and container_frame.atlas.resource_path.ends_with("container_glow_30f.png"),
-		"The authored upper-container 30-frame sequence is missing.")
-	_assert(container_frame.atlas.get_width() == 1536
-		and container_frame.atlas.get_height() == 2560
+		and container_frame.atlas.resource_path.ends_with("container_glow_120f.png"),
+		"The authored upper-container 120-frame sequence is missing.")
+	_assert(container_frame.atlas.get_width() == 3840
+		and container_frame.atlas.get_height() == 4096
 		and container_frame.region.size == Vector2(256.0, 512.0),
-		"The upper-container atlas is not laid out as 30 frames in a 6x5 grid.")
+		"The upper-container atlas is not laid out as 120 frames in a 15x8 grid.")
 	_assert(not _main.has_node("BackgroundVfx/ScannerGlow"),
 		"A dynamic scanner layer still covers the original static background disk.")
 	var container_cleanup := container_glow.material as ShaderMaterial
@@ -82,12 +82,15 @@ func _ready() -> void:
 	var fixed_container_rotation := container_glow.rotation
 	await get_tree().create_timer(0.24).timeout
 	_assert(container_frame.region != initial_container_region,
-		"The upper-container 30-frame sequence is present but not advancing.")
-	_assert(container_glow.position == fixed_container_position
+		"The upper-container 120-frame sequence is present but not advancing.")
+	var floating_delta := container_glow.position - fixed_container_position
+	_assert(is_zero_approx(floating_delta.x)
+		and absf(floating_delta.y) > 0.2
+		and absf(floating_delta.y) <= 6.1
 		and container_glow.scale == Vector2.ONE
 		and container_glow.rotation == fixed_container_rotation
 		and is_zero_approx(container_glow.rotation),
-		"The upper background VFX still bobs, scales, or rotates as a whole node.")
+		"The upper background VFX no longer performs only its bounded vertical float.")
 	_assert(not _button("TitleScreen/MenuGlass/MenuVBox/ContinueButton").visible,
 		"Continue must remain hidden without an unfinished save.")
 	_assert((_main.get_node(
@@ -121,17 +124,27 @@ func _ready() -> void:
 		"The obsolete dialogue continue button is still present.")
 	var dialogue_text := _main.get_node(
 		"TutorDialogueUI/SafeArea/Layout/Content/DialogueCard/DialogueVBox/DialogueText") as RichTextLabel
+	var tutor_speech := _main.get_node("TutorSpeechPlayer") as AudioStreamPlayer
 	_assert(dialogue_text.get_theme_font_size("normal_font_size") >= 32
 		and dialogue_text.vertical_alignment == VERTICAL_ALIGNMENT_CENTER,
 		"TutorDialogue text is not enlarged and vertically centred.")
 	_assert(dialogue_text.visible_characters != -1,
 		"Tutor dialogue did not begin with the typewriter animation.")
+	_assert(tutor_speech.playing and tutor_speech.stream != null,
+		"The opening Tutor line did not start its configured voice cue.")
 	_capture("02b-tutor-dialogue.png")
 
 	for index in range(6):
+		var stream_before_click := tutor_speech.stream
 		if dialogue_text.visible_characters != -1:
 			_left_click()
 			await _settle_frames()
+			if index == 0:
+				_assert(dialogue_text.visible_characters == -1,
+					"The first dialogue click did not reveal the complete line.")
+				_assert(tutor_speech.playing
+					and tutor_speech.stream == stream_before_click,
+					"The first dialogue click interrupted or replaced Tutor speech.")
 		if index < 3:
 			_capture("02c-background-%02d.png" % (index + 1))
 		if index == 2:
@@ -139,8 +152,14 @@ func _ready() -> void:
 				"TutorDialogueUI/SafeArea/Layout/Content/SpeakerCard/SpeakerVBox/SpeakerName") as Label
 			_assert(speaker_name.text.contains("S-17"),
 				"S-17 dialogue did not switch the visible speaker identity.")
+			_assert(not tutor_speech.playing and tutor_speech.stream == null,
+				"S-17 incorrectly received a generated Tutor voice cue.")
 		_left_click()
 		await _settle_frames()
+		if index == 0:
+			_assert(tutor_speech.playing
+				and tutor_speech.stream != stream_before_click,
+				"The second dialogue click did not replace the skipped voice cue.")
 
 	_assert(_main.get_node("GameplayHUD/ChapterOverlay").visible,
 		"Background dialogue did not route to the Chapter 1 splash.")
@@ -201,6 +220,8 @@ func _ready() -> void:
 	_assert(gameplay_dialogue.get_theme_font_size("normal_font_size") >= 30
 		and gameplay_dialogue.vertical_alignment == VERTICAL_ALIGNMENT_CENTER,
 		"Gameplay Tutor dialogue is not enlarged and vertically centred.")
+	_assert(gameplay_dialogue.visible_characters != -1 and tutor_speech.playing,
+		"Gameplay Tutor dialogue did not synchronize typewriter text with speech.")
 	_assert(not _main.has_node("GameplayHUD/SafeArea/Layout/Header/HeaderRow/ScoreLabel"),
 		"The removed top-centre score display is still present.")
 	_assert(_main.has_node("GameplayHUD/SafeArea/Layout/Header/HeaderRow/HeaderSpacer"),
@@ -285,6 +306,10 @@ func _ready() -> void:
 	_main.set("FastMode", false)
 	_press("GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ConfirmButton")
 	await get_tree().process_frame
+	_assert(not tutor_speech.playing and tutor_speech.stream == null,
+		"Bash confirmation started overlapping intermediate Tutor speech.")
+	_assert(gameplay_dialogue.text.is_empty(),
+		"Bash confirmation left more than one Tutor line active.")
 	_assert(choice_one.disabled and choice_two.disabled and choice_three.disabled,
 		"Tutor selection did not immediately lock all three player choices.")
 	_assert(confirm.visible and confirm.global_position == confirm_position,
@@ -324,16 +349,20 @@ func _ready() -> void:
 	await _settle_frames()
 	_capture("03b-tutor-locked.png")
 	_main.set("FastMode", true)
-	_assert((_main.get_node(
-		"GameplayHUD/SafeArea/Layout/Content/Center/DialoguePanel/DialogueVBox/Text") as RichTextLabel).text != tutor_line,
-		"Tutor dialogue did not advance after a confirmed gameplay event.")
+	_assert(gameplay_dialogue.text != tutor_line,
+		"The resolved Bash event retained the pre-confirmation Tutor line.")
 	_assert(FileAccess.file_exists(SAVE_PATH), "A stable session checkpoint was not written.")
 	await get_tree().create_timer(0.35).timeout
+	await _settle_frames()
+	_assert(tutor_speech.playing and not gameplay_dialogue.text.is_empty(),
+		"Bash resolution did not start its single final Tutor cue.")
 
 	_press("GameplayHUD/SafeArea/Layout/Content/RightColumn/BackButton")
 	await _settle_frames()
 	_assert(_main.get_node("TitleScreen").visible,
 		"Save and Back did not return to the title screen.")
+	_assert(not tutor_speech.playing,
+		"Tutor speech continued after returning to the title screen.")
 	_assert(_button("TitleScreen/MenuGlass/MenuVBox/ContinueButton").visible,
 		"A valid unfinished save did not reveal Continue.")
 	_press("TitleScreen/MenuGlass/MenuVBox/NewGameButton")
@@ -351,12 +380,18 @@ func _ready() -> void:
 		"GameplayHUD/SafeArea/Layout/Header/HeaderRow/PlayTimeLabel") as Label).text
 	_assert(restored_time != "PLAY TIME · 00:00",
 		"Continue did not restore the save's accumulated play time.")
+	var final_speech := _main.get_node("TutorSpeechPlayer") as AudioStreamPlayer
+	final_speech.stop()
+	final_speech.stream = null
+	await get_tree().create_timer(0.12).timeout
+	await _settle_frames()
 
-	if _failed:
-		get_tree().quit(1)
-	else:
+	var exit_code := 1 if _failed else 0
+	if not _failed:
 		print("Formal demo Godot smoke passed: title, chapters, gameplay, resume, and overwrite guard.")
-		get_tree().quit(0)
+	_main.queue_free()
+	await _settle_frames()
+	get_tree().quit(exit_code)
 
 
 func _prepare_test_paths() -> void:

@@ -128,6 +128,14 @@ public sealed class DialogueRepository
             : Array.Empty<DialogueLine>();
     }
 
+    public IReadOnlyList<DialogueLine> GetAll()
+    {
+        return _lines.Values
+            .SelectMany(lines => lines)
+            .Concat(_randomPools.Values.SelectMany(lines => lines))
+            .ToArray();
+    }
+
     public DialogueLine GetById(string lineId)
     {
         DialogueLine? line = _lines.Values

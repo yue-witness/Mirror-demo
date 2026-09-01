@@ -22,7 +22,9 @@ public partial class TutorDialogueUI : Control
     private Button _backButton = null!;
     private Texture2D _tutorPortrait = null!;
     private Texture2D _s17Portrait = null!;
+    private TutorSpeechPlayer _speechPlayer = null!;
     private double _visibleCharacterProgress;
+    private float _activeCharactersPerSecond;
     private bool _isTyping;
 
     public event Action? ContinueRequested;
@@ -52,8 +54,9 @@ public partial class TutorDialogueUI : Control
             "res://assets/portraits/tutor_states.png");
         _s17Portrait = ResourceLoader.Load<Texture2D>(
             "res://assets/portraits/s17_idle.png");
+        _speechPlayer = GetNode<TutorSpeechPlayer>("../TutorSpeechPlayer");
 
-        _backButton.Pressed += () => BackToTitleRequested?.Invoke();
+        _backButton.Pressed += RequestBackToTitle;
     }
 
     public override void _Process(double delta)
@@ -63,7 +66,7 @@ public partial class TutorDialogueUI : Control
             return;
         }
 
-        _visibleCharacterProgress += CharactersPerSecond * delta;
+        _visibleCharacterProgress += _activeCharactersPerSecond * delta;
         int totalCharacters = _dialogueText.GetTotalCharacterCount();
         int visibleCharacters = Math.Min(
             totalCharacters,
@@ -95,6 +98,7 @@ public partial class TutorDialogueUI : Control
             return;
         }
 
+        _speechPlayer.StopDialogue();
         ContinueRequested?.Invoke();
     }
 
@@ -117,7 +121,7 @@ public partial class TutorDialogueUI : Control
         };
         _saveLabel.Text = $"SAVE · STABLE   {lineIndex + 1:00}/{totalLines:00}";
         SetSpeaker(line.Speaker, redEye: false, line.Text);
-        BeginTyping(line.Text);
+        BeginTyping(line);
         _supplementaryText.Visible = false;
     }
 
@@ -131,7 +135,7 @@ public partial class TutorDialogueUI : Control
         _phaseLabel.Text = "SUMMARY";
         _saveLabel.Text = $"SAVE · STABLE   {lineIndex + 1:00}/{totalLines:00}";
         SetSpeaker(line.Speaker, redEye, line.Text);
-        BeginTyping(line.Text);
+        BeginTyping(line);
         _supplementaryText.Visible = true;
         _supplementaryText.Text =
             "[b]SESSION SUMMARY[/b]\n\n"
@@ -153,11 +157,19 @@ public partial class TutorDialogueUI : Control
             : $"PLAY TIME · {elapsed.Minutes:00}:{elapsed.Seconds:00}";
     }
 
-    private void BeginTyping(string text)
+    private void BeginTyping(DialogueLine line)
     {
-        _dialogueText.Text = CenterDialogue(text);
+        _dialogueText.Text = CenterDialogue(line.Text);
         _dialogueText.VisibleCharacters = 0;
         _visibleCharacterProgress = 0.0;
+        float duration = _speechPlayer.PlayDialogue(
+            line.Id,
+            line.Speaker,
+            line.Text);
+        int totalCharacters = _dialogueText.GetTotalCharacterCount();
+        _activeCharactersPerSecond = duration > 0.0f
+            ? totalCharacters / duration
+            : CharactersPerSecond;
         _isTyping = _dialogueText.GetTotalCharacterCount() > 0;
 
         if (!_isTyping)
@@ -175,6 +187,12 @@ public partial class TutorDialogueUI : Control
     {
         _isTyping = false;
         _dialogueText.VisibleCharacters = -1;
+    }
+
+    private void RequestBackToTitle()
+    {
+        _speechPlayer.StopDialogue();
+        BackToTitleRequested?.Invoke();
     }
 
     private void SetSpeaker(

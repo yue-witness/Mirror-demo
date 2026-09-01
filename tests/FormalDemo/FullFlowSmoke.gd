@@ -65,12 +65,18 @@ func _ready() -> void:
 		"Completing the summary did not return to the title screen.")
 	_assert(not _button("TitleScreen/MenuGlass/MenuVBox/ContinueButton").visible,
 		"A completed session must not remain available through Continue.")
+	var final_speech := _main.get_node("TutorSpeechPlayer") as AudioStreamPlayer
+	final_speech.stop()
+	final_speech.stream = null
+	await get_tree().create_timer(0.12).timeout
+	await _frames()
 
-	if _failed:
-		get_tree().quit(1)
-	else:
+	var exit_code := 1 if _failed else 0
+	if not _failed:
 		print("Formal demo full-flow smoke passed: title to completed summary.")
-		get_tree().quit(0)
+	_main.queue_free()
+	await _frames()
+	get_tree().quit(exit_code)
 
 
 func _complete_bash_tutorial_gate() -> void:
@@ -119,7 +125,7 @@ func _complete_bash_tutorial_gate() -> void:
 				"Result Tutor portrait and dialogue frames are not aligned.")
 			if result == "PLAYER WIN":
 				completed_rounds += 1
-			_left_click()
+			await _advance_result_page()
 			continue
 
 		var choice := _choose_optimal_bash_button()
@@ -206,7 +212,7 @@ func _complete_limit_bash() -> void:
 					"Limit Bash result did not retain its execution log.")
 				_capture("03b-limit-result.png")
 				captured_result = true
-			_left_click()
+			await _advance_result_page()
 			continue
 
 		for index in range(1, 4):
@@ -232,6 +238,14 @@ func _complete_limit_bash() -> void:
 				if not checked_tutor_layout:
 					await get_tree().create_timer(0.5).timeout
 					await _frames()
+					var speech := _main.get_node(
+						"TutorSpeechPlayer") as AudioStreamPlayer
+					var tutor_text := _main.get_node(
+						"GameplayHUD/SafeArea/Layout/Content/Center/DialoguePanel/DialogueVBox/Text") as RichTextLabel
+					_assert(not speech.playing and speech.stream == null,
+						"Limit lock and reveal started overlapping Tutor speech cues.")
+					_assert(tutor_text.text.is_empty(),
+						"Limit lock and reveal exposed conflicting Tutor lines.")
 					_assert(confirm.visible
 						and action_buttons[0].global_position == positions[0]
 						and action_buttons[1].global_position == positions[1]
@@ -287,6 +301,24 @@ func _advance_dialogue_page() -> void:
 	if dialogue.visible_characters != -1:
 		_left_click()
 		await _frames()
+
+	_left_click()
+	await _frames()
+
+
+func _advance_result_page() -> void:
+	var dialogue := _main.get_node(
+		"GameplayHUD/SafeArea/Layout/Content/Center/DialoguePanel/DialogueVBox/Text") as RichTextLabel
+	var speech := _main.get_node("TutorSpeechPlayer") as AudioStreamPlayer
+
+	if dialogue.visible_characters != -1:
+		var active_stream := speech.stream
+		_left_click()
+		await _frames()
+		_assert(dialogue.visible_characters == -1,
+			"The first result click did not reveal the complete Tutor line.")
+		_assert(speech.playing and speech.stream == active_stream,
+			"The first result click interrupted Tutor speech.")
 
 	_left_click()
 	await _frames()

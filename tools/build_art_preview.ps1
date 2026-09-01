@@ -7,7 +7,7 @@ param(
     [Parameter(Mandatory = $true)]
     [string]$S17Atlas,
 
-    [string]$ContainerGlow = "assets/vfx/container_glow_30f.png",
+    [string]$ContainerGlow = "assets/vfx/container_glow_120f.png",
 
     [string]$OutputDirectory = "_qa/art-preview"
 )
@@ -148,8 +148,8 @@ $tutor = [System.Drawing.Image]::FromFile((Resolve-Path $TutorAtlas))
 $s17 = [System.Drawing.Image]::FromFile((Resolve-Path $S17Atlas))
 $containerGlowAtlas = [System.Drawing.Image]::FromFile(
     (Resolve-Path $ContainerGlow))
-$containerFrameWidth = [int]($containerGlowAtlas.Width / 6)
-$containerFrameHeight = [int]($containerGlowAtlas.Height / 5)
+$containerFrameWidth = [int]($containerGlowAtlas.Width / 15)
+$containerFrameHeight = [int]($containerGlowAtlas.Height / 8)
 $containerGlowImage = [System.Drawing.Bitmap]::new(
     $containerFrameWidth,
     $containerFrameHeight,
@@ -192,7 +192,7 @@ try {
             -Graphics $sceneGraphics `
             -Image $containerGlowImage `
             -Destination ([System.Drawing.Rectangle]::new(1595, 157, 330, 380)) `
-            -Opacity 0.84
+            -Opacity 0.92
 
         $borderPen = [System.Drawing.Pen]::new(
             [System.Drawing.Color]::FromArgb(210, 56, 255, 59),

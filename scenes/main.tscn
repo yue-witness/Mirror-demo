@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://bgranncpwtngt"]
+[gd_scene load_steps=14 format=3 uid="uid://bgranncpwtngt"]
 
 [ext_resource type="Theme" path="res://themes/ProjectMirrorLightTheme.tres" id="1_theme"]
 [ext_resource type="Script" path="res://scripts/Core/DemoFlowController.cs" id="2_flow"]
@@ -8,15 +8,16 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/TutorDialogueUI.tscn" id="6_dialogue"]
 [ext_resource type="Script" path="res://scripts/UI/DotMatrixTextStyler.cs" id="7_text_styler"]
 [ext_resource type="Script" path="res://scripts/UI/BackgroundVfx.cs" id="8_background_vfx"]
-[ext_resource type="Texture2D" path="res://assets/vfx/container_glow_30f.png" id="9_container_glow"]
+[ext_resource type="Texture2D" path="res://assets/vfx/container_glow_120f.png" id="9_container_glow"]
 [ext_resource type="Script" path="res://scripts/UI/FrameParticleEffectsInstaller.cs" id="11_frame_effects"]
 [ext_resource type="Shader" path="res://shaders/background_vfx_cleanup.gdshader" id="12_vfx_cleanup"]
+[ext_resource type="Script" path="res://scripts/Audio/TutorSpeechPlayer.cs" id="13_tutor_speech"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_container_cleanup"]
 shader = ExtResource("12_vfx_cleanup")
 shader_parameter/luminance_cutoff = 0.02
 shader_parameter/transition_width = 0.08
-shader_parameter/maximum_brightness = 0.84
+shader_parameter/maximum_brightness = 0.92
 shader_parameter/highlight_suppression = 0.08
 
 [node name="Main" type="Control"]
@@ -75,6 +76,9 @@ stretch_mode = 0
 
 [node name="TitleScreen" parent="." instance=ExtResource("4_title")]
 layout_mode = 1
+
+[node name="TutorSpeechPlayer" type="AudioStreamPlayer" parent="."]
+script = ExtResource("13_tutor_speech")
 
 [node name="GameplayHUD" parent="." instance=ExtResource("5_hud")]
 visible = false

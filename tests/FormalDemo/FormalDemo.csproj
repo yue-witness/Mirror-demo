@@ -19,6 +19,7 @@
     <Compile Include="../../scripts/Session/DemoSaveState.cs" Link="Domain/DemoSaveState.cs" />
     <Compile Include="../../scripts/Data/SaveGameService.cs" Link="Domain/SaveGameService.cs" />
     <Compile Include="../../scripts/Data/DialogueRepository.cs" Link="Domain/DialogueRepository.cs" />
+    <Compile Include="../../scripts/Data/TutorSpeechCatalog.cs" Link="Domain/TutorSpeechCatalog.cs" />
     <Compile Include="../../scripts/Data/RuleConfiguration.cs" Link="Domain/RuleConfiguration.cs" />
   </ItemGroup>
 </Project>

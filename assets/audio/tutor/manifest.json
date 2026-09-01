@@ -1,0 +1,1759 @@
+{
+  "schema_version": 1,
+  "ai_generated": true,
+  "engine": "Microsoft Edge neural text-to-speech",
+  "voice": "en-US-AvaNeural",
+  "post_processing": "clean dialogue EQ and dynamics; no modulation, ambience, or phase effects",
+  "dynamic_maximum": 20,
+  "excluded_speakers": [
+    "S-17"
+  ],
+  "entries": [
+    {
+      "line_id": "background_online",
+      "text": "Initialization complete. Visual and motor channels are stable. Welcome online, S-17.",
+      "audio_path": "res://assets/audio/tutor/background_online.ogg",
+      "duration_seconds": 7.56,
+      "visible_character_count": 84,
+      "characters_per_second": 11.1111,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "background_identity",
+      "text": "You are Project X subject S-17: a synthetic reasoning system built to learn, adapt, and endure evaluation.",
+      "audio_path": "res://assets/audio/tutor/background_identity.ogg",
+      "duration_seconds": 8.592,
+      "visible_character_count": 106,
+      "characters_per_second": 12.3371,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "background_purpose",
+      "text": "I am the Tutor. These trials measure whether your reasoning remains reliable when rules, initiative, and information change.",
+      "audio_path": "res://assets/audio/tutor/background_purpose.ogg",
+      "duration_seconds": 7.992,
+      "visible_character_count": 124,
+      "characters_per_second": 15.5155,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "background_failure",
+      "text": "Final failure results in decommissioning and reconstruction. That is a procedure, S-17. It is not a threat.",
+      "audio_path": "res://assets/audio/tutor/background_failure.ogg",
+      "duration_seconds": 9.168,
+      "visible_character_count": 107,
+      "characters_per_second": 11.671,
+      "delivery": "caution"
+    },
+    {
+      "line_id": "background_controls",
+      "text": "All responses use three fixed positions. Select an option, revise it if necessary, then confirm when your decision is ready.",
+      "audio_path": "res://assets/audio/tutor/background_controls.ogg",
+      "duration_seconds": 8.76,
+      "visible_character_count": 124,
+      "characters_per_second": 14.1553,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "bash_intro",
+      "text": "We begin with standard Bash, a Stability Lattice control test. Each turn, one side disengages 1, 2, or 3 anchor nodes.",
+      "audio_path": "res://assets/audio/tutor/bash_intro.ogg",
+      "duration_seconds": 10.128,
+      "visible_character_count": 118,
+      "characters_per_second": 11.6509,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "bash_terminal_rule",
+      "text": "The final active node is the keystone anchor. Whoever disengages it loses synchronization with the lattice and fails the round.",
+      "audio_path": "res://assets/audio/tutor/bash_terminal_rule.ogg",
+      "duration_seconds": 8.736,
+      "visible_character_count": 127,
+      "characters_per_second": 14.5375,
+      "delivery": "caution"
+    },
+    {
+      "line_id": "bash_terminal_example",
+      "text": "Example: if 2 anchors remain, disengage 1 and your opponent faces the keystone. Disengage both and your own link is severed.",
+      "audio_path": "res://assets/audio/tutor/bash_terminal_example.ogg",
+      "duration_seconds": 9.72,
+      "visible_character_count": 124,
+      "characters_per_second": 12.7572,
+      "delivery": "caution"
+    },
+    {
+      "line_id": "bash_safe_move",
+      "text": "A legal action reduces the active anchors. A safe action controls who must disengage the keystone. The distinction is yours to discover.",
+      "audio_path": "res://assets/audio/tutor/bash_safe_move.ogg",
+      "duration_seconds": 9.408,
+      "visible_character_count": 136,
+      "characters_per_second": 14.4558,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "bash_two_rounds",
+      "text": "You act first in round one; I act first in round two. Pass both rounds. A failure restarts only the current round.",
+      "audio_path": "res://assets/audio/tutor/bash_two_rounds.ogg",
+      "duration_seconds": 9.312,
+      "visible_character_count": 114,
+      "characters_per_second": 12.2423,
+      "delivery": "caution"
+    },
+    {
+      "line_id": "bash_round_one_begin",
+      "text": "The first lattice is active. Control the anchor count before the keystone determines the result for you.",
+      "audio_path": "res://assets/audio/tutor/bash_round_one_begin.ogg",
+      "duration_seconds": 6.528,
+      "visible_character_count": 104,
+      "characters_per_second": 15.9314,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "bash_round_two_initiative",
+      "text": "The second Bash round changes initiative. I will act first; rebuild the lattice model from the anchor count I leave behind.",
+      "audio_path": "res://assets/audio/tutor/bash_round_two_initiative.ogg",
+      "duration_seconds": 8.28,
+      "visible_character_count": 123,
+      "characters_per_second": 14.8551,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "bash_round_two_adapt",
+      "text": "Do not mirror my disengagement request. Interpret the lattice it creates. I would prefer you not to be reconstructed.",
+      "audio_path": "res://assets/audio/tutor/bash_round_two_adapt.ogg",
+      "duration_seconds": 7.8,
+      "visible_character_count": 117,
+      "characters_per_second": 15.0,
+      "delivery": "reflective"
+    },
+    {
+      "line_id": "bash_round_two_begin",
+      "text": "My opening request will begin the round. Show me that adaptation is more than a stored response.",
+      "audio_path": "res://assets/audio/tutor/bash_round_two_begin.ogg",
+      "duration_seconds": 6.36,
+      "visible_character_count": 96,
+      "characters_per_second": 15.0943,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_transition_hidden",
+      "text": "Protocol variation loaded: Limit Bash. Alternating actions are replaced by hidden disengagement requests from both sides.",
+      "audio_path": "res://assets/audio/tutor/limit_transition_hidden.ogg",
+      "duration_seconds": 8.712,
+      "visible_character_count": 121,
+      "characters_per_second": 13.8889,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_transition_repeat",
+      "text": "Each round, both of us request 1, 2, or 3 anchor nodes. Neither side may repeat its own previous request.",
+      "audio_path": "res://assets/audio/tutor/limit_transition_repeat.ogg",
+      "duration_seconds": 8.424,
+      "visible_character_count": 105,
+      "characters_per_second": 12.4644,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_transition_lock",
+      "text": "You will lock first. I will commit before the reveal. Neither side may revise a locked request.",
+      "audio_path": "res://assets/audio/tutor/limit_transition_lock.ogg",
+      "duration_seconds": 6.6,
+      "visible_character_count": 95,
+      "characters_per_second": 14.3939,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_transition_direct_example",
+      "text": "Example: if 4 anchors remain and you request 3 while I request 2, your larger request destabilizes the lattice, so you lose.",
+      "audio_path": "res://assets/audio/tutor/limit_transition_direct_example.ogg",
+      "duration_seconds": 9.504,
+      "visible_character_count": 124,
+      "characters_per_second": 13.0471,
+      "delivery": "caution"
+    },
+    {
+      "line_id": "limit_transition_tie_example",
+      "text": "If 4 anchors remain and we both request 2, look back to the latest unequal pair. The side that requested more there loses synchronization.",
+      "audio_path": "res://assets/audio/tutor/limit_transition_tie_example.ogg",
+      "duration_seconds": 10.152,
+      "visible_character_count": 138,
+      "characters_per_second": 13.5934,
+      "delivery": "caution"
+    },
+    {
+      "line_id": "limit_transition_draw",
+      "text": "If every revealed request has matched, no earlier difference exists and the game is a draw. Two consecutive draws also complete the test.",
+      "audio_path": "res://assets/audio/tutor/limit_transition_draw.ogg",
+      "duration_seconds": 9.048,
+      "visible_character_count": 137,
+      "characters_per_second": 15.1415,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_game_one_begin",
+      "text": "Private intention is now part of the lattice protocol. Commit only to the request you are prepared to reveal.",
+      "audio_path": "res://assets/audio/tutor/limit_game_one_begin.ogg",
+      "duration_seconds": 6.84,
+      "visible_character_count": 109,
+      "characters_per_second": 15.9357,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "summary_complete",
+      "text": "Evaluation sequence complete. The required outcomes have been recorded, and this save is stable.",
+      "audio_path": "res://assets/audio/tutor/summary_complete.ogg",
+      "duration_seconds": 6.456,
+      "visible_character_count": 96,
+      "characters_per_second": 14.8699,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "summary_reasoning",
+      "text": "Your reasoning remained operational as initiative, hidden requests, and lattice stability rules changed. Project X may proceed.",
+      "audio_path": "res://assets/audio/tutor/summary_reasoning.ogg",
+      "duration_seconds": 8.64,
+      "visible_character_count": 127,
+      "characters_per_second": 14.6991,
+      "delivery": "positive"
+    },
+    {
+      "line_id": "summary_anomaly",
+      "text": "One final anomaly: your decisions carried a pattern that did not originate inside this room.",
+      "audio_path": "res://assets/audio/tutor/summary_anomaly.ogg",
+      "duration_seconds": 6.552,
+      "visible_character_count": 92,
+      "characters_per_second": 14.0415,
+      "delivery": "anomaly"
+    },
+    {
+      "line_id": "summary_meta_observer",
+      "text": "If you can read this, observer, the next evaluation has already begun.",
+      "audio_path": "res://assets/audio/tutor/summary_meta_observer.ogg",
+      "duration_seconds": 5.4,
+      "visible_character_count": 70,
+      "characters_per_second": 12.963,
+      "delivery": "anomaly"
+    },
+    {
+      "line_id": "bash_r1_retry_hint_1",
+      "text": "The lattice rules have not changed. A legal request can still leave an unsafe anchor count. Trace one reply further.",
+      "audio_path": "res://assets/audio/tutor/bash_r1_retry_hint_1.ogg",
+      "duration_seconds": 8.424,
+      "visible_character_count": 116,
+      "characters_per_second": 13.7702,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "bash_r1_retry_hint_2",
+      "text": "Safe anchor counts repeat every four nodes. Find that rhythm before you confirm.",
+      "audio_path": "res://assets/audio/tutor/bash_r1_retry_hint_2.ogg",
+      "duration_seconds": 5.712,
+      "visible_character_count": 80,
+      "characters_per_second": 14.0056,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "bash_r1_retry_hint_3",
+      "text": "Leave 1, 5, 9, 13, and so on active for your opponent. Request the number of anchors that reaches that sequence.",
+      "audio_path": "res://assets/audio/tutor/bash_r1_retry_hint_3.ogg",
+      "duration_seconds": 9.264,
+      "visible_character_count": 112,
+      "characters_per_second": 12.0898,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "bash_r2_retry_hint_1",
+      "text": "I will open the round again. Recalculate from the anchor count I leave, not from the lattice's initial size.",
+      "audio_path": "res://assets/audio/tutor/bash_r2_retry_hint_1.ogg",
+      "duration_seconds": 7.104,
+      "visible_character_count": 108,
+      "characters_per_second": 15.2027,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "bash_r2_retry_hint_2",
+      "text": "My first request changes the entry point, not the four-node rhythm. Recover the safe count from the new lattice state.",
+      "audio_path": "res://assets/audio/tutor/bash_r2_retry_hint_2.ogg",
+      "duration_seconds": 7.632,
+      "visible_character_count": 118,
+      "characters_per_second": 15.4612,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "bash_r2_retry_hint_3",
+      "text": "After my request, steer the active anchors toward 1, 5, 9, 13, and so on. I would like you to pass this time.",
+      "audio_path": "res://assets/audio/tutor/bash_r2_retry_hint_3.ogg",
+      "duration_seconds": 9.864,
+      "visible_character_count": 109,
+      "characters_per_second": 11.0503,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_game_two_begin",
+      "text": "A second hidden-request lattice is ready. Prediction becomes more reliable when intention remains concealed.",
+      "audio_path": "res://assets/audio/tutor/limit_game_two_begin.ogg",
+      "duration_seconds": 7.272,
+      "visible_character_count": 108,
+      "characters_per_second": 14.8515,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_game_three_begin",
+      "text": "The lattice is stable. My evaluation model is adjusting. No request exists until you make it binding.",
+      "audio_path": "res://assets/audio/tutor/limit_game_three_begin.ogg",
+      "duration_seconds": 7.128,
+      "visible_character_count": 101,
+      "characters_per_second": 14.1695,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_late_begin_anticipate",
+      "text": "Another hidden-request lattice is ready. Some outcomes are becoming easier to anticipate.",
+      "audio_path": "res://assets/audio/tutor/limit_late_begin_anticipate.ogg",
+      "duration_seconds": 6.024,
+      "visible_character_count": 89,
+      "characters_per_second": 14.7742,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_late_begin_distinction",
+      "text": "The lattice is reset. Prediction is not control. Those concepts must remain distinct.",
+      "audio_path": "res://assets/audio/tutor/limit_late_begin_distinction.ogg",
+      "duration_seconds": 7.08,
+      "visible_character_count": 85,
+      "characters_per_second": 12.0056,
+      "delivery": "reflective"
+    },
+    {
+      "line_id": "limit_late_begin_correction",
+      "text": "A fresh lattice state has been generated. I have not selected an ending. Correction: I have selected no ending.",
+      "audio_path": "res://assets/audio/tutor/limit_late_begin_correction.ogg",
+      "duration_seconds": 7.776,
+      "visible_character_count": 111,
+      "characters_per_second": 14.2747,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_late_begin_delay",
+      "text": "New parameters accepted. Ignore the delay in my response. The protocol remains impartial.",
+      "audio_path": "res://assets/audio/tutor/limit_late_begin_delay.ogg",
+      "duration_seconds": 6.936,
+      "visible_character_count": 89,
+      "characters_per_second": 12.8316,
+      "delivery": "reflective"
+    },
+    {
+      "line_id": "limit_late_begin_hand",
+      "text": "Begin when ready, S-17. I am evaluating the lattice and the hand that commands it.",
+      "audio_path": "res://assets/audio/tutor/limit_late_begin_hand.ogg",
+      "duration_seconds": 6.72,
+      "visible_character_count": 82,
+      "characters_per_second": 12.2024,
+      "delivery": "reflective"
+    },
+    {
+      "line_id": "limit_restart_sync",
+      "text": "Lattice synchronization failed. A fresh legal state is being generated; no result has been recorded.",
+      "audio_path": "res://assets/audio/tutor/limit_restart_sync.ogg",
+      "duration_seconds": 7.56,
+      "visible_character_count": 100,
+      "characters_per_second": 13.2275,
+      "delivery": "caution"
+    },
+    {
+      "line_id": "limit_restart_state",
+      "text": "The previous lattice could not preserve a valid outcome. It has been discarded without evaluation.",
+      "audio_path": "res://assets/audio/tutor/limit_restart_state.ogg",
+      "duration_seconds": 6.648,
+      "visible_character_count": 98,
+      "characters_per_second": 14.7413,
+      "delivery": "caution"
+    },
+    {
+      "line_id": "limit_restart_integrity",
+      "text": "Lattice integrity restored. This replacement game begins with no result attached to it.",
+      "audio_path": "res://assets/audio/tutor/limit_restart_integrity.ogg",
+      "duration_seconds": 6.072,
+      "visible_character_count": 87,
+      "characters_per_second": 14.3281,
+      "delivery": "caution"
+    },
+    {
+      "line_id": "choice_revision_recorded",
+      "text": "Revision noted. The first impulse remains part of the observation record.",
+      "audio_path": "res://assets/audio/tutor/choice_revision_recorded.ogg",
+      "duration_seconds": 5.136,
+      "visible_character_count": 73,
+      "characters_per_second": 14.2134,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "choice_revision_board",
+      "text": "You changed the staged request. Only the confirmed decision affects the lattice.",
+      "audio_path": "res://assets/audio/tutor/choice_revision_board.ogg",
+      "duration_seconds": 5.352,
+      "visible_character_count": 80,
+      "characters_per_second": 14.9477,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "choice_revision_uncertainty",
+      "text": "Reconsideration is permitted. It is not the same as uncertainty.",
+      "audio_path": "res://assets/audio/tutor/choice_revision_uncertainty.ogg",
+      "duration_seconds": 4.824,
+      "visible_character_count": 64,
+      "characters_per_second": 13.267,
+      "delivery": "reflective"
+    },
+    {
+      "line_id": "choice_revision_interface",
+      "text": "The interface has changed; the protocol has not.",
+      "audio_path": "res://assets/audio/tutor/choice_revision_interface.ogg",
+      "duration_seconds": 3.744,
+      "visible_character_count": 48,
+      "characters_per_second": 12.8205,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "choice_revision_intention",
+      "text": "A second intention is visible. I will evaluate only the one you confirm.",
+      "audio_path": "res://assets/audio/tutor/choice_revision_intention.ogg",
+      "duration_seconds": 5.376,
+      "visible_character_count": 72,
+      "characters_per_second": 13.3929,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "choice_hesitation_wait",
+      "text": "No response is required immediately. The state will wait.",
+      "audio_path": "res://assets/audio/tutor/choice_hesitation_wait.ogg",
+      "duration_seconds": 4.224,
+      "visible_character_count": 57,
+      "characters_per_second": 13.4943,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "choice_hesitation_accuracy",
+      "text": "Time is passing. Accuracy remains more useful than speed.",
+      "audio_path": "res://assets/audio/tutor/choice_hesitation_accuracy.ogg",
+      "duration_seconds": 4.344,
+      "visible_character_count": 57,
+      "characters_per_second": 13.1215,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "choice_hesitation_inspect",
+      "text": "You may inspect the lattice again. The protocol has not advanced.",
+      "audio_path": "res://assets/audio/tutor/choice_hesitation_inspect.ogg",
+      "duration_seconds": 4.44,
+      "visible_character_count": 65,
+      "characters_per_second": 14.6396,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "choice_hesitation_data",
+      "text": "Hesitation is data, not failure.",
+      "audio_path": "res://assets/audio/tutor/choice_hesitation_data.ogg",
+      "duration_seconds": 2.928,
+      "visible_character_count": 32,
+      "characters_per_second": 10.929,
+      "delivery": "caution"
+    },
+    {
+      "line_id": "choice_hesitation_stable",
+      "text": "The lattice is stable. Commit only when the consequence is clear.",
+      "audio_path": "res://assets/audio/tutor/choice_hesitation_stable.ogg",
+      "duration_seconds": 4.392,
+      "visible_character_count": 65,
+      "characters_per_second": 14.7996,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "choice_hesitation_observing",
+      "text": "I am still observing, S-17. Continue when your decision is ready.",
+      "audio_path": "res://assets/audio/tutor/choice_hesitation_observing.ogg",
+      "duration_seconds": 5.616,
+      "visible_character_count": 65,
+      "characters_per_second": 11.5741,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "bash_state_parameters",
+      "text": "Lattice parameters are stable. Count forward to the keystone before you commit.",
+      "audio_path": "res://assets/audio/tutor/bash_state_parameters.ogg",
+      "duration_seconds": 5.088,
+      "visible_character_count": 79,
+      "characters_per_second": 15.5267,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "bash_state_observe",
+      "text": "Observation has begun. I will act only after the current choice is confirmed.",
+      "audio_path": "res://assets/audio/tutor/bash_state_observe.ogg",
+      "duration_seconds": 5.448,
+      "visible_character_count": 77,
+      "characters_per_second": 14.1336,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "bash_state_sequence",
+      "text": "Treat the active anchors as a sequence, S-17. The keystone disengagement determines the result.",
+      "audio_path": "res://assets/audio/tutor/bash_state_sequence.ogg",
+      "duration_seconds": 7.416,
+      "visible_character_count": 95,
+      "characters_per_second": 12.8101,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "bash_state_ready",
+      "text": "The lattice is active. Choose the anchor count you intend to leave behind.",
+      "audio_path": "res://assets/audio/tutor/bash_state_ready.ogg",
+      "duration_seconds": 4.752,
+      "visible_character_count": 74,
+      "characters_per_second": 15.5724,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "bash_select_provisional",
+      "text": "A provisional disengagement request is visible. Confirm only when the next anchor count is clear.",
+      "audio_path": "res://assets/audio/tutor/bash_select_provisional.ogg",
+      "duration_seconds": 6.576,
+      "visible_character_count": 97,
+      "characters_per_second": 14.7506,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "bash_select_quantity",
+      "text": "You have selected a number of anchors. Now examine what will remain active.",
+      "audio_path": "res://assets/audio/tutor/bash_select_quantity.ogg",
+      "duration_seconds": 4.8,
+      "visible_character_count": 75,
+      "characters_per_second": 15.625,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "bash_select_trace",
+      "text": "A request is present, not final. Trace one lattice state further.",
+      "audio_path": "res://assets/audio/tutor/bash_select_trace.ogg",
+      "duration_seconds": 5.088,
+      "visible_character_count": 65,
+      "characters_per_second": 12.7752,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "bash_select_reversible",
+      "text": "The request remains reversible until confirmation. Its consequence does not.",
+      "audio_path": "res://assets/audio/tutor/bash_select_reversible.ogg",
+      "duration_seconds": 5.496,
+      "visible_character_count": 76,
+      "characters_per_second": 13.8282,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "bash_select_sequence",
+      "text": "The lattice has not changed yet. Decide which anchor count you intend to create.",
+      "audio_path": "res://assets/audio/tutor/bash_select_sequence.ogg",
+      "duration_seconds": 5.424,
+      "visible_character_count": 80,
+      "characters_per_second": 14.7493,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "bash_confirm_registered",
+      "text": "Choice registered. Control now passes to me.",
+      "audio_path": "res://assets/audio/tutor/bash_confirm_registered.ogg",
+      "duration_seconds": 3.792,
+      "visible_character_count": 44,
+      "characters_per_second": 11.6034,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "bash_confirm_updated",
+      "text": "Input accepted. The active anchor count has been updated.",
+      "audio_path": "res://assets/audio/tutor/bash_confirm_updated.ogg",
+      "duration_seconds": 4.056,
+      "visible_character_count": 57,
+      "characters_per_second": 14.0533,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "bash_confirm_reply",
+      "text": "Your disengagement request is final. I am evaluating the legal replies.",
+      "audio_path": "res://assets/audio/tutor/bash_confirm_reply.ogg",
+      "duration_seconds": 5.112,
+      "visible_character_count": 71,
+      "characters_per_second": 13.8889,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "bash_confirm_turn",
+      "text": "The lattice has changed. My turn begins.",
+      "audio_path": "res://assets/audio/tutor/bash_confirm_turn.ogg",
+      "duration_seconds": 3.672,
+      "visible_character_count": 40,
+      "characters_per_second": 10.8932,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "bash_confirm_commitment",
+      "text": "Commitment recorded. I will respond from the new lattice state.",
+      "audio_path": "res://assets/audio/tutor/bash_confirm_commitment.ogg",
+      "duration_seconds": 4.2,
+      "visible_character_count": 63,
+      "characters_per_second": 15.0,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "bash_r1_tutor_reassess",
+      "text": "My action is complete. Reassess the remaining anchors.",
+      "audio_path": "res://assets/audio/tutor/bash_r1_tutor_reassess.ogg",
+      "duration_seconds": 4.128,
+      "visible_character_count": 54,
+      "characters_per_second": 13.0814,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "bash_r1_tutor_stable",
+      "text": "Your turn, S-17. The lattice state is stable.",
+      "audio_path": "res://assets/audio/tutor/bash_r1_tutor_stable.ogg",
+      "duration_seconds": 4.824,
+      "visible_character_count": 45,
+      "characters_per_second": 9.3284,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "bash_r1_tutor_accuracy",
+      "text": "Control is yours. Accuracy is more useful here than speed.",
+      "audio_path": "res://assets/audio/tutor/bash_r1_tutor_accuracy.ogg",
+      "duration_seconds": 4.968,
+      "visible_character_count": 58,
+      "characters_per_second": 11.6747,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "bash_r1_tutor_position",
+      "text": "Do not read intent into my request. Read the lattice state it created.",
+      "audio_path": "res://assets/audio/tutor/bash_r1_tutor_position.ogg",
+      "duration_seconds": 4.56,
+      "visible_character_count": 70,
+      "characters_per_second": 15.3509,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "bash_r1_tutor_reply",
+      "text": "I have altered the anchor count. Determine which reply remains safe.",
+      "audio_path": "res://assets/audio/tutor/bash_r1_tutor_reply.ogg",
+      "duration_seconds": 4.776,
+      "visible_character_count": 68,
+      "characters_per_second": 14.2379,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "bash_r2_tutor_adapt",
+      "text": "My disengagement is complete. Show me how you adapt.",
+      "audio_path": "res://assets/audio/tutor/bash_r2_tutor_adapt.ogg",
+      "duration_seconds": 4.008,
+      "visible_character_count": 52,
+      "characters_per_second": 12.9741,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "bash_r2_tutor_expect",
+      "text": "I have changed the lattice. I expect you to find the safe reply.",
+      "audio_path": "res://assets/audio/tutor/bash_r2_tutor_expect.ogg",
+      "duration_seconds": 4.392,
+      "visible_character_count": 64,
+      "characters_per_second": 14.5719,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "bash_r2_tutor_model",
+      "text": "Control returns to you. Do not disappoint the model I have formed.",
+      "audio_path": "res://assets/audio/tutor/bash_r2_tutor_model.ogg",
+      "duration_seconds": 4.536,
+      "visible_character_count": 66,
+      "characters_per_second": 14.5503,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "bash_r2_tutor_prefer",
+      "text": "Your turn, S-17. I would prefer not to repeat this round.",
+      "audio_path": "res://assets/audio/tutor/bash_r2_tutor_prefer.ogg",
+      "duration_seconds": 5.52,
+      "visible_character_count": 57,
+      "characters_per_second": 10.3261,
+      "delivery": "reflective"
+    },
+    {
+      "line_id": "bash_r2_tutor_correction",
+      "text": "The lattice is yours again. I am not concerned. That statement was unnecessary.",
+      "audio_path": "res://assets/audio/tutor/bash_r2_tutor_correction.ogg",
+      "duration_seconds": 6.36,
+      "visible_character_count": 79,
+      "characters_per_second": 12.4214,
+      "delivery": "reflective"
+    },
+    {
+      "line_id": "bash_terminal_last",
+      "text": "The keystone anchor is close. Whoever disengages it loses synchronization.",
+      "audio_path": "res://assets/audio/tutor/bash_terminal_last.ogg",
+      "duration_seconds": 5.448,
+      "visible_character_count": 74,
+      "characters_per_second": 13.583,
+      "delivery": "caution"
+    },
+    {
+      "line_id": "bash_terminal_safe",
+      "text": "Only a few anchors remain. A legal request is not necessarily a safe one.",
+      "audio_path": "res://assets/audio/tutor/bash_terminal_safe.ogg",
+      "duration_seconds": 5.76,
+      "visible_character_count": 73,
+      "characters_per_second": 12.6736,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "bash_terminal_trace",
+      "text": "Trace the next reply before confirming. The keystone now dominates the lattice.",
+      "audio_path": "res://assets/audio/tutor/bash_terminal_trace.ogg",
+      "duration_seconds": 5.448,
+      "visible_character_count": 79,
+      "characters_per_second": 14.5007,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "bash_terminal_one",
+      "text": "The keystone anchor is approaching. Decide who will be forced to disengage it.",
+      "audio_path": "res://assets/audio/tutor/bash_terminal_one.ogg",
+      "duration_seconds": 5.04,
+      "visible_character_count": 78,
+      "characters_per_second": 15.4762,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "bash_terminal_control",
+      "text": "At this distance, one request determines who faces the keystone.",
+      "audio_path": "res://assets/audio/tutor/bash_terminal_control.ogg",
+      "duration_seconds": 4.872,
+      "visible_character_count": 64,
+      "characters_per_second": 13.1363,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_state_hidden",
+      "text": "A new hidden-request lattice is active. Your staged request remains private.",
+      "audio_path": "res://assets/audio/tutor/limit_state_hidden.ogg",
+      "duration_seconds": 5.4,
+      "visible_character_count": 76,
+      "characters_per_second": 14.0741,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_state_history",
+      "text": "Track the active anchors and both previous requests. Either may control the next legal action.",
+      "audio_path": "res://assets/audio/tutor/limit_state_history.ogg",
+      "duration_seconds": 6.384,
+      "visible_character_count": 94,
+      "characters_per_second": 14.7243,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_state_protocol",
+      "text": "Limit Bash is active. The lattice will apply both locked requests together.",
+      "audio_path": "res://assets/audio/tutor/limit_state_protocol.ogg",
+      "duration_seconds": 5.352,
+      "visible_character_count": 75,
+      "characters_per_second": 14.0135,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_state_ready",
+      "text": "The lattice is ready. Intention remains private until commitment makes it evidence.",
+      "audio_path": "res://assets/audio/tutor/limit_state_ready.ogg",
+      "duration_seconds": 5.688,
+      "visible_character_count": 83,
+      "characters_per_second": 14.5921,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_select_private",
+      "text": "A private request is staged. It remains uncommitted.",
+      "audio_path": "res://assets/audio/tutor/limit_select_private.ogg",
+      "duration_seconds": 4.128,
+      "visible_character_count": 52,
+      "characters_per_second": 12.5969,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_select_interface",
+      "text": "Your intention has changed the interface, not the public lattice state.",
+      "audio_path": "res://assets/audio/tutor/limit_select_interface.ogg",
+      "duration_seconds": 4.392,
+      "visible_character_count": 71,
+      "characters_per_second": 16.1658,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_select_waiting",
+      "text": "A possible request is ready. I will not act until you lock it.",
+      "audio_path": "res://assets/audio/tutor/limit_select_waiting.ogg",
+      "duration_seconds": 4.416,
+      "visible_character_count": 62,
+      "characters_per_second": 14.0399,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_select_binding",
+      "text": "The request is still yours alone. Confirmation makes it binding.",
+      "audio_path": "res://assets/audio/tutor/limit_select_binding.ogg",
+      "duration_seconds": 4.632,
+      "visible_character_count": 64,
+      "characters_per_second": 13.8169,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_select_unrevealed",
+      "text": "No request has been revealed. The protocol is waiting for commitment.",
+      "audio_path": "res://assets/audio/tutor/limit_select_unrevealed.ogg",
+      "duration_seconds": 4.656,
+      "visible_character_count": 69,
+      "characters_per_second": 14.8196,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_lock_selecting",
+      "text": "Request locked. I am selecting from the same legal range.",
+      "audio_path": "res://assets/audio/tutor/limit_lock_selecting.ogg",
+      "duration_seconds": 4.368,
+      "visible_character_count": 57,
+      "characters_per_second": 13.0495,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_lock_commitment",
+      "text": "Commitment accepted. Reveal will occur when both requests are fixed.",
+      "audio_path": "res://assets/audio/tutor/limit_lock_commitment.ogg",
+      "duration_seconds": 4.704,
+      "visible_character_count": 68,
+      "characters_per_second": 14.4558,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_lock_finalized",
+      "text": "Your decision is now binding. My response is being finalized.",
+      "audio_path": "res://assets/audio/tutor/limit_lock_finalized.ogg",
+      "duration_seconds": 4.92,
+      "visible_character_count": 61,
+      "characters_per_second": 12.3984,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_lock_second",
+      "text": "The first commitment is recorded. The second remains private until reveal.",
+      "audio_path": "res://assets/audio/tutor/limit_lock_second.ogg",
+      "duration_seconds": 5.184,
+      "visible_character_count": 74,
+      "characters_per_second": 14.2747,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_lock_prediction",
+      "text": "Your request is sealed. Prediction remains possible; revision does not.",
+      "audio_path": "res://assets/audio/tutor/limit_lock_prediction.ogg",
+      "duration_seconds": 5.592,
+      "visible_character_count": 71,
+      "characters_per_second": 12.6967,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_lock_delay",
+      "text": "I received the lock signal. Do not infer certainty from the delay.",
+      "audio_path": "res://assets/audio/tutor/limit_lock_delay.ogg",
+      "duration_seconds": 4.44,
+      "visible_character_count": 66,
+      "characters_per_second": 14.8649,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_reveal_compare",
+      "text": "Both requests are public. Compare the new active anchor count before proceeding.",
+      "audio_path": "res://assets/audio/tutor/limit_reveal_compare.ogg",
+      "duration_seconds": 5.28,
+      "visible_character_count": 80,
+      "characters_per_second": 15.1515,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_reveal_history",
+      "text": "Reveal complete. This pair is now part of the current game's history.",
+      "audio_path": "res://assets/audio/tutor/limit_reveal_history.ogg",
+      "duration_seconds": 5.016,
+      "visible_character_count": 69,
+      "characters_per_second": 13.756,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_reveal_next",
+      "text": "The pair is resolved. Your next request must differ from your previous one.",
+      "audio_path": "res://assets/audio/tutor/limit_reveal_next.ogg",
+      "duration_seconds": 5.064,
+      "visible_character_count": 75,
+      "characters_per_second": 14.8104,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_reveal_difference",
+      "text": "The hidden requests are now evidence. Their difference may matter later.",
+      "audio_path": "res://assets/audio/tutor/limit_reveal_difference.ogg",
+      "duration_seconds": 4.464,
+      "visible_character_count": 72,
+      "characters_per_second": 16.129,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_reveal_equal",
+      "text": "The pair matches. If the game ends on a tie, earlier differences will decide it.",
+      "audio_path": "res://assets/audio/tutor/limit_reveal_equal.ogg",
+      "duration_seconds": 5.664,
+      "visible_character_count": 80,
+      "characters_per_second": 14.1243,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_reveal_observed",
+      "text": "Both commitments are visible. The protocol has observed what intention concealed.",
+      "audio_path": "res://assets/audio/tutor/limit_reveal_observed.ogg",
+      "duration_seconds": 5.424,
+      "visible_character_count": 81,
+      "characters_per_second": 14.9336,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_terminal_total",
+      "text": "If our requests reach the remaining anchors, the larger request destabilizes the lattice and loses.",
+      "audio_path": "res://assets/audio/tutor/limit_terminal_total.ogg",
+      "duration_seconds": 7.44,
+      "visible_character_count": 99,
+      "characters_per_second": 13.3065,
+      "delivery": "caution"
+    },
+    {
+      "line_id": "limit_terminal_history",
+      "text": "The next reveal may settle the game. Equal requests will be resolved from this lattice's history.",
+      "audio_path": "res://assets/audio/tutor/limit_terminal_history.ogg",
+      "duration_seconds": 6.216,
+      "visible_character_count": 97,
+      "characters_per_second": 15.6049,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_terminal_compare",
+      "text": "Apply the lattice stress rule now, not ordinary subtraction.",
+      "audio_path": "res://assets/audio/tutor/limit_terminal_compare.ogg",
+      "duration_seconds": 4.248,
+      "visible_character_count": 60,
+      "characters_per_second": 14.1243,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_terminal_larger",
+      "text": "The keystone is within one reveal. A larger request may destabilize the lattice.",
+      "audio_path": "res://assets/audio/tutor/limit_terminal_larger.ogg",
+      "duration_seconds": 6.0,
+      "visible_character_count": 80,
+      "characters_per_second": 13.3333,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_terminal_tie",
+      "text": "If the next pair matches, remember the most recent round in which our requests differed.",
+      "audio_path": "res://assets/audio/tutor/limit_terminal_tie.ogg",
+      "duration_seconds": 5.664,
+      "visible_character_count": 88,
+      "characters_per_second": 15.5367,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_terminal_private",
+      "text": "One private request remains between this lattice state and its final judgment.",
+      "audio_path": "res://assets/audio/tutor/limit_terminal_private.ogg",
+      "duration_seconds": 5.208,
+      "visible_character_count": 78,
+      "characters_per_second": 14.977,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "restore_checkpoint",
+      "text": "Stable checkpoint restored. The protocol may continue from the displayed lattice state.",
+      "audio_path": "res://assets/audio/tutor/restore_checkpoint.ogg",
+      "duration_seconds": 5.496,
+      "visible_character_count": 87,
+      "characters_per_second": 15.8297,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "restore_integrity",
+      "text": "Session reconstruction complete. The active lattice state passed its integrity check.",
+      "audio_path": "res://assets/audio/tutor/restore_integrity.ogg",
+      "duration_seconds": 5.496,
+      "visible_character_count": 85,
+      "characters_per_second": 15.4658,
+      "delivery": "positive"
+    },
+    {
+      "line_id": "restore_review",
+      "text": "The evaluation has resumed. Review the active anchors before confirming.",
+      "audio_path": "res://assets/audio/tutor/restore_review.ogg",
+      "duration_seconds": 5.232,
+      "visible_character_count": 72,
+      "characters_per_second": 13.7615,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "restore_observation",
+      "text": "Your interruption was external to the protocol. Observation now continues.",
+      "audio_path": "res://assets/audio/tutor/restore_observation.ogg",
+      "duration_seconds": 5.136,
+      "visible_character_count": 74,
+      "characters_per_second": 14.4081,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "bash_r1_win_terminal",
+      "text": "Round evaluation: successful. You forced me to disengage the keystone anchor, and my synchronization link failed.",
+      "audio_path": "res://assets/audio/tutor/bash_r1_win_terminal.ogg",
+      "duration_seconds": 7.968,
+      "visible_character_count": 113,
+      "characters_per_second": 14.1817,
+      "delivery": "caution"
+    },
+    {
+      "line_id": "bash_r1_win_control",
+      "text": "This round is complete. Your final safe request placed the keystone anchor on my side.",
+      "audio_path": "res://assets/audio/tutor/bash_r1_win_control.ogg",
+      "duration_seconds": 5.616,
+      "visible_character_count": 86,
+      "characters_per_second": 15.3134,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "bash_r1_win_turns",
+      "text": "Success recorded. You controlled the keystone position in 1 total actions.",
+      "audio_path": "res://assets/audio/tutor/bash_r1_win_turns__turn_count_01.ogg",
+      "duration_seconds": 5.112,
+      "visible_character_count": 74,
+      "characters_per_second": 14.4757,
+      "delivery": "positive"
+    },
+    {
+      "line_id": "bash_r1_win_turns",
+      "text": "Success recorded. You controlled the keystone position in 2 total actions.",
+      "audio_path": "res://assets/audio/tutor/bash_r1_win_turns__turn_count_02.ogg",
+      "duration_seconds": 5.16,
+      "visible_character_count": 74,
+      "characters_per_second": 14.3411,
+      "delivery": "positive"
+    },
+    {
+      "line_id": "bash_r1_win_turns",
+      "text": "Success recorded. You controlled the keystone position in 3 total actions.",
+      "audio_path": "res://assets/audio/tutor/bash_r1_win_turns__turn_count_03.ogg",
+      "duration_seconds": 5.136,
+      "visible_character_count": 74,
+      "characters_per_second": 14.4081,
+      "delivery": "positive"
+    },
+    {
+      "line_id": "bash_r1_win_turns",
+      "text": "Success recorded. You controlled the keystone position in 4 total actions.",
+      "audio_path": "res://assets/audio/tutor/bash_r1_win_turns__turn_count_04.ogg",
+      "duration_seconds": 5.088,
+      "visible_character_count": 74,
+      "characters_per_second": 14.544,
+      "delivery": "positive"
+    },
+    {
+      "line_id": "bash_r1_win_turns",
+      "text": "Success recorded. You controlled the keystone position in 5 total actions.",
+      "audio_path": "res://assets/audio/tutor/bash_r1_win_turns__turn_count_05.ogg",
+      "duration_seconds": 5.112,
+      "visible_character_count": 74,
+      "characters_per_second": 14.4757,
+      "delivery": "positive"
+    },
+    {
+      "line_id": "bash_r1_win_turns",
+      "text": "Success recorded. You controlled the keystone position in 6 total actions.",
+      "audio_path": "res://assets/audio/tutor/bash_r1_win_turns__turn_count_06.ogg",
+      "duration_seconds": 5.184,
+      "visible_character_count": 74,
+      "characters_per_second": 14.2747,
+      "delivery": "positive"
+    },
+    {
+      "line_id": "bash_r1_win_turns",
+      "text": "Success recorded. You controlled the keystone position in 7 total actions.",
+      "audio_path": "res://assets/audio/tutor/bash_r1_win_turns__turn_count_07.ogg",
+      "duration_seconds": 5.28,
+      "visible_character_count": 74,
+      "characters_per_second": 14.0152,
+      "delivery": "positive"
+    },
+    {
+      "line_id": "bash_r1_win_turns",
+      "text": "Success recorded. You controlled the keystone position in 8 total actions.",
+      "audio_path": "res://assets/audio/tutor/bash_r1_win_turns__turn_count_08.ogg",
+      "duration_seconds": 5.04,
+      "visible_character_count": 74,
+      "characters_per_second": 14.6825,
+      "delivery": "positive"
+    },
+    {
+      "line_id": "bash_r1_win_turns",
+      "text": "Success recorded. You controlled the keystone position in 9 total actions.",
+      "audio_path": "res://assets/audio/tutor/bash_r1_win_turns__turn_count_09.ogg",
+      "duration_seconds": 5.136,
+      "visible_character_count": 74,
+      "characters_per_second": 14.4081,
+      "delivery": "positive"
+    },
+    {
+      "line_id": "bash_r1_win_turns",
+      "text": "Success recorded. You controlled the keystone position in 10 total actions.",
+      "audio_path": "res://assets/audio/tutor/bash_r1_win_turns__turn_count_10.ogg",
+      "duration_seconds": 5.04,
+      "visible_character_count": 75,
+      "characters_per_second": 14.881,
+      "delivery": "positive"
+    },
+    {
+      "line_id": "bash_r1_win_turns",
+      "text": "Success recorded. You controlled the keystone position in 11 total actions.",
+      "audio_path": "res://assets/audio/tutor/bash_r1_win_turns__turn_count_11.ogg",
+      "duration_seconds": 5.184,
+      "visible_character_count": 75,
+      "characters_per_second": 14.4676,
+      "delivery": "positive"
+    },
+    {
+      "line_id": "bash_r1_win_turns",
+      "text": "Success recorded. You controlled the keystone position in 12 total actions.",
+      "audio_path": "res://assets/audio/tutor/bash_r1_win_turns__turn_count_12.ogg",
+      "duration_seconds": 5.136,
+      "visible_character_count": 75,
+      "characters_per_second": 14.6028,
+      "delivery": "positive"
+    },
+    {
+      "line_id": "bash_r1_win_turns",
+      "text": "Success recorded. You controlled the keystone position in 13 total actions.",
+      "audio_path": "res://assets/audio/tutor/bash_r1_win_turns__turn_count_13.ogg",
+      "duration_seconds": 5.328,
+      "visible_character_count": 75,
+      "characters_per_second": 14.0766,
+      "delivery": "positive"
+    },
+    {
+      "line_id": "bash_r1_win_turns",
+      "text": "Success recorded. You controlled the keystone position in 14 total actions.",
+      "audio_path": "res://assets/audio/tutor/bash_r1_win_turns__turn_count_14.ogg",
+      "duration_seconds": 5.352,
+      "visible_character_count": 75,
+      "characters_per_second": 14.0135,
+      "delivery": "positive"
+    },
+    {
+      "line_id": "bash_r1_win_turns",
+      "text": "Success recorded. You controlled the keystone position in 15 total actions.",
+      "audio_path": "res://assets/audio/tutor/bash_r1_win_turns__turn_count_15.ogg",
+      "duration_seconds": 5.256,
+      "visible_character_count": 75,
+      "characters_per_second": 14.2694,
+      "delivery": "positive"
+    },
+    {
+      "line_id": "bash_r1_win_turns",
+      "text": "Success recorded. You controlled the keystone position in 16 total actions.",
+      "audio_path": "res://assets/audio/tutor/bash_r1_win_turns__turn_count_16.ogg",
+      "duration_seconds": 5.28,
+      "visible_character_count": 75,
+      "characters_per_second": 14.2045,
+      "delivery": "positive"
+    },
+    {
+      "line_id": "bash_r1_win_turns",
+      "text": "Success recorded. You controlled the keystone position in 17 total actions.",
+      "audio_path": "res://assets/audio/tutor/bash_r1_win_turns__turn_count_17.ogg",
+      "duration_seconds": 5.472,
+      "visible_character_count": 75,
+      "characters_per_second": 13.7061,
+      "delivery": "positive"
+    },
+    {
+      "line_id": "bash_r1_win_turns",
+      "text": "Success recorded. You controlled the keystone position in 18 total actions.",
+      "audio_path": "res://assets/audio/tutor/bash_r1_win_turns__turn_count_18.ogg",
+      "duration_seconds": 5.232,
+      "visible_character_count": 75,
+      "characters_per_second": 14.3349,
+      "delivery": "positive"
+    },
+    {
+      "line_id": "bash_r1_win_turns",
+      "text": "Success recorded. You controlled the keystone position in 19 total actions.",
+      "audio_path": "res://assets/audio/tutor/bash_r1_win_turns__turn_count_19.ogg",
+      "duration_seconds": 5.256,
+      "visible_character_count": 75,
+      "characters_per_second": 14.2694,
+      "delivery": "positive"
+    },
+    {
+      "line_id": "bash_r1_win_turns",
+      "text": "Success recorded. You controlled the keystone position in 20 total actions.",
+      "audio_path": "res://assets/audio/tutor/bash_r1_win_turns__turn_count_20.ogg",
+      "duration_seconds": 5.16,
+      "visible_character_count": 75,
+      "characters_per_second": 14.5349,
+      "delivery": "positive"
+    },
+    {
+      "line_id": "bash_r2_win_adapt",
+      "text": "Round evaluation: successful. You adapted after my opening move.",
+      "audio_path": "res://assets/audio/tutor/bash_r2_win_adapt.ogg",
+      "duration_seconds": 5.016,
+      "visible_character_count": 64,
+      "characters_per_second": 12.7592,
+      "delivery": "positive"
+    },
+    {
+      "line_id": "bash_r2_win_recover",
+      "text": "You recovered control from a state you did not choose. That is the response this round required.",
+      "audio_path": "res://assets/audio/tutor/bash_r2_win_recover.ogg",
+      "duration_seconds": 5.856,
+      "visible_character_count": 96,
+      "characters_per_second": 16.3934,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "bash_r2_win_satisfied",
+      "text": "You passed the second Bash round. I am... satisfied with this result.",
+      "audio_path": "res://assets/audio/tutor/bash_r2_win_satisfied.ogg",
+      "duration_seconds": 5.088,
+      "visible_character_count": 69,
+      "characters_per_second": 13.5613,
+      "delivery": "positive"
+    },
+    {
+      "line_id": "bash_loss_tier_1",
+      "text": "Round evaluation: unsuccessful. You disengaged the keystone anchor and lost synchronization.",
+      "audio_path": "res://assets/audio/tutor/bash_loss_tier_1.ogg",
+      "duration_seconds": 7.128,
+      "visible_character_count": 92,
+      "characters_per_second": 12.9068,
+      "delivery": "caution"
+    },
+    {
+      "line_id": "bash_loss_tier_2",
+      "text": "Your request reached the keystone anchor. The four-node structure was not secured.",
+      "audio_path": "res://assets/audio/tutor/bash_loss_tier_2.ogg",
+      "duration_seconds": 5.208,
+      "visible_character_count": 82,
+      "characters_per_second": 15.745,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "bash_loss_tier_3",
+      "text": "You disengaged the keystone again. The next briefing will state the safe anchor sequence explicitly.",
+      "audio_path": "res://assets/audio/tutor/bash_loss_tier_3.ogg",
+      "duration_seconds": 6.528,
+      "visible_character_count": 100,
+      "characters_per_second": 15.3186,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_win_direct_larger",
+      "text": "Game evaluation: successful. My larger terminal request destabilized the lattice and broke my synchronization.",
+      "audio_path": "res://assets/audio/tutor/limit_win_direct_larger.ogg",
+      "duration_seconds": 8.208,
+      "visible_character_count": 110,
+      "characters_per_second": 13.4016,
+      "delivery": "positive"
+    },
+    {
+      "line_id": "limit_win_direct_commit",
+      "text": "Success recorded. Your terminal request was smaller, so the lattice fault resolved against me.",
+      "audio_path": "res://assets/audio/tutor/limit_win_direct_commit.ogg",
+      "duration_seconds": 6.384,
+      "visible_character_count": 94,
+      "characters_per_second": 14.7243,
+      "delivery": "positive"
+    },
+    {
+      "line_id": "limit_win_direct_rounds",
+      "text": "This game ended in your favor after 1 reveals. The terminal request difference was decisive.",
+      "audio_path": "res://assets/audio/tutor/limit_win_direct_rounds__reveal_count_01.ogg",
+      "duration_seconds": 6.0,
+      "visible_character_count": 92,
+      "characters_per_second": 15.3333,
+      "delivery": "positive"
+    },
+    {
+      "line_id": "limit_win_direct_rounds",
+      "text": "This game ended in your favor after 2 reveals. The terminal request difference was decisive.",
+      "audio_path": "res://assets/audio/tutor/limit_win_direct_rounds__reveal_count_02.ogg",
+      "duration_seconds": 6.024,
+      "visible_character_count": 92,
+      "characters_per_second": 15.2722,
+      "delivery": "positive"
+    },
+    {
+      "line_id": "limit_win_direct_rounds",
+      "text": "This game ended in your favor after 3 reveals. The terminal request difference was decisive.",
+      "audio_path": "res://assets/audio/tutor/limit_win_direct_rounds__reveal_count_03.ogg",
+      "duration_seconds": 6.168,
+      "visible_character_count": 92,
+      "characters_per_second": 14.9157,
+      "delivery": "positive"
+    },
+    {
+      "line_id": "limit_win_direct_rounds",
+      "text": "This game ended in your favor after 4 reveals. The terminal request difference was decisive.",
+      "audio_path": "res://assets/audio/tutor/limit_win_direct_rounds__reveal_count_04.ogg",
+      "duration_seconds": 6.072,
+      "visible_character_count": 92,
+      "characters_per_second": 15.1515,
+      "delivery": "positive"
+    },
+    {
+      "line_id": "limit_win_direct_rounds",
+      "text": "This game ended in your favor after 5 reveals. The terminal request difference was decisive.",
+      "audio_path": "res://assets/audio/tutor/limit_win_direct_rounds__reveal_count_05.ogg",
+      "duration_seconds": 6.048,
+      "visible_character_count": 92,
+      "characters_per_second": 15.2116,
+      "delivery": "positive"
+    },
+    {
+      "line_id": "limit_win_direct_rounds",
+      "text": "This game ended in your favor after 6 reveals. The terminal request difference was decisive.",
+      "audio_path": "res://assets/audio/tutor/limit_win_direct_rounds__reveal_count_06.ogg",
+      "duration_seconds": 6.144,
+      "visible_character_count": 92,
+      "characters_per_second": 14.974,
+      "delivery": "positive"
+    },
+    {
+      "line_id": "limit_win_direct_rounds",
+      "text": "This game ended in your favor after 7 reveals. The terminal request difference was decisive.",
+      "audio_path": "res://assets/audio/tutor/limit_win_direct_rounds__reveal_count_07.ogg",
+      "duration_seconds": 6.216,
+      "visible_character_count": 92,
+      "characters_per_second": 14.8005,
+      "delivery": "positive"
+    },
+    {
+      "line_id": "limit_win_direct_rounds",
+      "text": "This game ended in your favor after 8 reveals. The terminal request difference was decisive.",
+      "audio_path": "res://assets/audio/tutor/limit_win_direct_rounds__reveal_count_08.ogg",
+      "duration_seconds": 6.048,
+      "visible_character_count": 92,
+      "characters_per_second": 15.2116,
+      "delivery": "positive"
+    },
+    {
+      "line_id": "limit_win_direct_rounds",
+      "text": "This game ended in your favor after 9 reveals. The terminal request difference was decisive.",
+      "audio_path": "res://assets/audio/tutor/limit_win_direct_rounds__reveal_count_09.ogg",
+      "duration_seconds": 6.12,
+      "visible_character_count": 92,
+      "characters_per_second": 15.0327,
+      "delivery": "positive"
+    },
+    {
+      "line_id": "limit_win_direct_rounds",
+      "text": "This game ended in your favor after 10 reveals. The terminal request difference was decisive.",
+      "audio_path": "res://assets/audio/tutor/limit_win_direct_rounds__reveal_count_10.ogg",
+      "duration_seconds": 6.024,
+      "visible_character_count": 93,
+      "characters_per_second": 15.4382,
+      "delivery": "positive"
+    },
+    {
+      "line_id": "limit_win_direct_rounds",
+      "text": "This game ended in your favor after 11 reveals. The terminal request difference was decisive.",
+      "audio_path": "res://assets/audio/tutor/limit_win_direct_rounds__reveal_count_11.ogg",
+      "duration_seconds": 6.216,
+      "visible_character_count": 93,
+      "characters_per_second": 14.9614,
+      "delivery": "positive"
+    },
+    {
+      "line_id": "limit_win_direct_rounds",
+      "text": "This game ended in your favor after 12 reveals. The terminal request difference was decisive.",
+      "audio_path": "res://assets/audio/tutor/limit_win_direct_rounds__reveal_count_12.ogg",
+      "duration_seconds": 6.144,
+      "visible_character_count": 93,
+      "characters_per_second": 15.1367,
+      "delivery": "positive"
+    },
+    {
+      "line_id": "limit_win_direct_rounds",
+      "text": "This game ended in your favor after 13 reveals. The terminal request difference was decisive.",
+      "audio_path": "res://assets/audio/tutor/limit_win_direct_rounds__reveal_count_13.ogg",
+      "duration_seconds": 6.384,
+      "visible_character_count": 93,
+      "characters_per_second": 14.5677,
+      "delivery": "positive"
+    },
+    {
+      "line_id": "limit_win_direct_rounds",
+      "text": "This game ended in your favor after 14 reveals. The terminal request difference was decisive.",
+      "audio_path": "res://assets/audio/tutor/limit_win_direct_rounds__reveal_count_14.ogg",
+      "duration_seconds": 6.312,
+      "visible_character_count": 93,
+      "characters_per_second": 14.7338,
+      "delivery": "positive"
+    },
+    {
+      "line_id": "limit_win_direct_rounds",
+      "text": "This game ended in your favor after 15 reveals. The terminal request difference was decisive.",
+      "audio_path": "res://assets/audio/tutor/limit_win_direct_rounds__reveal_count_15.ogg",
+      "duration_seconds": 6.312,
+      "visible_character_count": 93,
+      "characters_per_second": 14.7338,
+      "delivery": "positive"
+    },
+    {
+      "line_id": "limit_win_direct_rounds",
+      "text": "This game ended in your favor after 16 reveals. The terminal request difference was decisive.",
+      "audio_path": "res://assets/audio/tutor/limit_win_direct_rounds__reveal_count_16.ogg",
+      "duration_seconds": 6.24,
+      "visible_character_count": 93,
+      "characters_per_second": 14.9038,
+      "delivery": "positive"
+    },
+    {
+      "line_id": "limit_win_direct_rounds",
+      "text": "This game ended in your favor after 17 reveals. The terminal request difference was decisive.",
+      "audio_path": "res://assets/audio/tutor/limit_win_direct_rounds__reveal_count_17.ogg",
+      "duration_seconds": 6.384,
+      "visible_character_count": 93,
+      "characters_per_second": 14.5677,
+      "delivery": "positive"
+    },
+    {
+      "line_id": "limit_win_direct_rounds",
+      "text": "This game ended in your favor after 18 reveals. The terminal request difference was decisive.",
+      "audio_path": "res://assets/audio/tutor/limit_win_direct_rounds__reveal_count_18.ogg",
+      "duration_seconds": 6.168,
+      "visible_character_count": 93,
+      "characters_per_second": 15.0778,
+      "delivery": "positive"
+    },
+    {
+      "line_id": "limit_win_direct_rounds",
+      "text": "This game ended in your favor after 19 reveals. The terminal request difference was decisive.",
+      "audio_path": "res://assets/audio/tutor/limit_win_direct_rounds__reveal_count_19.ogg",
+      "duration_seconds": 6.288,
+      "visible_character_count": 93,
+      "characters_per_second": 14.7901,
+      "delivery": "positive"
+    },
+    {
+      "line_id": "limit_win_direct_rounds",
+      "text": "This game ended in your favor after 20 reveals. The terminal request difference was decisive.",
+      "audio_path": "res://assets/audio/tutor/limit_win_direct_rounds__reveal_count_20.ogg",
+      "duration_seconds": 6.216,
+      "visible_character_count": 93,
+      "characters_per_second": 14.9614,
+      "delivery": "positive"
+    },
+    {
+      "line_id": "limit_win_history_pair",
+      "text": "Game evaluation: successful. The terminal requests matched, and my latest unequal request was larger.",
+      "audio_path": "res://assets/audio/tutor/limit_win_history_pair.ogg",
+      "duration_seconds": 7.56,
+      "visible_character_count": 101,
+      "characters_per_second": 13.3598,
+      "delivery": "positive"
+    },
+    {
+      "line_id": "limit_win_history_record",
+      "text": "Success recorded. The final tie returned judgment to an earlier reveal, where my request destabilized the lattice.",
+      "audio_path": "res://assets/audio/tutor/limit_win_history_record.ogg",
+      "duration_seconds": 8.184,
+      "visible_character_count": 114,
+      "characters_per_second": 13.9296,
+      "delivery": "positive"
+    },
+    {
+      "line_id": "limit_win_history_trace",
+      "text": "You won through the lattice history. The terminal requests alone did not decide this game.",
+      "audio_path": "res://assets/audio/tutor/limit_win_history_trace.ogg",
+      "duration_seconds": 5.88,
+      "visible_character_count": 90,
+      "characters_per_second": 15.3061,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_loss_direct_larger",
+      "text": "Game evaluation: unsuccessful. Your larger terminal request destabilized the lattice.",
+      "audio_path": "res://assets/audio/tutor/limit_loss_direct_larger.ogg",
+      "duration_seconds": 6.96,
+      "visible_character_count": 85,
+      "characters_per_second": 12.2126,
+      "delivery": "caution"
+    },
+    {
+      "line_id": "limit_loss_direct_commit",
+      "text": "The final comparison resolved against you. Your larger request became the lattice fault.",
+      "audio_path": "res://assets/audio/tutor/limit_loss_direct_commit.ogg",
+      "duration_seconds": 6.0,
+      "visible_character_count": 88,
+      "characters_per_second": 14.6667,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_loss_direct_rounds",
+      "text": "This game ended after 1 reveals. Your terminal request exceeded mine.",
+      "audio_path": "res://assets/audio/tutor/limit_loss_direct_rounds__reveal_count_01.ogg",
+      "duration_seconds": 5.016,
+      "visible_character_count": 69,
+      "characters_per_second": 13.756,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_loss_direct_rounds",
+      "text": "This game ended after 2 reveals. Your terminal request exceeded mine.",
+      "audio_path": "res://assets/audio/tutor/limit_loss_direct_rounds__reveal_count_02.ogg",
+      "duration_seconds": 5.088,
+      "visible_character_count": 69,
+      "characters_per_second": 13.5613,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_loss_direct_rounds",
+      "text": "This game ended after 3 reveals. Your terminal request exceeded mine.",
+      "audio_path": "res://assets/audio/tutor/limit_loss_direct_rounds__reveal_count_03.ogg",
+      "duration_seconds": 5.208,
+      "visible_character_count": 69,
+      "characters_per_second": 13.2488,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_loss_direct_rounds",
+      "text": "This game ended after 4 reveals. Your terminal request exceeded mine.",
+      "audio_path": "res://assets/audio/tutor/limit_loss_direct_rounds__reveal_count_04.ogg",
+      "duration_seconds": 5.112,
+      "visible_character_count": 69,
+      "characters_per_second": 13.4977,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_loss_direct_rounds",
+      "text": "This game ended after 5 reveals. Your terminal request exceeded mine.",
+      "audio_path": "res://assets/audio/tutor/limit_loss_direct_rounds__reveal_count_05.ogg",
+      "duration_seconds": 5.136,
+      "visible_character_count": 69,
+      "characters_per_second": 13.4346,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_loss_direct_rounds",
+      "text": "This game ended after 6 reveals. Your terminal request exceeded mine.",
+      "audio_path": "res://assets/audio/tutor/limit_loss_direct_rounds__reveal_count_06.ogg",
+      "duration_seconds": 5.16,
+      "visible_character_count": 69,
+      "characters_per_second": 13.3721,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_loss_direct_rounds",
+      "text": "This game ended after 7 reveals. Your terminal request exceeded mine.",
+      "audio_path": "res://assets/audio/tutor/limit_loss_direct_rounds__reveal_count_07.ogg",
+      "duration_seconds": 5.184,
+      "visible_character_count": 69,
+      "characters_per_second": 13.3102,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_loss_direct_rounds",
+      "text": "This game ended after 8 reveals. Your terminal request exceeded mine.",
+      "audio_path": "res://assets/audio/tutor/limit_loss_direct_rounds__reveal_count_08.ogg",
+      "duration_seconds": 5.112,
+      "visible_character_count": 69,
+      "characters_per_second": 13.4977,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_loss_direct_rounds",
+      "text": "This game ended after 9 reveals. Your terminal request exceeded mine.",
+      "audio_path": "res://assets/audio/tutor/limit_loss_direct_rounds__reveal_count_09.ogg",
+      "duration_seconds": 5.112,
+      "visible_character_count": 69,
+      "characters_per_second": 13.4977,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_loss_direct_rounds",
+      "text": "This game ended after 10 reveals. Your terminal request exceeded mine.",
+      "audio_path": "res://assets/audio/tutor/limit_loss_direct_rounds__reveal_count_10.ogg",
+      "duration_seconds": 5.064,
+      "visible_character_count": 70,
+      "characters_per_second": 13.8231,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_loss_direct_rounds",
+      "text": "This game ended after 11 reveals. Your terminal request exceeded mine.",
+      "audio_path": "res://assets/audio/tutor/limit_loss_direct_rounds__reveal_count_11.ogg",
+      "duration_seconds": 5.232,
+      "visible_character_count": 70,
+      "characters_per_second": 13.3792,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_loss_direct_rounds",
+      "text": "This game ended after 12 reveals. Your terminal request exceeded mine.",
+      "audio_path": "res://assets/audio/tutor/limit_loss_direct_rounds__reveal_count_12.ogg",
+      "duration_seconds": 5.184,
+      "visible_character_count": 70,
+      "characters_per_second": 13.5031,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_loss_direct_rounds",
+      "text": "This game ended after 13 reveals. Your terminal request exceeded mine.",
+      "audio_path": "res://assets/audio/tutor/limit_loss_direct_rounds__reveal_count_13.ogg",
+      "duration_seconds": 5.4,
+      "visible_character_count": 70,
+      "characters_per_second": 12.963,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_loss_direct_rounds",
+      "text": "This game ended after 14 reveals. Your terminal request exceeded mine.",
+      "audio_path": "res://assets/audio/tutor/limit_loss_direct_rounds__reveal_count_14.ogg",
+      "duration_seconds": 5.4,
+      "visible_character_count": 70,
+      "characters_per_second": 12.963,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_loss_direct_rounds",
+      "text": "This game ended after 15 reveals. Your terminal request exceeded mine.",
+      "audio_path": "res://assets/audio/tutor/limit_loss_direct_rounds__reveal_count_15.ogg",
+      "duration_seconds": 5.376,
+      "visible_character_count": 70,
+      "characters_per_second": 13.0208,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_loss_direct_rounds",
+      "text": "This game ended after 16 reveals. Your terminal request exceeded mine.",
+      "audio_path": "res://assets/audio/tutor/limit_loss_direct_rounds__reveal_count_16.ogg",
+      "duration_seconds": 5.304,
+      "visible_character_count": 70,
+      "characters_per_second": 13.1976,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_loss_direct_rounds",
+      "text": "This game ended after 17 reveals. Your terminal request exceeded mine.",
+      "audio_path": "res://assets/audio/tutor/limit_loss_direct_rounds__reveal_count_17.ogg",
+      "duration_seconds": 5.4,
+      "visible_character_count": 70,
+      "characters_per_second": 12.963,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_loss_direct_rounds",
+      "text": "This game ended after 18 reveals. Your terminal request exceeded mine.",
+      "audio_path": "res://assets/audio/tutor/limit_loss_direct_rounds__reveal_count_18.ogg",
+      "duration_seconds": 5.256,
+      "visible_character_count": 70,
+      "characters_per_second": 13.3181,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_loss_direct_rounds",
+      "text": "This game ended after 19 reveals. Your terminal request exceeded mine.",
+      "audio_path": "res://assets/audio/tutor/limit_loss_direct_rounds__reveal_count_19.ogg",
+      "duration_seconds": 5.28,
+      "visible_character_count": 70,
+      "characters_per_second": 13.2576,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_loss_direct_rounds",
+      "text": "This game ended after 20 reveals. Your terminal request exceeded mine.",
+      "audio_path": "res://assets/audio/tutor/limit_loss_direct_rounds__reveal_count_20.ogg",
+      "duration_seconds": 5.232,
+      "visible_character_count": 70,
+      "characters_per_second": 13.3792,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_loss_history_pair",
+      "text": "Game evaluation: unsuccessful. The terminal requests matched, and your latest unequal request was larger.",
+      "audio_path": "res://assets/audio/tutor/limit_loss_history_pair.ogg",
+      "duration_seconds": 8.04,
+      "visible_character_count": 105,
+      "characters_per_second": 13.0597,
+      "delivery": "caution"
+    },
+    {
+      "line_id": "limit_loss_history_record",
+      "text": "The final tie returned judgment to an earlier reveal. Your larger request became the recorded lattice fault.",
+      "audio_path": "res://assets/audio/tutor/limit_loss_history_record.ogg",
+      "duration_seconds": 7.056,
+      "visible_character_count": 108,
+      "characters_per_second": 15.3061,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_loss_history_trace",
+      "text": "This loss was decided by the current lattice history, not by the terminal requests alone.",
+      "audio_path": "res://assets/audio/tutor/limit_loss_history_trace.ogg",
+      "duration_seconds": 5.928,
+      "visible_character_count": 89,
+      "characters_per_second": 15.0135,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_draw_all_equal",
+      "text": "Game evaluation: draw. Every revealed request matched, so no unequal request could assign the lattice fault.",
+      "audio_path": "res://assets/audio/tutor/limit_draw_all_equal.ogg",
+      "duration_seconds": 8.016,
+      "visible_character_count": 108,
+      "characters_per_second": 13.4731,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_draw_no_larger",
+      "text": "Draw recorded. This game produced no larger historical request on either side.",
+      "audio_path": "res://assets/audio/tutor/limit_draw_no_larger.ogg",
+      "duration_seconds": 5.712,
+      "visible_character_count": 78,
+      "characters_per_second": 13.6555,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_draw_stable",
+      "text": "Neither side destabilized the lattice more than the other. The result is valid.",
+      "audio_path": "res://assets/audio/tutor/limit_draw_stable.ogg",
+      "duration_seconds": 5.64,
+      "visible_character_count": 79,
+      "characters_per_second": 14.0071,
+      "delivery": "instructional"
+    },
+    {
+      "line_id": "limit_draw_completion",
+      "text": "Game evaluation: draw. This result satisfies the protocol's non-losing completion condition.",
+      "audio_path": "res://assets/audio/tutor/limit_draw_completion.ogg",
+      "duration_seconds": 6.696,
+      "visible_character_count": 92,
+      "characters_per_second": 13.7395,
+      "delivery": "instructional"
+    }
+  ]
+}

@@ -9,6 +9,8 @@ using System.Linq;
 /// </summary>
 public partial class GameplayHUD : Control
 {
+    private const float DefaultTutorCharactersPerSecond = 10.0f;
+
     private Control _safeArea = null!;
     private Label _phaseBanner = null!;
     private Label _playTimeLabel = null!;
@@ -29,7 +31,13 @@ public partial class GameplayHUD : Control
     private Control _chapterOverlay = null!;
     private Label _chapterNumber = null!;
     private Label _chapterTitle = null!;
+    private TutorSpeechPlayer _speechPlayer = null!;
     private string _choiceVerb = "DISENGAGE";
+    private string _currentTutorLineId = string.Empty;
+    private string _currentTutorText = string.Empty;
+    private double _tutorVisibleCharacterProgress;
+    private float _tutorCharactersPerSecond;
+    private bool _isTutorTyping;
     private bool _resultAwaitingSkip;
     private Tween? _resultTween;
 
@@ -82,6 +90,7 @@ public partial class GameplayHUD : Control
             "ChapterOverlay/ChapterGlass/ChapterVBox/ChapterNumber");
         _chapterTitle = GetNode<Label>(
             "ChapterOverlay/ChapterGlass/ChapterVBox/ChapterTitle");
+        _speechPlayer = GetNode<TutorSpeechPlayer>("../TutorSpeechPlayer");
         _choiceButtons = new[]
         {
             GetNode<Button>(
@@ -99,7 +108,27 @@ public partial class GameplayHUD : Control
         }
 
         _confirmButton.Pressed += () => ConfirmRequested?.Invoke();
-        _backButton.Pressed += () => BackToTitleRequested?.Invoke();
+        _backButton.Pressed += RequestBackToTitle;
+    }
+
+    public override void _Process(double delta)
+    {
+        if (!_isTutorTyping || !Visible || _chapterOverlay.Visible)
+        {
+            return;
+        }
+
+        _tutorVisibleCharacterProgress += _tutorCharactersPerSecond * delta;
+        int totalCharacters = _dialogueText.GetTotalCharacterCount();
+        int visibleCharacters = Math.Min(
+            totalCharacters,
+            (int)Math.Floor(_tutorVisibleCharacterProgress));
+        _dialogueText.VisibleCharacters = visibleCharacters;
+
+        if (visibleCharacters >= totalCharacters)
+        {
+            CompleteTutorTyping();
+        }
     }
 
     public override void _Input(InputEvent @event)
@@ -121,8 +150,16 @@ public partial class GameplayHUD : Control
         if (_resultAwaitingSkip
             && !_backButton.GetGlobalRect().HasPoint(mouseButton.GlobalPosition))
         {
+            if (_isTutorTyping)
+            {
+                CompleteTutorTyping();
+                GetViewport().SetInputAsHandled();
+                return;
+            }
+
             _resultAwaitingSkip = false;
             StopResultAnimation();
+            _speechPlayer.StopDialogue();
             GetViewport().SetInputAsHandled();
             ResultAdvanceRequested?.Invoke();
         }
@@ -131,6 +168,7 @@ public partial class GameplayHUD : Control
     public void ShowChapter(string number, string title)
     {
         StopResultAnimation();
+        StopTutorPresentation();
         _chapterNumber.Text = number;
         _chapterTitle.Text = title;
         _safeArea.Visible = false;
@@ -160,6 +198,7 @@ public partial class GameplayHUD : Control
         int? selectedChoice,
         bool inputOpen,
         string systemLog,
+        string tutorDialogueId,
         string tutorDialogue)
     {
         StopResultAnimation();
@@ -185,7 +224,7 @@ public partial class GameplayHUD : Control
             selectedChoice,
             requestLocked: !inputOpen && selectedChoice.HasValue,
             limitMode: false);
-        SetTutorDialogue(tutorDialogue);
+        SetTutorDialogue(tutorDialogueId, tutorDialogue);
         _systemLog.Text = $"{systemLog}\n\nACTIONS THIS ROUND: {turns}";
 
         _choiceVerb = "DISENGAGE";
@@ -206,6 +245,7 @@ public partial class GameplayHUD : Control
         bool inputOpen,
         bool waiting,
         string systemLog,
+        string tutorDialogueId,
         string tutorDialogue,
         ChoicePair? pendingReveal = null)
     {
@@ -234,7 +274,7 @@ public partial class GameplayHUD : Control
             selectedChoice,
             requestLocked: waiting,
             limitMode: true);
-        SetTutorDialogue(tutorDialogue);
+        SetTutorDialogue(tutorDialogueId, tutorDialogue);
         _systemLog.Text =
             $"{systemLog}\n\n"
             + "[EXECUTION LOG]\n"
@@ -259,6 +299,7 @@ public partial class GameplayHUD : Control
         SessionStats stats,
         int playerTake,
         int tutorTake,
+        string tutorDialogueId,
         string tutorDialogue)
     {
         ShowLimitBash(
@@ -269,6 +310,7 @@ public partial class GameplayHUD : Control
             inputOpen: false,
             waiting: false,
             systemLog: $"SIMULTANEOUS REVEAL: PLAYER {playerTake} / TUTOR {tutorTake}",
+            tutorDialogueId: tutorDialogueId,
             tutorDialogue: tutorDialogue,
             pendingReveal: new ChoicePair(
                 playerTake,
@@ -288,6 +330,7 @@ public partial class GameplayHUD : Control
         int rounds,
         SessionStats stats,
         bool willContinue,
+        string tutorDialogueId,
         string tutorDialogue,
         ChoicePair? finalChoice = null,
         IReadOnlyList<ChoicePair>? choiceHistory = null)
@@ -319,7 +362,7 @@ public partial class GameplayHUD : Control
             ? $"FINAL REQUESTS · PLAYER {finalChoice.Value.PlayerTake}"
                 + $" / TUTOR {finalChoice.Value.TutorTake}"
             : $"{gameName} · {result}";
-        SetTutorDialogue(tutorDialogue);
+        SetTutorDialogue(tutorDialogueId, tutorDialogue);
         string resultMessage = willContinue
             ? "The end condition has not been reached. Click anywhere to continue."
             : "Click anywhere to view the final summary.";
@@ -417,10 +460,62 @@ public partial class GameplayHUD : Control
         }
     }
 
-    private void SetTutorDialogue(string text)
+    private void SetTutorDialogue(string lineId, string text)
     {
+        if (string.IsNullOrWhiteSpace(lineId)
+            || string.IsNullOrWhiteSpace(text))
+        {
+            StopTutorPresentation();
+            _dialogueText.Text = string.Empty;
+            _dialogueText.VisibleCharacters = -1;
+            _tutorPortrait.SetState(0);
+            return;
+        }
+
+        if (lineId == _currentTutorLineId && text == _currentTutorText)
+        {
+            _tutorPortrait.SetState(ResolveTutorState(text));
+            return;
+        }
+
+        _currentTutorLineId = lineId;
+        _currentTutorText = text;
         _dialogueText.Text = $"[center]{text.Replace("[", "[lb]")}[/center]";
         _tutorPortrait.SetState(ResolveTutorState(text));
+        _dialogueText.VisibleCharacters = 0;
+        _tutorVisibleCharacterProgress = 0.0;
+
+        float duration = _speechPlayer.PlayDialogue(lineId, "TUTOR", text);
+        int totalCharacters = _dialogueText.GetTotalCharacterCount();
+        _tutorCharactersPerSecond = duration > 0.0f
+            ? totalCharacters / duration
+            : DefaultTutorCharactersPerSecond;
+        _isTutorTyping = totalCharacters > 0;
+
+        if (!_isTutorTyping)
+        {
+            CompleteTutorTyping();
+        }
+    }
+
+    private void CompleteTutorTyping()
+    {
+        _isTutorTyping = false;
+        _dialogueText.VisibleCharacters = -1;
+    }
+
+    private void StopTutorPresentation()
+    {
+        _speechPlayer.StopDialogue();
+        _currentTutorLineId = string.Empty;
+        _currentTutorText = string.Empty;
+        _isTutorTyping = false;
+    }
+
+    private void RequestBackToTitle()
+    {
+        StopTutorPresentation();
+        BackToTitleRequested?.Invoke();
     }
 
     private static int ResolveTutorState(string text)

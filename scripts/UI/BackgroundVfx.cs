@@ -9,24 +9,30 @@ using System;
 /// </summary>
 public partial class BackgroundVfx : Control
 {
-    private const int FrameCount = 30;
-    private const int ContainerColumns = 6;
-    private const int ContainerRows = 5;
-    private const float ContainerFramesPerSecond = 15.0f;
+    private const int FrameCount = 120;
+    private const int ContainerColumns = 15;
+    private const int ContainerRows = 8;
+    private const float ContainerRotationSeconds = 5.0f;
+    private const float ContainerFramesPerSecond =
+        FrameCount / ContainerRotationSeconds;
+    private const float FloatAmplitudePixels = 6.0f;
+    private const float FloatPeriodSeconds = 6.0f;
 
     private TextureRect _containerGlow = null!;
     private Texture2D _containerAtlasSource = null!;
     private AtlasTexture _containerFrame = null!;
+    private Vector2 _containerBasePosition;
     private double _elapsed;
     private int _visibleContainerFrame = -1;
 
     public override void _Ready()
     {
         _containerGlow = GetNode<TextureRect>("ContainerGlow");
+        _containerBasePosition = _containerGlow.Position;
         _containerAtlasSource = _containerGlow.Texture;
         _containerFrame = new AtlasTexture { Atlas = _containerAtlasSource };
         _containerGlow.Texture = _containerFrame;
-        _containerGlow.Modulate = new Color(0.84f, 0.97f, 1.0f, 0.97f);
+        _containerGlow.Modulate = new Color(0.92f, 1.0f, 1.0f, 1.0f);
         UpdateFrames(force: true);
     }
 
@@ -34,6 +40,15 @@ public partial class BackgroundVfx : Control
     {
         _elapsed += delta;
         UpdateFrames(force: false);
+        UpdateFloatingPosition();
+    }
+
+    private void UpdateFloatingPosition()
+    {
+        float phase = (float)(_elapsed / FloatPeriodSeconds) * Mathf.Tau;
+        float verticalOffset = Mathf.Sin(phase) * FloatAmplitudePixels;
+        _containerGlow.Position = _containerBasePosition
+            + new Vector2(0.0f, verticalOffset);
     }
 
     private void UpdateFrames(bool force)
