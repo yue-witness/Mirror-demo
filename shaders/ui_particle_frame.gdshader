@@ -8,7 +8,7 @@ uniform vec2 border_inset_uv = vec2(0.02);
 uniform float pixel_size_y = 0.004;
 uniform float phase_offset = 0.0;
 uniform float speed : hint_range(0.01, 1.0) = 0.16;
-uniform float corner_radius : hint_range(0.01, 0.40) = 0.11;
+uniform float corner_radius : hint_range(0.0, 1.0) = 0.11;
 uniform float line_width : hint_range(0.001, 0.08) = 0.004;
 uniform float dot_density : hint_range(12.0, 180.0) = 72.0;
 uniform float trail_length : hint_range(0.02, 0.50) = 0.22;
@@ -23,28 +23,81 @@ float rounded_box_distance(vec2 point, vec2 half_size, float radius) {
         - radius;
 }
 
-float perimeter_coordinate(vec2 point, vec2 half_size) {
-    vec2 edge_distance = half_size - abs(point);
-    float width = half_size.x * 2.0;
-    float height = half_size.y * 2.0;
-    float perimeter = 2.0 * (width + height);
+float rounded_perimeter_coordinate(
+    vec2 point,
+    vec2 half_size,
+    float radius) {
+    vec2 absolute_point = abs(point);
+    vec2 straight_extent = max(half_size - vec2(radius), vec2(0.0));
+    vec2 edge_distance = half_size - absolute_point;
+    float horizontal_length = straight_extent.x * 2.0;
+    float vertical_length = straight_extent.y * 2.0;
+    float quarter_arc_length = radius * PI * 0.5;
+    float perimeter = 2.0 * (horizontal_length + vertical_length)
+        + quarter_arc_length * 4.0;
     float distance;
 
-    if (edge_distance.y < edge_distance.x) {
+    bool inside_horizontal_span = absolute_point.x <= straight_extent.x;
+    bool inside_vertical_span = absolute_point.y <= straight_extent.y;
+    bool nearest_side_is_horizontal = edge_distance.y <= edge_distance.x;
+
+    if (inside_horizontal_span
+        && (!inside_vertical_span || nearest_side_is_horizontal)) {
         if (point.y < 0.0) {
-            distance = point.x + half_size.x;
+            distance = point.x + straight_extent.x;
         } else {
-            distance = width + height + half_size.x - point.x;
+            distance = horizontal_length
+                + quarter_arc_length * 2.0
+                + vertical_length
+                + straight_extent.x
+                - point.x;
+        }
+    } else if (inside_vertical_span) {
+        if (point.x > 0.0) {
+            distance = horizontal_length
+                + quarter_arc_length
+                + point.y
+                + straight_extent.y;
+        } else {
+            distance = horizontal_length * 2.0
+                + quarter_arc_length * 3.0
+                + vertical_length
+                + straight_extent.y
+                - point.y;
         }
     } else {
-        if (point.x > 0.0) {
-            distance = width + point.y + half_size.y;
+        // Corner pixels use their polar angle around the true corner centre.
+        // This keeps both the comet head and its tail on the same rounded arc.
+        vec2 corner_delta = max(
+            absolute_point - straight_extent,
+            vec2(0.0));
+        float corner_angle = clamp(
+            atan(corner_delta.y, corner_delta.x),
+            0.0,
+            PI * 0.5);
+
+        if (point.x >= 0.0 && point.y < 0.0) {
+            distance = horizontal_length
+                + radius * (PI * 0.5 - corner_angle);
+        } else if (point.x >= 0.0) {
+            distance = horizontal_length
+                + quarter_arc_length
+                + vertical_length
+                + radius * corner_angle;
+        } else if (point.y >= 0.0) {
+            distance = horizontal_length * 2.0
+                + quarter_arc_length * 2.0
+                + vertical_length
+                + radius * (PI * 0.5 - corner_angle);
         } else {
-            distance = width * 2.0 + height + half_size.y - point.y;
+            distance = horizontal_length * 2.0
+                + quarter_arc_length * 3.0
+                + vertical_length * 2.0
+                + radius * corner_angle;
         }
     }
 
-    return fract(distance / perimeter);
+    return fract(distance / max(perimeter, 0.0001));
 }
 
 float circular_distance(float from_value, float to_value) {
@@ -107,10 +160,18 @@ void fragment() {
     vec2 half_size = vec2(
         safe_aspect * (1.0 - border_inset_uv.x * 2.0),
         1.0 - border_inset_uv.y * 2.0);
-    float radius = min(corner_radius, min(half_size.x, half_size.y) * 0.48);
+    // A fully rounded square has radius == half_size and must remain a circle.
+    // The former 48% cap flattened portrait frames into rounded rectangles.
+    float radius = clamp(
+        corner_radius,
+        0.0,
+        min(half_size.x, half_size.y));
     float signed_distance = rounded_box_distance(point, half_size, radius);
     float border_distance = abs(signed_distance);
-    float path_position = perimeter_coordinate(point, half_size);
+    float path_position = rounded_perimeter_coordinate(
+        point,
+        half_size,
+        radius);
     float core_width = max(line_width, pixel_size_y * 1.25);
     float particle_core_width = core_width * particle_width_scale;
 

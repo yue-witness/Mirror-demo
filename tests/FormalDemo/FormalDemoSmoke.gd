@@ -66,6 +66,12 @@ func _ready() -> void:
 		and title_particle_material.shader.resource_path.ends_with(
 			"ui_particle_frame.gdshader"),
 		"The title frame does not use the particle-trail dot-matrix shader.")
+	var frame_shader_source := FileAccess.get_file_as_string(
+		"res://shaders/ui_particle_frame.gdshader")
+	_assert(frame_shader_source.contains("rounded_perimeter_coordinate(")
+		and frame_shader_source.contains("quarter_arc_length")
+		and not frame_shader_source.contains("min(half_size.x, half_size.y) * 0.48"),
+		"Frame comets no longer follow the true rounded perimeter geometry.")
 	var trail_length: float = title_particle_material.get_shader_parameter(
 		"trail_length")
 	var trail_diffusion: float = title_particle_material.get_shader_parameter(
@@ -142,11 +148,24 @@ func _ready() -> void:
 	var opening_portrait_frame := _main.get_node(
 		"TutorDialogueUI/SafeArea/Layout/Content/SpeakerCard/SpeakerVBox/PortraitFrame") as Control
 	var opening_portrait := opening_portrait_frame.get_node("PortraitTexture") as Control
+	var opening_particle_frame := opening_portrait_frame.get_node(
+		"ParticleFrame") as ColorRect
+	var opening_particle_material := opening_particle_frame.material as ShaderMaterial
+	var opening_corner_radius: float = opening_particle_material.get_shader_parameter(
+		"corner_radius")
+	var opening_border_inset: Vector2 = opening_particle_material.get_shader_parameter(
+		"border_inset_uv")
+	var opening_half_size_y := 1.0 - opening_border_inset.y * 2.0
 	_assert(not opening_speaker_name.text.to_lower().contains("online"),
 		"The dialogue-only Tutor identity still exposes ONLINE wording.")
 	_assert(_visual_center(opening_portrait).distance_to(
 			_visual_center(opening_portrait_frame)) <= 1.0,
 		"The dialogue-only Tutor portrait is not centred in its frame.")
+	_assert(opening_corner_radius > opening_half_size_y * 0.48,
+		"The dialogue portrait curve would be flattened by the former radius cap: "
+		+ "radius=%.4f, half_size_y=%.4f." % [
+			opening_corner_radius,
+			opening_half_size_y])
 	_assert(dialogue_text.get_theme_font_size("normal_font_size") >= 32
 		and dialogue_text.vertical_alignment == VERTICAL_ALIGNMENT_CENTER,
 		"TutorDialogue text is not enlarged and vertically centred.")
@@ -285,6 +304,14 @@ func _ready() -> void:
 	var gameplay_portrait_frame := _main.get_node(
 		"GameplayHUD/SafeArea/Layout/Content/LeftColumn/TutorCard/TutorVBox/PortraitFrame") as Control
 	var gameplay_portrait := gameplay_portrait_frame.get_node("PortraitTexture") as Control
+	var gameplay_particle_frame := gameplay_portrait_frame.get_node(
+		"ParticleFrame") as ColorRect
+	var gameplay_particle_material := gameplay_particle_frame.material as ShaderMaterial
+	var gameplay_corner_radius: float = gameplay_particle_material.get_shader_parameter(
+		"corner_radius")
+	var gameplay_border_inset: Vector2 = gameplay_particle_material.get_shader_parameter(
+		"border_inset_uv")
+	var gameplay_half_size_y := 1.0 - gameplay_border_inset.y * 2.0
 	var gameplay_tutor_name := _main.get_node(
 		"GameplayHUD/SafeArea/Layout/Content/LeftColumn/TutorCard/TutorVBox/TutorName") as Label
 	_assert(not gameplay_tutor_name.text.to_lower().contains("online"),
@@ -292,6 +319,8 @@ func _ready() -> void:
 	_assert(_visual_center(gameplay_portrait).distance_to(
 			_visual_center(gameplay_portrait_frame)) <= 1.0,
 		"The gameplay Tutor portrait is not centred in its frame.")
+	_assert(gameplay_corner_radius >= gameplay_half_size_y,
+		"The gameplay Tutor particle path no longer resolves to a full circle.")
 	var dialogue_panel := _main.get_node(
 		"GameplayHUD/SafeArea/Layout/Content/Center/DialoguePanel") as PanelContainer
 	_assert(is_equal_approx(tutor_panel.global_position.y, dialogue_panel.global_position.y)
