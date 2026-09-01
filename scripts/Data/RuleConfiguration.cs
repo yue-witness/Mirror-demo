@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -24,17 +25,26 @@ public sealed class RuleConfiguration
 
     public static RuleConfiguration Load(string bashPath, string limitBashPath)
     {
+        return Load(File.ReadAllText, bashPath, limitBashPath);
+    }
+
+    public static RuleConfiguration Load(
+        Func<string, string> readAllText,
+        string bashPath,
+        string limitBashPath)
+    {
+        ArgumentNullException.ThrowIfNull(readAllText);
         var options = new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
         };
 
         BashRuleConfiguration? bash = JsonSerializer.Deserialize<BashRuleConfiguration>(
-            File.ReadAllText(bashPath),
+            readAllText(bashPath),
             options);
         LimitBashRuleConfiguration? limit =
             JsonSerializer.Deserialize<LimitBashRuleConfiguration>(
-                File.ReadAllText(limitBashPath),
+                readAllText(limitBashPath),
                 options);
 
         if (bash is null || limit is null)

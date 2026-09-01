@@ -6,9 +6,18 @@
 **/bin/
 **/obj/
 
+# Python helper bytecode.
+__pycache__/
+*.pyc
+
 # Local QA captures, generated reports, and review-only helpers.
 # Keep these available for local verification without publishing them as game content.
 /_qa/
 /design-qa.md
 /tools/build_art_preview.ps1
 /tools/build_ui_ux_report.py
+
+# Local export dependencies and release packages are published as GitHub
+# Release assets instead of being committed to the source repository.
+/_export_tools/
+/_release/

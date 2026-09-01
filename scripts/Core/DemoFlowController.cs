@@ -93,11 +93,13 @@ public partial class DemoFlowController : Control
 
         _saveService = new SaveGameService(ResolvePersistentPath(SavePath));
         _dialogues = DialogueRepository.Load(
-            ResolveResourcePath("res://data/dialogue/intro.json"),
-            ResolveResourcePath("res://data/dialogue/tutorial.json"));
+            GodotTextResourceReader.ReadAllText,
+            "res://data/dialogue/intro.json",
+            "res://data/dialogue/tutorial.json");
         _rules = RuleConfiguration.Load(
-            ResolveResourcePath("res://data/rules/bash.json"),
-            ResolveResourcePath("res://data/rules/limit_bash.json"));
+            GodotTextResourceReader.ReadAllText,
+            "res://data/rules/bash.json",
+            "res://data/rules/limit_bash.json");
 
         _titleScreen.NewGameRequested += StartNewGame;
         _titleScreen.ContinueRequested += ContinueGame;
@@ -1649,13 +1651,6 @@ public partial class DemoFlowController : Control
     {
         return path.StartsWith("user://", StringComparison.Ordinal)
             || path.StartsWith("res://", StringComparison.Ordinal)
-            ? ProjectSettings.GlobalizePath(path)
-            : Path.GetFullPath(path);
-    }
-
-    private static string ResolveResourcePath(string path)
-    {
-        return path.StartsWith("res://", StringComparison.Ordinal)
             ? ProjectSettings.GlobalizePath(path)
             : Path.GetFullPath(path);
     }

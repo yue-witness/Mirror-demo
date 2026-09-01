@@ -24,8 +24,9 @@ public partial class TutorSpeechPlayer : AudioStreamPlayer
 
     public override void _Ready()
     {
-        string absoluteManifestPath = ProjectSettings.GlobalizePath(ManifestPath);
-        _catalog = TutorSpeechCatalog.Load(absoluteManifestPath);
+        _catalog = TutorSpeechCatalog.Load(
+            ManifestPath,
+            GodotTextResourceReader.ReadAllText);
         VolumeDb = -2.0f;
     }
 

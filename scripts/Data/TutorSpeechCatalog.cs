@@ -26,7 +26,15 @@ public sealed class TutorSpeechCatalog
 
     public static TutorSpeechCatalog Load(string path)
     {
-        string json = File.ReadAllText(path);
+        return Load(path, File.ReadAllText);
+    }
+
+    public static TutorSpeechCatalog Load(
+        string path,
+        Func<string, string> readAllText)
+    {
+        ArgumentNullException.ThrowIfNull(readAllText);
+        string json = readAllText(path);
         SpeechManifest? manifest = JsonSerializer.Deserialize<SpeechManifest>(
             json,
             new JsonSerializerOptions

@@ -6,6 +6,12 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' Or '$(Configuration)' == 'ExportRelease' ">
+    <!-- Public packages do not ship local source paths or standalone symbols. -->
+    <DebugType>None</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+  </PropertyGroup>
+
   <ItemGroup>
     <!-- The standalone domain test runner has its own executable project. -->
     <Compile Remove="tests/**/*.cs" />

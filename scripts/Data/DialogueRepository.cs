@@ -108,11 +108,19 @@ public sealed class DialogueRepository
 
     public static DialogueRepository Load(params string[] paths)
     {
+        return Load(File.ReadAllText, paths);
+    }
+
+    public static DialogueRepository Load(
+        Func<string, string> readAllText,
+        params string[] paths)
+    {
+        ArgumentNullException.ThrowIfNull(readAllText);
         var repository = new DialogueRepository();
 
         foreach (string path in paths)
         {
-            repository.LoadFile(path);
+            repository.LoadFile(path, readAllText);
         }
 
         return repository;
@@ -170,9 +178,9 @@ public sealed class DialogueRepository
         return lines[index];
     }
 
-    private void LoadFile(string path)
+    private void LoadFile(string path, Func<string, string> readAllText)
     {
-        string json = File.ReadAllText(path);
+        string json = readAllText(path);
         DialogueDocument? document = JsonSerializer.Deserialize<DialogueDocument>(
             json,
             new JsonSerializerOptions
