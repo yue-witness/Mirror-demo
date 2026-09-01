@@ -129,6 +129,9 @@ internal static class Program
             && TutorPresentationPolicy.ResolveSpeechMode(
                 "guided_input_confirm") == TutorSpeechMode.Essential,
             "Both mandatory guided-input steps must retain Tutor speech.");
+        Assert(TutorPresentationPolicy.ResolveSpeechMode(
+                "bash_confirm_turn") == TutorSpeechMode.Essential,
+            "Tutor Bash actions must retain one voiced commitment cue.");
         Assert(TutorPresentationPolicy.ResolveEmotion(
                 "bash_r2_win_satisfied",
                 "You passed. I am satisfied.") == TutorEmotion.Encouraging,

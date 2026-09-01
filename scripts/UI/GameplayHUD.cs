@@ -10,6 +10,8 @@ using System.Linq;
 public partial class GameplayHUD : Control
 {
     private const float DefaultTutorCharactersPerSecond = 10.0f;
+    public const float BashTutorExtractionSeconds = 0.72f;
+    public const float LimitRevealPresentationSeconds = 1.15f;
 
     private Control _safeArea = null!;
     private Label _phaseBanner = null!;
@@ -23,12 +25,14 @@ public partial class GameplayHUD : Control
     private Label _resultLabel = null!;
     private SpriteAtlasAnimator _tutorPortrait = null!;
     private RichTextLabel _dialogueText = null!;
+    private RichTextLabel _tutorCommitmentStatus = null!;
     private Label _completionCue = null!;
     private Label _systemStatus = null!;
     private RichTextLabel _systemLog = null!;
     private Button[] _choiceButtons = null!;
     private Button _confirmButton = null!;
     private Button _backButton = null!;
+    private RichTextLabel _limitRevealResult = null!;
     private ForcedChoiceTutorialOverlay _forcedChoiceTutorial = null!;
     private Control _chapterOverlay = null!;
     private Label _chapterNumber = null!;
@@ -44,6 +48,11 @@ public partial class GameplayHUD : Control
     private bool _resultAwaitingSkip;
     private Tween? _resultTween;
     private Tween? _completionTween;
+    private Tween? _limitRevealTween;
+    private Vector2 _limitRevealRestingPosition;
+
+    public float CurrentTutorSpeechDurationSeconds =>
+        _speechPlayer.CurrentDurationSeconds;
 
     public event Action<int>? ChoiceSelected;
 
@@ -81,6 +90,9 @@ public partial class GameplayHUD : Control
             + "PortraitFrame/PortraitTexture");
         _dialogueText = GetNode<RichTextLabel>(
             "SafeArea/Layout/Content/Center/DialoguePanel/DialogueVBox/Text");
+        _tutorCommitmentStatus = GetNode<RichTextLabel>(
+            "SafeArea/Layout/Content/Center/DialoguePanel/DialogueVBox/Text/"
+            + "TutorCommitmentStatus");
         _completionCue = GetNode<Label>(
             "SafeArea/Layout/Content/Center/DialoguePanel/DialogueVBox/Text/"
             + "CompletionCue");
@@ -92,6 +104,10 @@ public partial class GameplayHUD : Control
             "SafeArea/Layout/Content/Center/ActionRow/ConfirmButton");
         _backButton = GetNode<Button>(
             "SafeArea/Layout/Content/RightColumn/BackButton");
+        _limitRevealResult = GetNode<RichTextLabel>(
+            "SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/"
+            + "StateRow/LatticeView/LimitRevealResult");
+        _limitRevealRestingPosition = _limitRevealResult.Position;
         _forcedChoiceTutorial = GetNode<ForcedChoiceTutorialOverlay>(
             "ForcedChoiceTutorial");
         _chapterOverlay = GetNode<Control>("ChapterOverlay");
@@ -180,6 +196,7 @@ public partial class GameplayHUD : Control
 
     public void ShowChapter(string number, string title)
     {
+        HideLimitPresentation();
         StopResultAnimation();
         StopTutorPresentation();
         _chapterNumber.Text = number;
@@ -214,6 +231,7 @@ public partial class GameplayHUD : Control
         string tutorDialogueId,
         string tutorDialogue)
     {
+        HideLimitPresentation();
         StopResultAnimation();
         _phaseBanner.Text = $"CHAPTER 1.1 / BASH ROUND {bashRoundIndex}";
         _systemStatus.Text = game.CurrentTurn == Actor.Player
@@ -250,6 +268,19 @@ public partial class GameplayHUD : Control
             : "SELECT\nFIRST";
     }
 
+    public void ShowBashTutorSelection(int choice)
+    {
+        _systemStatus.Text = "STATUS · TUTOR TARGET LOCKED";
+        _selectionLabel.Text = $"TUTOR TARGET · DISENGAGE {choice}";
+        _latticeView.ShowTutorSelection(choice);
+    }
+
+    public void BeginBashTutorExtraction()
+    {
+        _systemStatus.Text = "STATUS · TUTOR EXTRACTION IN PROGRESS";
+        _latticeView.AnimateTutorRemoval(BashTutorExtractionSeconds);
+    }
+
     public void ShowLimitBash(
         LimitBashGame game,
         int gameIndex,
@@ -262,6 +293,7 @@ public partial class GameplayHUD : Control
         string tutorDialogue,
         ChoicePair? pendingReveal = null)
     {
+        HideLimitPresentation();
         StopResultAnimation();
         _phaseBanner.Text = "CHAPTER 1.2 / LIMIT BASH";
         _systemStatus.Text = waiting
@@ -306,6 +338,16 @@ public partial class GameplayHUD : Control
                 : "SELECT\nFIRST";
     }
 
+    public void ShowLimitTutorCommitted()
+    {
+        HideLimitRevealResult();
+        _systemStatus.Text = "STATUS · BOTH REQUESTS LOCKED · REVEAL PENDING";
+        _tutorCommitmentStatus.Text =
+            "[center][color=#66f4ff]◆ TUTOR SELECTION COMPLETE ◆[/color]\n"
+            + "[color=#9df9ff]COMMITMENT SEALED · VALUE HIDDEN[/color][/center]";
+        _tutorCommitmentStatus.Visible = true;
+    }
+
     public void ShowLimitReveal(
         LimitBashGame game,
         int gameIndex,
@@ -330,10 +372,17 @@ public partial class GameplayHUD : Control
                 tutorTake,
                 game.Remaining,
                 Math.Max(0, game.Remaining - playerTake - tutorTake)));
+        HideTutorCommitmentStatus();
+        _latticeView.ShowLimitReveal(
+            playerTake,
+            tutorTake,
+            LimitRevealPresentationSeconds);
         _selectionLabel.Text = $"REVEAL · PLAYER {playerTake}  ·  TUTOR {tutorTake}";
+        _systemStatus.Text = "STATUS · SIMULTANEOUS REVEAL IN PROGRESS";
         _confirmButton.Visible = true;
         _confirmButton.Disabled = true;
         _confirmButton.Text = "TUTOR\nACTING";
+        ShowLimitRevealResult(playerTake, tutorTake);
     }
 
     public void ShowRoundResult(
@@ -348,6 +397,7 @@ public partial class GameplayHUD : Control
         ChoicePair? finalChoice = null,
         IReadOnlyList<ChoicePair>? choiceHistory = null)
     {
+        HideLimitPresentation();
         HideForcedChoiceTutorial();
         string preservedSystemLog = _systemLog.Text.Trim();
         string gameName = game == GameKind.Bash ? "BASH" : "LIMIT BASH";
@@ -424,6 +474,27 @@ public partial class GameplayHUD : Control
         {
             _forcedChoiceTutorial.HideStage();
         }
+
+        // The tutorial overlay temporarily owns pointer input while it frames
+        // the required action. Restore normal hit testing when that gate ends;
+        // otherwise Confirm remains visually enabled but ignores every click
+        // for the rest of the session.
+        foreach (Button button in _choiceButtons)
+        {
+            button.MouseFilter = button.Disabled
+                ? MouseFilterEnum.Ignore
+                : MouseFilterEnum.Stop;
+            button.FocusMode = button.Disabled
+                ? FocusModeEnum.None
+                : FocusModeEnum.All;
+        }
+
+        _confirmButton.MouseFilter = _confirmButton.Disabled
+            ? MouseFilterEnum.Ignore
+            : MouseFilterEnum.Stop;
+        _confirmButton.FocusMode = _confirmButton.Disabled
+            ? FocusModeEnum.None
+            : FocusModeEnum.All;
     }
 
     private void ConfigureChoices(
@@ -581,8 +652,68 @@ public partial class GameplayHUD : Control
 
     private void RequestBackToTitle()
     {
+        HideLimitPresentation();
         StopTutorPresentation();
         BackToTitleRequested?.Invoke();
+    }
+
+    private void ShowLimitRevealResult(int playerTake, int tutorTake)
+    {
+        HideLimitRevealResult();
+        _limitRevealResult.Text =
+            $"[center][color=#ffcb55]PLAYER −{playerTake} ANCHORS[/color]\n"
+            + $"[color=#66f4ff]TUTOR −{tutorTake} ANCHORS[/color][/center]";
+        _limitRevealResult.Position = _limitRevealRestingPosition;
+        _limitRevealResult.Modulate = Colors.White;
+        _limitRevealResult.Visible = true;
+
+        _limitRevealTween = CreateTween();
+        _limitRevealTween.TweenProperty(
+                _limitRevealResult,
+                "position:y",
+                _limitRevealRestingPosition.Y - 28.0f,
+                LimitRevealPresentationSeconds)
+            .SetTrans(Tween.TransitionType.Cubic)
+            .SetEase(Tween.EaseType.Out);
+        _limitRevealTween.Parallel().TweenProperty(
+                _limitRevealResult,
+                "modulate:a",
+                0.0f,
+                LimitRevealPresentationSeconds * 0.42f)
+            .SetDelay(LimitRevealPresentationSeconds * 0.58f)
+            .SetTrans(Tween.TransitionType.Sine)
+            .SetEase(Tween.EaseType.In);
+    }
+
+    private void HideLimitPresentation()
+    {
+        HideTutorCommitmentStatus();
+        HideLimitRevealResult();
+    }
+
+    private void HideTutorCommitmentStatus()
+    {
+        if (GodotObject.IsInstanceValid(_tutorCommitmentStatus))
+        {
+            _tutorCommitmentStatus.Visible = false;
+        }
+    }
+
+    private void HideLimitRevealResult()
+    {
+        if (_limitRevealTween is not null
+            && GodotObject.IsInstanceValid(_limitRevealTween))
+        {
+            _limitRevealTween.Kill();
+        }
+
+        _limitRevealTween = null;
+        if (GodotObject.IsInstanceValid(_limitRevealResult))
+        {
+            _limitRevealResult.Visible = false;
+            _limitRevealResult.Position = _limitRevealRestingPosition;
+            _limitRevealResult.Modulate = Colors.White;
+        }
     }
 
     private void HandleForcedTutorialAction()

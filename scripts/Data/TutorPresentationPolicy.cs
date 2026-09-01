@@ -26,7 +26,6 @@ public static class TutorPresentationPolicy
         "choice_hesitation_",
         "bash_state_",
         "bash_select_",
-        "bash_confirm_",
         "bash_r1_tutor_",
         "bash_r2_tutor_",
         "limit_state_",

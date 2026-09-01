@@ -81,17 +81,20 @@ func _ready() -> void:
 	_press("GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ConfirmButton")
 	await get_tree().process_frame
 
-	_assert(not speech.playing and speech.stream == null,
-		"Bash confirmation started an overlapping intermediate Tutor cue.")
-	_assert(gameplay_dialogue.text.is_empty(),
-		"Bash confirmation left an intermediate Tutor line visible.")
+	_assert(speech.playing and speech.stream != null
+		and str(speech.get("CurrentLineId")).begins_with("bash_confirm_"),
+		"Bash confirmation did not start the Tutor's voiced action cue.")
+	_assert(not gameplay_dialogue.text.is_empty(),
+		"Bash confirmation did not show the Tutor's action dialogue.")
 
-	await get_tree().create_timer(0.2).timeout
+	await get_tree().create_timer(0.55).timeout
 	await _frames()
-	_assert(not speech.playing and gameplay_dialogue.text.is_empty(),
-		"Bash lock delay unexpectedly triggered a Tutor cue.")
+	var tutor_status := _main.get_node(
+		"GameplayHUD/SafeArea/Layout/Content/RightColumn/RightLog/RightVBox/Status") as Label
+	_assert(speech.playing and tutor_status.text.contains("TUTOR TARGET LOCKED"),
+		"The voiced Bash cue did not remain active through Tutor target selection.")
 
-	await get_tree().create_timer(0.35).timeout
+	await get_tree().create_timer(5.2).timeout
 	await _frames()
 	_assert(not speech.playing and speech.stream == null
 		and not gameplay_dialogue.text.is_empty(),

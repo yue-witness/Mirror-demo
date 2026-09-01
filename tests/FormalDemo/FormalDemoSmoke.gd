@@ -273,6 +273,10 @@ func _ready() -> void:
 		"GameplayHUD/SafeArea/Layout/Content/Center/DialoguePanel/DialogueVBox/Text") as RichTextLabel).text
 	var gameplay_dialogue := _main.get_node(
 		"GameplayHUD/SafeArea/Layout/Content/Center/DialoguePanel/DialogueVBox/Text") as RichTextLabel
+	var selection_label := _main.get_node(
+		"GameplayHUD/SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/StateRow/SelectionStack/SelectionLabel") as Label
+	var system_status := _main.get_node(
+		"GameplayHUD/SafeArea/Layout/Content/RightColumn/RightLog/RightVBox/Status") as Label
 	var forced_tutorial := _main.get_node(
 		"GameplayHUD/ForcedChoiceTutorial") as Control
 	var tutorial_pointer := _main.get_node(
@@ -462,10 +466,11 @@ func _ready() -> void:
 	await get_tree().process_frame
 	_assert(not forced_tutorial.visible,
 		"The mandatory tutorial mask remained after the guided confirmation.")
-	_assert(not tutor_speech.playing and tutor_speech.stream == null,
-		"Bash confirmation started overlapping intermediate Tutor speech.")
-	_assert(gameplay_dialogue.text.is_empty(),
-		"Bash confirmation left more than one Tutor line active.")
+	_assert(tutor_speech.playing and tutor_speech.stream != null
+		and str(tutor_speech.get("CurrentLineId")).begins_with("bash_confirm_"),
+		"The Tutor Bash action did not start its single voiced commitment cue.")
+	_assert(not gameplay_dialogue.text.is_empty(),
+		"The Tutor Bash action did not show its commitment dialogue.")
 	_assert(choice_one.disabled and choice_two.disabled and choice_three.disabled,
 		"Tutor selection did not immediately lock all three player choices.")
 	_assert(confirm.visible and confirm.global_position == confirm_position,
@@ -501,18 +506,28 @@ func _ready() -> void:
 		and choice_two.scale == Vector2.ONE
 		and choice_three.scale == Vector2.ONE,
 		"Tutor selection changed the three-button geometry.")
-	await get_tree().create_timer(0.2).timeout
+	await get_tree().create_timer(0.55).timeout
 	await _settle_frames()
+	_assert(selection_label.text.contains("TUTOR TARGET · DISENGAGE")
+		and system_status.text.contains("TUTOR TARGET LOCKED"),
+		"The Tutor Bash action did not visibly lock a cyan lattice target.")
 	_capture("03b-tutor-locked.png")
-	_main.set("FastMode", true)
 	_assert(gameplay_dialogue.text != tutor_line,
 		"The resolved Bash event retained the pre-confirmation Tutor line.")
 	_assert(FileAccess.file_exists(SAVE_PATH), "A stable session checkpoint was not written.")
-	await get_tree().create_timer(0.35).timeout
+	await get_tree().create_timer(5.2).timeout
 	await _settle_frames()
+	_main.set("FastMode", true)
 	_assert(not tutor_speech.playing and tutor_speech.stream == null
 		and not gameplay_dialogue.text.is_empty(),
 		"Routine post-action guidance must remain visible but text-only.")
+	_press(
+		"GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ChoiceStack/ChoiceRow/Choice1")
+	await _settle_frames()
+	_assert(not confirm.disabled
+		and confirm.mouse_filter == Control.MOUSE_FILTER_STOP
+		and confirm.focus_mode == Control.FOCUS_ALL,
+		"Confirm did not regain pointer and keyboard input after the tutorial gate ended.")
 
 	_press("GameplayHUD/SafeArea/Layout/Content/RightColumn/BackButton")
 	await _settle_frames()

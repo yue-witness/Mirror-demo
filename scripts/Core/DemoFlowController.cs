@@ -11,7 +11,7 @@ using System.Linq;
 public partial class DemoFlowController : Control
 {
     private const double TutorDelaySeconds = 0.45;
-    private const double RevealDelaySeconds = 0.42;
+    private const double LimitTutorCommitmentPauseSeconds = 0.90;
     private const int MaximumControlledRestarts = 3;
     private const int DialogueHistoryLimit = 2;
     private const int SelectionDialoguePercent = 35;
@@ -646,7 +646,7 @@ public partial class DemoFlowController : Control
 
         RenderBash(
             $"Player disengaged {choice}; {_bash.Remaining} anchors remain active.",
-            suppressTutorDialogue: true);
+            TutorDialoguePool.BashPlayerConfirmed);
         RunBashTutorTurn(_flowVersion);
     }
 
@@ -655,6 +655,14 @@ public partial class DemoFlowController : Control
         if (_bash is null || _bash.CurrentTurn != Actor.Tutor)
         {
             return;
+        }
+
+        if (!_currentTutorDialogueId.StartsWith(
+                "bash_confirm_",
+                StringComparison.OrdinalIgnoreCase))
+        {
+            SetTutorDialogueById("bash_confirm_turn");
+            RenderBash("Tutor control accepted. Target analysis is active.");
         }
 
         await ToSignal(
@@ -671,6 +679,41 @@ public partial class DemoFlowController : Control
 
         int selector = _sessionRandom.Next(0, int.MaxValue);
         int choice = _strategy.ChooseBashMove(_bash, selector);
+        _hud.ShowBashTutorSelection(choice);
+
+        double selectionHoldSeconds = FastMode
+            ? 0.01
+            : Math.Max(
+                0.65,
+                _hud.CurrentTutorSpeechDurationSeconds
+                    - TutorDelaySeconds
+                    - GameplayHUD.BashTutorExtractionSeconds);
+        await ToSignal(
+            GetTree().CreateTimer(selectionHoldSeconds),
+            SceneTreeTimer.SignalName.Timeout);
+
+        if (expectedVersion != _flowVersion
+            || _bash is null
+            || _bash.IsGameOver
+            || _bash.CurrentTurn != Actor.Tutor)
+        {
+            return;
+        }
+
+        _hud.BeginBashTutorExtraction();
+        await ToSignal(
+            GetTree().CreateTimer(
+                FastMode ? 0.01 : GameplayHUD.BashTutorExtractionSeconds),
+            SceneTreeTimer.SignalName.Timeout);
+
+        if (expectedVersion != _flowVersion
+            || _bash is null
+            || _bash.IsGameOver
+            || _bash.CurrentTurn != Actor.Tutor)
+        {
+            return;
+        }
+
         _currentGameTurns++;
         RoundOutcome outcome = _bash.ApplyTake(Actor.Tutor, choice);
 
@@ -847,6 +890,7 @@ public partial class DemoFlowController : Control
             return;
         }
 
+        _hud.ShowLimitTutorCommitted();
         RevealLimitRound(_flowVersion, choice, tutorChoice);
     }
 
@@ -856,7 +900,8 @@ public partial class DemoFlowController : Control
         int tutorChoice)
     {
         await ToSignal(
-            GetTree().CreateTimer(FastMode ? 0.01 : TutorDelaySeconds),
+            GetTree().CreateTimer(
+                FastMode ? 0.01 : LimitTutorCommitmentPauseSeconds),
             SceneTreeTimer.SignalName.Timeout);
 
         if (expectedVersion != _flowVersion || _limitBash is null)
@@ -875,7 +920,8 @@ public partial class DemoFlowController : Control
             _currentTutorDialogue);
 
         await ToSignal(
-            GetTree().CreateTimer(FastMode ? 0.01 : RevealDelaySeconds),
+            GetTree().CreateTimer(
+                FastMode ? 0.01 : GameplayHUD.LimitRevealPresentationSeconds),
             SceneTreeTimer.SignalName.Timeout);
 
         if (expectedVersion != _flowVersion || _limitBash is null)
@@ -1330,6 +1376,13 @@ public partial class DemoFlowController : Control
     private void SetTutorDialogue(string poolId)
     {
         DialogueLine line = PickTutorLine(poolId);
+        _currentTutorDialogueId = line.Id;
+        _currentTutorDialogue = FormatDialogue(line.Text);
+    }
+
+    private void SetTutorDialogueById(string lineId)
+    {
+        DialogueLine line = _dialogues.GetById(lineId);
         _currentTutorDialogueId = line.Id;
         _currentTutorDialogue = FormatDialogue(line.Text);
     }

@@ -503,6 +503,28 @@ size_flags_horizontal = 3
 mouse_filter = 2
 script = ExtResource("2_lattice")
 
+[node name="LimitRevealResult" type="RichTextLabel" parent="SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/StateRow/LatticeView"]
+visible = false
+z_index = 10
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 54.0
+offset_bottom = -42.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.94)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/normal_font_size = 24
+bbcode_enabled = true
+text = "[center][color=#ffcb55]PLAYER −2 ANCHORS[/color]\n[color=#66f4ff]TUTOR −3 ANCHORS[/color][/center]"
+fit_content = false
+scroll_active = false
+vertical_alignment = 1
+
 [node name="SelectionStack" type="VBoxContainer" parent="SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/StateRow"]
 custom_minimum_size = Vector2(250, 0)
 layout_mode = 2
@@ -622,6 +644,27 @@ size_flags_vertical = 3
 theme_override_font_sizes/normal_font_size = 30
 bbcode_enabled = true
 text = "[center]You can change your choice before confirming. After you confirm, I will act.[/center]"
+fit_content = false
+scroll_active = false
+autowrap_mode = 2
+vertical_alignment = 1
+
+[node name="TutorCommitmentStatus" type="RichTextLabel" parent="SafeArea/Layout/Content/Center/DialoguePanel/DialogueVBox/Text"]
+visible = false
+z_index = 4
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_colors/default_color = Color(0.4, 0.96, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0.06, 0.08, 0.96)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/normal_font_size = 24
+bbcode_enabled = true
+text = "[center][color=#66f4ff]◆ TUTOR SELECTION COMPLETE ◆[/color]\n[color=#9df9ff]COMMITMENT SEALED · VALUE HIDDEN[/color][/center]"
 fit_content = false
 scroll_active = false
 autowrap_mode = 2

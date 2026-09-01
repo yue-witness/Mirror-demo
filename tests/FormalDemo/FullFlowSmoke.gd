@@ -272,10 +272,18 @@ func _complete_limit_bash() -> void:
 						"TutorSpeechPlayer") as AudioStreamPlayer
 					var tutor_text := _main.get_node(
 						"GameplayHUD/SafeArea/Layout/Content/Center/DialoguePanel/DialogueVBox/Text") as RichTextLabel
+					var tutor_commitment := _main.get_node(
+						"GameplayHUD/SafeArea/Layout/Content/Center/DialoguePanel/DialogueVBox/Text/TutorCommitmentStatus") as RichTextLabel
+					var reveal_result := _main.get_node(
+						"GameplayHUD/SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/StateRow/LatticeView/LimitRevealResult") as RichTextLabel
 					_assert(not speech.playing and speech.stream == null,
 						"Limit lock and reveal started overlapping Tutor speech cues.")
-					_assert(tutor_text.text.is_empty(),
-						"Limit lock and reveal exposed conflicting Tutor lines.")
+					_assert(tutor_text.text.is_empty()
+						and tutor_commitment.visible
+						and tutor_commitment.text.contains("TUTOR SELECTION COMPLETE")
+						and tutor_commitment.text.contains("VALUE HIDDEN")
+						and not reveal_result.visible,
+						"Limit Bash did not hold the private Tutor commitment before reveal.")
 					_assert(confirm.visible
 						and action_buttons[0].global_position == positions[0]
 						and action_buttons[1].global_position == positions[1]
@@ -283,6 +291,14 @@ func _complete_limit_bash() -> void:
 						and confirm.global_position == positions[3],
 						"Limit Tutor reveal hid Confirm or moved the action row.")
 					_capture("03d-limit-tutor-acting.png")
+					await get_tree().create_timer(0.55).timeout
+					await _frames()
+					_assert(not tutor_commitment.visible
+						and reveal_result.visible
+						and reveal_result.text.contains("PLAYER −")
+						and reveal_result.text.contains("TUTOR −"),
+						"Limit Bash did not present both requests during simultaneous reveal.")
+					_capture("03e-limit-simultaneous-reveal.png")
 					checked_tutor_layout = true
 					_main.set("FastMode", true)
 				break

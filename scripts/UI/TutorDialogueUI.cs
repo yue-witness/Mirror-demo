@@ -17,7 +17,6 @@ public partial class TutorDialogueUI : Control
     private RichTextLabel _dialogueText = null!;
     private RichTextLabel _supplementaryText = null!;
     private Label _completionCue = null!;
-    private PanelContainer _portrait = null!;
     private SpriteAtlasAnimator _portraitTexture = null!;
     private Label _speakerName = null!;
     private Button _backButton = null!;
@@ -48,8 +47,6 @@ public partial class TutorDialogueUI : Control
         _completionCue = GetNode<Label>(
             "SafeArea/Layout/Content/DialogueCard/DialogueVBox/DialogueText/"
             + "CompletionCue");
-        _portrait = GetNode<PanelContainer>(
-            "SafeArea/Layout/Content/SpeakerCard/SpeakerVBox/PortraitFrame");
         _portraitTexture = GetNode<SpriteAtlasAnimator>(
             "SafeArea/Layout/Content/SpeakerCard/SpeakerVBox/PortraitFrame/PortraitTexture");
         _speakerName = GetNode<Label>(
@@ -211,8 +208,8 @@ public partial class TutorDialogueUI : Control
         bool isS17 = speaker.Equals("S-17", StringComparison.OrdinalIgnoreCase)
             || speaker.Equals("S17", StringComparison.OrdinalIgnoreCase);
 
-        _portrait.RemoveThemeStyleboxOverride("panel");
         _portraitTexture.Modulate = Colors.White;
+        _portraitTexture.SetRedEyeAnomaly(false);
         if (isS17)
         {
             _portraitTexture.ConfigureAtlas(_s17Portrait, 4, 1);
@@ -241,23 +238,7 @@ public partial class TutorDialogueUI : Control
             return;
         }
 
-        var anomalyStyle = new StyleBoxFlat
-        {
-            BgColor = Colors.Transparent,
-            BorderColor = new Color("ff314d"),
-            BorderWidthLeft = 4,
-            BorderWidthTop = 4,
-            BorderWidthRight = 4,
-            BorderWidthBottom = 4,
-            CornerRadiusTopLeft = 90,
-            CornerRadiusTopRight = 90,
-            CornerRadiusBottomRight = 90,
-            CornerRadiusBottomLeft = 90,
-            ShadowColor = Colors.Transparent,
-            ShadowSize = 0
-        };
-        _portrait.AddThemeStyleboxOverride("panel", anomalyStyle);
-        _portraitTexture.Modulate = new Color("ff8192");
+        _portraitTexture.SetRedEyeAnomaly(true);
         _speakerName.Text = "THE TUTOR · SIGNAL ANOMALY";
     }
 
