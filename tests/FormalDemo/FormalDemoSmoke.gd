@@ -32,6 +32,18 @@ func _ready() -> void:
 		and _main.has_node("UiAudioController/ActionPlayer")
 		and _main.has_node("UiAudioController/EventPlayer"),
 		"The UI sound router did not create its three playback channels.")
+	var background_music := _main.get_node(
+		"BackgroundMusicPlayer") as AudioStreamPlayer
+	var background_music_stream := background_music.stream as AudioStreamOggVorbis
+	_assert(background_music.playing
+		and background_music.bus == &"Music"
+		and AudioServer.get_bus_index(&"Music") >= 0,
+		"The approved BGM is not playing through its dedicated Music bus.")
+	_assert(background_music_stream != null
+		and background_music_stream.loop
+		and background_music_stream.resource_path.ends_with(
+			"exploration_theme.ogg"),
+		"The approved Exploration Theme OGG is missing or is not looping.")
 	var background := _main.get_node("Background") as TextureRect
 	_assert(background.texture.resource_path.ends_with(
 		"command_chamber_static_scanner.png"),
@@ -141,6 +153,8 @@ func _ready() -> void:
 	var dialogue_text := _main.get_node(
 		"TutorDialogueUI/SafeArea/Layout/Content/DialogueCard/DialogueVBox/DialogueText") as RichTextLabel
 	var tutor_speech := _main.get_node("TutorSpeechPlayer") as AudioStreamPlayer
+	_assert(background_music.volume_db < -20.5,
+		"Tutor speech did not duck the background music.")
 	var completion_cue := _main.get_node(
 		"TutorDialogueUI/SafeArea/Layout/Content/DialogueCard/DialogueVBox/DialogueText/CompletionCue") as Label
 	var opening_speaker_name := _main.get_node(
@@ -288,6 +302,17 @@ func _ready() -> void:
 	_assert(_main.has_node(
 		"GameplayHUD/SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/StateRow/LatticeView"),
 		"The Stability Lattice visualization is missing from gameplay.")
+	var lattice_view := _main.get_node(
+		"GameplayHUD/SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/StateRow/LatticeView") as Control
+	var lattice_source := FileAccess.get_file_as_string(
+		"res://scripts/UI/StabilityLatticeView.cs")
+	_assert(lattice_view.is_processing()
+		and ResourceLoader.exists("res://assets/vfx/lattice_energy_core_v2.png")
+		and lattice_source.contains("DrawOrbitPath")
+		and lattice_source.contains("_elapsedSeconds"),
+		"The Stability Lattice orbital animation or generated core asset is missing.")
+	_assert(not lattice_source.contains("\"KEYSTONE\""),
+		"The removed KEYSTONE centre label is still authored in the lattice view.")
 	var active_value := _main.get_node(
 		"GameplayHUD/SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/StateRow/ActiveStack/RemainingValue") as Label
 	var selection_value := _main.get_node(
@@ -357,6 +382,11 @@ func _ready() -> void:
 	gameplay_dialogue.visible_characters = -1
 	await get_tree().process_frame
 	_capture("03-bash-guided-select-b.png")
+	if DisplayServer.get_name() != "headless":
+		_capture("03-lattice-orbit-a.png")
+		await get_tree().create_timer(0.9).timeout
+		await _settle_frames()
+		_capture("03-lattice-orbit-b.png")
 	gameplay_hud.set_process(true)
 	if DisplayServer.get_name() != "headless":
 		Input.warp_mouse(choice_two.global_position + choice_two.size / 2.0)
@@ -510,6 +540,8 @@ func _ready() -> void:
 	var final_speech := _main.get_node("TutorSpeechPlayer") as AudioStreamPlayer
 	final_speech.stop()
 	final_speech.stream = null
+	background_music.stop()
+	background_music.stream = null
 	for player_name in ["HoverPlayer", "ActionPlayer", "EventPlayer"]:
 		var ui_player := _main.get_node(
 			"UiAudioController/" + player_name) as AudioStreamPlayer

@@ -15,6 +15,12 @@ func _ready() -> void:
 	_main.set("TestSeed", 772774)
 	add_child(_main)
 	await _frames()
+	var background_music := _main.get_node(
+		"BackgroundMusicPlayer") as AudioStreamPlayer
+	_assert(background_music.playing
+		and background_music.bus == &"Music"
+		and (background_music.stream as AudioStreamOggVorbis).loop,
+		"The Tutor speech test did not start the approved looping BGM.")
 
 	_press("TitleScreen/MenuGlass/MenuVBox/NewGameButton")
 	await get_tree().create_timer(0.22).timeout
@@ -27,6 +33,10 @@ func _ready() -> void:
 	var speech := _main.get_node("TutorSpeechPlayer") as AudioStreamPlayer
 	_assert(speech.playing and speech.stream != null,
 		"The regenerated chamber-arrival cue did not begin playback.")
+	await get_tree().create_timer(0.08).timeout
+	await _frames()
+	_assert(background_music.volume_db < -20.5,
+		"Tutor speech did not duck the background music.")
 
 	var duration := speech.stream.get_length()
 	var total_characters := dialogue.get_total_character_count()
@@ -66,7 +76,7 @@ func _ready() -> void:
 		) as RichTextLabel
 	_main.set("FastMode", false)
 	_press(
-		"GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ChoiceStack/ChoiceRow/Choice1")
+		"GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ChoiceStack/ChoiceRow/Choice2")
 	await _frames()
 	_press("GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ConfirmButton")
 	await get_tree().process_frame
@@ -96,6 +106,8 @@ func _ready() -> void:
 	await _frames()
 	speech.stop()
 	speech.stream = null
+	background_music.stop()
+	background_music.stream = null
 	await get_tree().create_timer(0.12).timeout
 	await _frames()
 

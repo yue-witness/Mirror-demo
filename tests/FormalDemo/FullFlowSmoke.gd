@@ -16,6 +16,12 @@ func _ready() -> void:
 	_main.set("TestSeed", 772774)
 	add_child(_main)
 	await _frames()
+	var background_music := _main.get_node(
+		"BackgroundMusicPlayer") as AudioStreamPlayer
+	_assert(background_music.playing
+		and background_music.bus == &"Music"
+		and (background_music.stream as AudioStreamOggVorbis).loop,
+		"The full flow did not start the approved looping BGM.")
 
 	_press("TitleScreen/MenuGlass/MenuVBox/NewGameButton")
 	await get_tree().create_timer(0.22).timeout
@@ -69,6 +75,8 @@ func _ready() -> void:
 	var final_speech := _main.get_node("TutorSpeechPlayer") as AudioStreamPlayer
 	final_speech.stop()
 	final_speech.stream = null
+	background_music.stop()
+	background_music.stream = null
 	for player_name in ["HoverPlayer", "ActionPlayer", "EventPlayer"]:
 		var ui_player := _main.get_node(
 			"UiAudioController/" + player_name) as AudioStreamPlayer
@@ -96,6 +104,22 @@ func _complete_bash_tutorial_gate() -> void:
 
 		if _main.get_node("TutorDialogueUI").visible:
 			await _advance_dialogue_page()
+			continue
+
+		# The first playable Bash turn is intentionally gated through B and then
+		# Confirm. Complete that authored tutorial before resuming optimal play.
+		var forced_tutorial := _main.get_node(
+			"GameplayHUD/ForcedChoiceTutorial") as Control
+		if forced_tutorial.visible:
+			var guided_confirm := _button(
+				"GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ConfirmButton")
+			if guided_confirm.disabled:
+				_press(
+					"GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ChoiceStack/ChoiceRow/Choice2")
+			else:
+				_press(
+					"GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ConfirmButton")
+			await _frames()
 			continue
 
 		var banner := _label("GameplayHUD/SafeArea/Layout/Header/HeaderRow/PhaseBanner")

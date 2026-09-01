@@ -189,8 +189,9 @@ internal static class Program
 
     private static void VerifyUiAudioAssets()
     {
+        string root = FindProjectRoot();
         string audioRoot = Path.Combine(
-            FindProjectRoot(),
+            root,
             "assets",
             "audio",
             "ui");
@@ -215,6 +216,34 @@ internal static class Program
                 && Encoding.ASCII.GetString(bytes, 8, 4) == "WAVE",
                 $"UI sound asset is not a valid PCM WAV file: {fileName}");
         }
+
+        string musicPath = Path.Combine(
+            root,
+            "assets",
+            "audio",
+            "bgm",
+            "exploration_theme.ogg");
+        Assert(File.Exists(musicPath),
+            "The approved Exploration Theme BGM is missing.");
+        byte[] musicBytes = File.ReadAllBytes(musicPath);
+        Assert(musicBytes.Length > 1_000_000
+            && Encoding.ASCII.GetString(musicBytes, 0, 4) == "OggS",
+            "The approved BGM is not a valid OGG container.");
+
+        string mainScene = File.ReadAllText(
+            Path.Combine(root, "scenes", "main.tscn"));
+        Assert(mainScene.Contains("BackgroundMusicPlayer", StringComparison.Ordinal)
+            && mainScene.Contains("bus = &\"Music\"", StringComparison.Ordinal),
+            "The main scene does not route the approved BGM to the Music bus.");
+
+        string musicController = File.ReadAllText(Path.Combine(
+            root,
+            "scripts",
+            "Audio",
+            "BackgroundMusicPlayer.cs"));
+        Assert(musicController.Contains("music.Loop = true", StringComparison.Ordinal)
+            && musicController.Contains("DuckedVolumeDb = -28.0f", StringComparison.Ordinal),
+            "The BGM controller no longer loops or ducks beneath Tutor speech.");
     }
 
     private static void VerifyMisereBash()

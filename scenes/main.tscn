@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://bgranncpwtngt"]
+[gd_scene load_steps=18 format=3 uid="uid://bgranncpwtngt"]
 
 [ext_resource type="Theme" path="res://themes/ProjectMirrorLightTheme.tres" id="1_theme"]
 [ext_resource type="Script" path="res://scripts/Core/DemoFlowController.cs" id="2_flow"]
@@ -14,6 +14,8 @@
 [ext_resource type="Script" path="res://scripts/Audio/TutorSpeechPlayer.cs" id="13_tutor_speech"]
 [ext_resource type="Script" path="res://scripts/Audio/UiAudioController.cs" id="14_ui_audio"]
 [ext_resource type="Script" path="res://scripts/UI/UiTransitionController.cs" id="15_ui_transition"]
+[ext_resource type="AudioStream" path="res://assets/audio/bgm/exploration_theme.ogg" id="16_bgm"]
+[ext_resource type="Script" path="res://scripts/Audio/BackgroundMusicPlayer.cs" id="17_bgm_player"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_container_cleanup"]
 shader = ExtResource("12_vfx_cleanup")
@@ -81,6 +83,12 @@ layout_mode = 1
 
 [node name="TutorSpeechPlayer" type="AudioStreamPlayer" parent="."]
 script = ExtResource("13_tutor_speech")
+
+[node name="BackgroundMusicPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("16_bgm")
+volume_db = -20.0
+bus = &"Music"
+script = ExtResource("17_bgm_player")
 
 [node name="GameplayHUD" parent="." instance=ExtResource("5_hud")]
 visible = false
