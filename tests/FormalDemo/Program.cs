@@ -69,8 +69,8 @@ internal static class Program
                 $"Tutor dialogue pool {poolId} contains the wrong speaker.");
         }
 
-        Assert(configuredLines == 140,
-            $"The approved Tutor script must contain 140 lines, got {configuredLines}.");
+        Assert(configuredLines == 141,
+            $"The approved Tutor script must contain 141 lines, got {configuredLines}.");
 
         Assert(dialogue.GetRandomPool(TutorDialoguePool.GuidedInputSelectB)
                 .Single().Text.Contains("middle option: B", StringComparison.Ordinal)
@@ -113,8 +113,8 @@ internal static class Program
         TutorSpeechCatalog speech = TutorSpeechCatalog.Load(
             Path.Combine(root, "assets", "audio", "tutor", "manifest.json"));
 
-        Assert(speech.Count == 196,
-            $"Tutor speech manifest must contain 196 rendered cues, got {speech.Count}.");
+        Assert(speech.Count == 197,
+            $"Tutor speech manifest must contain 197 rendered cues, got {speech.Count}.");
         Assert(TutorPresentationPolicy.ResolveSpeechMode(
                 "choice_hesitation_wait") == TutorSpeechMode.Silent,
             "Repeated choice-time chatter must remain text-only.");
@@ -367,6 +367,7 @@ internal static class Program
                 Assert(IsAllowed(game.Result, directive),
                     $"Directive {directive} produced disallowed result {game.Result}.");
             }
+
         }
     }
 

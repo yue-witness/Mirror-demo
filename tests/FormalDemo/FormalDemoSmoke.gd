@@ -319,6 +319,10 @@ func _ready() -> void:
 		"The removed KEYSTONE centre label is still authored in the lattice view.")
 	var active_value := _main.get_node(
 		"GameplayHUD/SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/StateRow/ActiveStack/RemainingValue") as Label
+	_assert(int(lattice_view.call("GetDisplayedOrbitingAnchorCount"))
+		== active_value.text.to_int()
+		and lattice_source.contains("satelliteCount = Math.Max(0, _initialAnchors)"),
+		"The decorative core is still included in the displayed anchor count.")
 	var selection_value := _main.get_node(
 		"GameplayHUD/SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/StateRow/SelectionStack/SelectionLabel") as Label
 	_assert(active_value.global_position.x < selection_value.global_position.x,
@@ -466,11 +470,12 @@ func _ready() -> void:
 	await get_tree().process_frame
 	_assert(not forced_tutorial.visible,
 		"The mandatory tutorial mask remained after the guided confirmation.")
-	_assert(tutor_speech.playing and tutor_speech.stream != null
-		and str(tutor_speech.get("CurrentLineId")).begins_with("bash_confirm_"),
-		"The Tutor Bash action did not start its single voiced commitment cue.")
-	_assert(not gameplay_dialogue.text.is_empty(),
-		"The Tutor Bash action did not show its commitment dialogue.")
+	_assert(not tutor_speech.playing
+		and gameplay_dialogue.text.is_empty()
+		and int(lattice_view.call("GetPlayerRevealMarkedAnchorCount")) == 2
+		and system_status.text.contains("PLAYER EXTRACTION"),
+		"The confirmed player nodes did not move before Tutor evaluation.")
+	_capture("03a-player-extraction.png")
 	_assert(choice_one.disabled and choice_two.disabled and choice_three.disabled,
 		"Tutor selection did not immediately lock all three player choices.")
 	_assert(confirm.visible and confirm.global_position == confirm_position,
@@ -506,6 +511,13 @@ func _ready() -> void:
 		and choice_two.scale == Vector2.ONE
 		and choice_three.scale == Vector2.ONE,
 		"Tutor selection changed the three-button geometry.")
+	await get_tree().create_timer(0.68).timeout
+	await _settle_frames()
+	_assert(tutor_speech.playing and tutor_speech.stream != null
+		and str(tutor_speech.get("CurrentLineId")).begins_with("bash_confirm_"),
+		"Tutor evaluation did not start after the player extraction completed.")
+	_assert(not gameplay_dialogue.text.is_empty(),
+		"The Tutor Bash action did not show its commitment dialogue.")
 	await get_tree().create_timer(0.55).timeout
 	await _settle_frames()
 	_assert(selection_label.text.contains("TUTOR TARGET · DISENGAGE")

@@ -1,9 +1,10 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://scripts/UI/TutorDialogueUI.cs" id="1_script"]
 [ext_resource type="Texture2D" path="res://assets/portraits/tutor_states.png" id="2_tutor"]
 [ext_resource type="Texture2D" path="res://assets/portraits/s17_idle.png" id="3_s17"]
 [ext_resource type="Script" path="res://scripts/UI/SpriteAtlasAnimator.cs" id="4_atlas_animator"]
+[ext_resource type="Script" path="res://scripts/UI/SmoothPortraitFrame.cs" id="5_smooth_frame"]
 
 [sub_resource type="StyleBoxFlat" id="PortraitFrame"]
 content_margin_left = 6.0
@@ -11,15 +12,18 @@ content_margin_top = 6.0
 content_margin_right = 6.0
 content_margin_bottom = 6.0
 bg_color = Color(0, 0, 0, 0)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.22, 1, 0.23, 0.95)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.22, 1, 0.23, 0.02)
 corner_radius_top_left = 190
 corner_radius_top_right = 190
 corner_radius_bottom_right = 190
 corner_radius_bottom_left = 190
+corner_detail = 20
+anti_aliasing = true
+anti_aliasing_size = 1.0
 shadow_color = Color(0, 0, 0, 0)
 shadow_size = 0
 
@@ -135,6 +139,11 @@ custom_minimum_size = Vector2(380, 380)
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_styles/panel = SubResource("PortraitFrame")
+script = ExtResource("5_smooth_frame")
+segment_count = 256
+ring_width = 3.0
+ring_color = Color(0.22, 1, 0.23, 0.95)
+glow_width = 6.0
 
 [node name="PortraitTexture" type="TextureRect" parent="SafeArea/Layout/Content/SpeakerCard/SpeakerVBox/PortraitFrame"]
 custom_minimum_size = Vector2(368, 368)
@@ -182,6 +191,7 @@ fit_content = false
 scroll_active = false
 autowrap_mode = 2
 vertical_alignment = 1
+visible_characters_behavior = 1
 
 [node name="CompletionCue" type="Label" parent="SafeArea/Layout/Content/DialogueCard/DialogueVBox/DialogueText"]
 visible = false

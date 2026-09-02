@@ -81,16 +81,23 @@ func _ready() -> void:
 	_press("GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ConfirmButton")
 	await get_tree().process_frame
 
+	var tutor_status := _main.get_node(
+		"GameplayHUD/SafeArea/Layout/Content/RightColumn/RightLog/RightVBox/Status") as Label
+	_assert(not speech.playing
+		and gameplay_dialogue.text.is_empty()
+		and tutor_status.text.contains("PLAYER EXTRACTION"),
+		"Tutor speech started before the player's nodes finished moving.")
+
+	await get_tree().create_timer(0.68).timeout
+	await _frames()
 	_assert(speech.playing and speech.stream != null
 		and str(speech.get("CurrentLineId")).begins_with("bash_confirm_"),
-		"Bash confirmation did not start the Tutor's voiced action cue.")
+		"Player extraction did not hand off to the Tutor's voiced action cue.")
 	_assert(not gameplay_dialogue.text.is_empty(),
 		"Bash confirmation did not show the Tutor's action dialogue.")
 
 	await get_tree().create_timer(0.55).timeout
 	await _frames()
-	var tutor_status := _main.get_node(
-		"GameplayHUD/SafeArea/Layout/Content/RightColumn/RightLog/RightVBox/Status") as Label
 	_assert(speech.playing and tutor_status.text.contains("TUTOR TARGET LOCKED"),
 		"The voiced Bash cue did not remain active through Tutor target selection.")
 

@@ -10,8 +10,10 @@ using System.Linq;
 public partial class GameplayHUD : Control
 {
     private const float DefaultTutorCharactersPerSecond = 10.0f;
+    public const float BashPlayerExtractionSeconds = 0.62f;
     public const float BashTutorExtractionSeconds = 0.72f;
     public const float LimitRevealPresentationSeconds = 1.15f;
+    public const float LimitRevealNumberHoldSeconds = 0.72f;
 
     private Control _safeArea = null!;
     private Label _phaseBanner = null!;
@@ -241,10 +243,11 @@ public partial class GameplayHUD : Control
             : "STATUS · TUTOR TURN · ACTING";
         _leftTitle.Text = "ROUND STATUS";
         _leftDetails.Text =
-            $"• Starting anchors: {game.InitialUnits}\n\n"
-            + $"• Active anchors: {game.Remaining}\n\n"
+            $"• Starting orbiting anchors: {game.InitialUnits}\n\n"
+            + $"• Active orbiting anchors: {game.Remaining}\n\n"
             + $"• {(game.CurrentTurn == Actor.Player ? "Player's turn" : "Tutor's turn")}\n\n"
-            + "• Disengaging the keystone loses synchronization";
+            + "• The central core is not counted\n\n"
+            + "• Disengaging the final orbiting anchor loses synchronization";
         _remainingLabel.Text = game.Remaining.ToString("00");
         _selectionLabel.Text = selectedChoice.HasValue
             ? $"STAGED: DISENGAGE {selectedChoice.Value}"
@@ -261,11 +264,12 @@ public partial class GameplayHUD : Control
         _choiceVerb = "DISENGAGE";
         int[] legal = Enumerable.Range(1, 3).Where(game.CanTake).ToArray();
         ConfigureChoices(legal, selectedChoice, locked: !inputOpen);
-        _confirmButton.Visible = true;
-        _confirmButton.Disabled = !inputOpen || !selectedChoice.HasValue;
-        _confirmButton.Text = selectedChoice.HasValue
-            ? $"CONFIRM\nDISENGAGE {selectedChoice.Value}"
-            : "SELECT\nFIRST";
+        ConfigureConfirmButton(
+            visible: true,
+            enabled: inputOpen && selectedChoice.HasValue,
+            text: selectedChoice.HasValue
+                ? $"CONFIRM\nDISENGAGE {selectedChoice.Value}"
+                : "SELECT\nFIRST");
     }
 
     public void ShowBashTutorSelection(int choice)
@@ -273,6 +277,13 @@ public partial class GameplayHUD : Control
         _systemStatus.Text = "STATUS · TUTOR TARGET LOCKED";
         _selectionLabel.Text = $"TUTOR TARGET · DISENGAGE {choice}";
         _latticeView.ShowTutorSelection(choice);
+    }
+
+    public void BeginBashPlayerExtraction(int choice)
+    {
+        _systemStatus.Text = "STATUS · PLAYER EXTRACTION IN PROGRESS";
+        _selectionLabel.Text = $"PLAYER LOCKED · DISENGAGE {choice}";
+        _latticeView.AnimatePlayerRemoval(choice, BashPlayerExtractionSeconds);
     }
 
     public void BeginBashTutorExtraction()
@@ -303,8 +314,9 @@ public partial class GameplayHUD : Control
                 : "STATUS · REVEALING · INPUT LOCKED";
         _leftTitle.Text = "CURRENT STATUS";
         _leftDetails.Text =
-            $"• Starting anchors: {game.InitialUnits}\n\n"
-            + $"• Active anchors: {game.Remaining}\n\n"
+            $"• Starting orbiting anchors: {game.InitialUnits}\n\n"
+            + $"• Active orbiting anchors: {game.Remaining}\n\n"
+            + "• Central core: VISUAL REFERENCE · NOT COUNTED\n\n"
             + $"• Player's last request: {FormatPrevious(game.PlayerPrevious)}\n\n"
             + $"• Tutor's last request: {FormatPrevious(game.TutorPrevious)}";
         _remainingLabel.Text = game.Remaining.ToString("00");
@@ -329,13 +341,19 @@ public partial class GameplayHUD : Control
 
         _choiceVerb = "REQUEST";
         ConfigureChoices(game.GetLegalPlayerActions(), selectedChoice, !inputOpen);
-        _confirmButton.Visible = true;
-        _confirmButton.Disabled = !inputOpen || !selectedChoice.HasValue;
-        _confirmButton.Text = waiting
-            ? "LOCKED\nWAITING"
-            : selectedChoice.HasValue
-                ? $"CONFIRM\nREQUEST {selectedChoice.Value}"
-                : "SELECT\nFIRST";
+        ConfigureConfirmButton(
+            visible: true,
+            enabled: inputOpen && selectedChoice.HasValue,
+            text: waiting
+                ? "LOCKED\nWAITING"
+                : selectedChoice.HasValue
+                    ? $"CONFIRM\nREQUEST {selectedChoice.Value}"
+                    : "SELECT\nFIRST");
+
+        if (inputOpen || waiting)
+        {
+            ShowLimitTutorCommitted();
+        }
     }
 
     public void ShowLimitTutorCommitted()
@@ -348,7 +366,7 @@ public partial class GameplayHUD : Control
         _tutorCommitmentStatus.Visible = true;
     }
 
-    public void ShowLimitReveal(
+    public void ShowLimitTutorChoiceRevealed(
         LimitBashGame game,
         int gameIndex,
         SessionStats stats,
@@ -364,7 +382,7 @@ public partial class GameplayHUD : Control
             playerTake,
             inputOpen: false,
             waiting: false,
-            systemLog: $"SIMULTANEOUS REVEAL: PLAYER {playerTake} / TUTOR {tutorTake}",
+            systemLog: $"TUTOR REQUEST REVEALED: {tutorTake} · PLAYER REQUEST STILL LOCKED",
             tutorDialogueId: tutorDialogueId,
             tutorDialogue: tutorDialogue,
             pendingReveal: new ChoicePair(
@@ -373,15 +391,35 @@ public partial class GameplayHUD : Control
                 game.Remaining,
                 Math.Max(0, game.Remaining - playerTake - tutorTake)));
         HideTutorCommitmentStatus();
+        _latticeView.ShowLimitTutorSelection(tutorTake);
+        _selectionLabel.Text = $"TUTOR REVEALED · REQUEST {tutorTake}";
+        _systemStatus.Text = "STATUS · TUTOR REQUEST REVEALED · HOLD";
+        ConfigureConfirmButton(
+            visible: true,
+            enabled: false,
+            text: "REVEAL\nPAUSED");
+    }
+
+    public void BeginLimitExtraction(int playerTake, int tutorTake)
+    {
+        HideTutorCommitmentStatus();
+        HideLimitRevealResult();
         _latticeView.ShowLimitReveal(
             playerTake,
             tutorTake,
             LimitRevealPresentationSeconds);
+        _selectionLabel.Text = $"EXECUTING · PLAYER {playerTake}  ·  TUTOR {tutorTake}";
+        _systemStatus.Text = "STATUS · BOTH REQUESTS MOVING TO CORE";
+        ConfigureConfirmButton(
+            visible: true,
+            enabled: false,
+            text: "BOTH\nACTING");
+    }
+
+    public void ShowLimitRevealNumbers(int playerTake, int tutorTake)
+    {
         _selectionLabel.Text = $"REVEAL · PLAYER {playerTake}  ·  TUTOR {tutorTake}";
-        _systemStatus.Text = "STATUS · SIMULTANEOUS REVEAL IN PROGRESS";
-        _confirmButton.Visible = true;
-        _confirmButton.Disabled = true;
-        _confirmButton.Text = "TUTOR\nACTING";
+        _systemStatus.Text = "STATUS · REQUEST TOTALS CONFIRMED";
         ShowLimitRevealResult(playerTake, tutorTake);
     }
 
@@ -411,7 +449,7 @@ public partial class GameplayHUD : Control
         _leftDetails.Text = game == GameKind.Bash
             ? $"• {FormatOutcomeDescription(outcome)}\n\n"
                 + $"• Actions this round: {rounds}\n\n"
-                + "• Terminal event: keystone disengaged"
+                + "• Terminal event: final orbiting anchor disengaged"
             : $"• {FormatOutcomeDescription(outcome)}\n\n"
                 + $"• Total wins: {stats.LimitBashPlayerWins} / 2\n\n"
                 + $"• Consecutive draws: {stats.ConsecutiveLimitBashDraws} / 2\n\n"
@@ -438,7 +476,10 @@ public partial class GameplayHUD : Control
                 : $"{preservedSystemLog}\n\n{resultMessage}";
 
         ConfigureChoices(Array.Empty<int>(), null, locked: true);
-        _confirmButton.Visible = false;
+        ConfigureConfirmButton(
+            visible: false,
+            enabled: false,
+            text: string.Empty);
         StartResultAnimation(outcome);
     }
 
@@ -495,6 +536,27 @@ public partial class GameplayHUD : Control
         _confirmButton.FocusMode = _confirmButton.Disabled
             ? FocusModeEnum.None
             : FocusModeEnum.All;
+    }
+
+    /// <summary>
+    /// Keeps the Confirm button's visual state and actual input state in sync.
+    /// Godot does not restore MouseFilter or FocusMode when Disabled changes,
+    /// so every screen render must configure all of them together.
+    /// </summary>
+    private void ConfigureConfirmButton(
+        bool visible,
+        bool enabled,
+        string text)
+    {
+        _confirmButton.Visible = visible;
+        _confirmButton.Disabled = !enabled;
+        _confirmButton.MouseFilter = visible && enabled
+            ? MouseFilterEnum.Stop
+            : MouseFilterEnum.Ignore;
+        _confirmButton.FocusMode = visible && enabled
+            ? FocusModeEnum.All
+            : FocusModeEnum.None;
+        _confirmButton.Text = text;
     }
 
     private void ConfigureChoices(

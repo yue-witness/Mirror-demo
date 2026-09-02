@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3]
+[gd_scene load_steps=28 format=3]
 
 [ext_resource type="Script" path="res://scripts/UI/GameplayHUD.cs" id="1_script"]
 [ext_resource type="Script" path="res://scripts/UI/StabilityLatticeView.cs" id="2_lattice"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" path="res://scripts/UI/SpriteAtlasAnimator.cs" id="4_atlas_animator"]
 [ext_resource type="Script" path="res://scripts/UI/ForcedChoiceTutorialOverlay.cs" id="5_forced_tutorial"]
 [ext_resource type="Texture2D" path="res://assets/ui/green_laser_dot_arrow.png" id="6_tutorial_pointer"]
+[ext_resource type="Script" path="res://scripts/UI/SmoothPortraitFrame.cs" id="7_smooth_frame"]
 
 [sub_resource type="StyleBoxFlat" id="TutorialHighlight"]
 bg_color = Color(0.02, 0.2, 0.12, 0.08)
@@ -26,11 +27,11 @@ content_margin_left = 18.0
 content_margin_top = 14.0
 content_margin_right = 18.0
 content_margin_bottom = 14.0
-bg_color = Color(0.04, 0.36, 0.18, 0.58)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
+bg_color = Color(0, 0, 0, 0)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
 border_color = Color(0.22, 1, 0.23, 1)
 corner_radius_top_left = 16
 corner_radius_top_right = 16
@@ -60,11 +61,11 @@ content_margin_left = 18.0
 content_margin_top = 14.0
 content_margin_right = 18.0
 content_margin_bottom = 14.0
-bg_color = Color(0.4, 0.3, 0.02, 0.62)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
+bg_color = Color(0, 0, 0, 0)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
 border_color = Color(1, 0.76, 0.12, 1)
 corner_radius_top_left = 16
 corner_radius_top_right = 16
@@ -94,11 +95,11 @@ content_margin_left = 18.0
 content_margin_top = 14.0
 content_margin_right = 18.0
 content_margin_bottom = 14.0
-bg_color = Color(0.42, 0.04, 0.1, 0.62)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
+bg_color = Color(0, 0, 0, 0)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
 border_color = Color(1, 0.22, 0.38, 1)
 corner_radius_top_left = 16
 corner_radius_top_right = 16
@@ -143,10 +144,10 @@ shadow_size = 12
 
 [sub_resource type="StyleBoxFlat" id="ChoiceGreenDisabled"]
 bg_color = Color(0, 0, 0, 0)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
 border_color = Color(0.22, 1, 0.23, 0.82)
 corner_radius_top_left = 16
 corner_radius_top_right = 16
@@ -173,10 +174,10 @@ shadow_size = 12
 
 [sub_resource type="StyleBoxFlat" id="ChoiceYellowDisabled"]
 bg_color = Color(0, 0, 0, 0)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
 border_color = Color(1, 0.76, 0.12, 0.82)
 corner_radius_top_left = 16
 corner_radius_top_right = 16
@@ -203,10 +204,10 @@ shadow_size = 12
 
 [sub_resource type="StyleBoxFlat" id="ChoiceRedDisabled"]
 bg_color = Color(0, 0, 0, 0)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
 border_color = Color(1, 0.22, 0.38, 0.82)
 corner_radius_top_left = 16
 corner_radius_top_right = 16
@@ -256,15 +257,18 @@ content_margin_top = 4.0
 content_margin_right = 4.0
 content_margin_bottom = 4.0
 bg_color = Color(0, 0, 0, 0)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.22, 1, 0.23, 0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.22, 1, 0.23, 0.02)
 corner_radius_top_left = 82
 corner_radius_top_right = 82
 corner_radius_bottom_right = 82
 corner_radius_bottom_left = 82
+corner_detail = 20
+anti_aliasing = true
+anti_aliasing_size = 1.0
 shadow_color = Color(0, 0, 0, 0)
 shadow_size = 0
 
@@ -430,6 +434,11 @@ custom_minimum_size = Vector2(164, 164)
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_styles/panel = SubResource("PortraitFrame")
+script = ExtResource("7_smooth_frame")
+segment_count = 192
+ring_width = 2.0
+ring_color = Color(0.22, 1, 0.23, 0.9)
+glow_width = 4.0
 
 [node name="PortraitTexture" type="TextureRect" parent="SafeArea/Layout/Content/LeftColumn/TutorCard/TutorVBox/PortraitFrame"]
 custom_minimum_size = Vector2(156, 156)
@@ -655,9 +664,8 @@ z_index = 4
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
-anchor_bottom = 1.0
 grow_horizontal = 2
-grow_vertical = 2
+offset_bottom = 82.0
 mouse_filter = 2
 theme_override_colors/default_color = Color(0.4, 0.96, 1, 1)
 theme_override_colors/font_outline_color = Color(0, 0.06, 0.08, 0.96)
@@ -668,7 +676,7 @@ text = "[center][color=#66f4ff]◆ TUTOR SELECTION COMPLETE ◆[/color]\n[color=
 fit_content = false
 scroll_active = false
 autowrap_mode = 2
-vertical_alignment = 1
+vertical_alignment = 0
 
 [node name="CompletionCue" type="Label" parent="SafeArea/Layout/Content/Center/DialoguePanel/DialogueVBox/Text"]
 visible = false

@@ -38,6 +38,7 @@ public static class TutorDialoguePool
     public const string LimitState = "limit_state";
     public const string LimitFirstSelection = "limit_first_selection";
     public const string LimitChoiceLocked = "limit_choice_locked";
+    public const string LimitTutorChoiceRevealed = "limit_tutor_choice_revealed";
     public const string LimitReveal = "limit_reveal";
     public const string LimitTerminalApproach = "limit_terminal_approach";
     public const string Restore = "restore";
@@ -78,6 +79,7 @@ public static class TutorDialoguePool
         LimitState,
         LimitFirstSelection,
         LimitChoiceLocked,
+        LimitTutorChoiceRevealed,
         LimitReveal,
         LimitTerminalApproach,
         Restore,

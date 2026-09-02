@@ -42,6 +42,11 @@ public partial class TutorDialogueUI : Control
             "SafeArea/Layout/Content/DialogueCard/DialogueVBox/Speaker");
         _dialogueText = GetNode<RichTextLabel>(
             "SafeArea/Layout/Content/DialogueCard/DialogueVBox/DialogueText");
+        // Shape the complete paragraph before revealing individual
+        // characters. This locks wrapping and vertical placement, so the
+        // typewriter pass cannot push completed lines toward the continue cue.
+        _dialogueText.VisibleCharactersBehavior =
+            TextServer.VisibleCharactersBehavior.CharsAfterShaping;
         _supplementaryText = GetNode<RichTextLabel>(
             "SafeArea/Layout/Content/DialogueCard/DialogueVBox/SupplementaryText");
         _completionCue = GetNode<Label>(

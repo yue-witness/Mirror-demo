@@ -59,9 +59,9 @@
       { "id": "choice_hesitation_observing", "speaker": "TUTOR", "text": "I am still observing, S-17. Continue when your decision is ready." }
     ],
     "bash_state": [
-      { "id": "bash_state_parameters", "speaker": "TUTOR", "text": "Lattice parameters are stable. Count forward to the keystone before you commit." },
+      { "id": "bash_state_parameters", "speaker": "TUTOR", "text": "Lattice parameters are stable. Count the orbiting anchors only; the central core is not part of the total." },
       { "id": "bash_state_observe", "speaker": "TUTOR", "text": "Observation has begun. I will act only after the current choice is confirmed." },
-      { "id": "bash_state_sequence", "speaker": "TUTOR", "text": "Treat the active anchors as a sequence, S-17. The keystone disengagement determines the result." },
+      { "id": "bash_state_sequence", "speaker": "TUTOR", "text": "Treat the active orbiting anchors as a sequence, S-17. Disengaging the final one determines the result." },
       { "id": "bash_state_ready", "speaker": "TUTOR", "text": "The lattice is active. Choose the anchor count you intend to leave behind." }
     ],
     "bash_first_selection": [
@@ -93,11 +93,11 @@
       { "id": "bash_r2_tutor_correction", "speaker": "TUTOR", "text": "The lattice is yours again. I am not concerned. That statement was unnecessary." }
     ],
     "bash_terminal_approach": [
-      { "id": "bash_terminal_last", "speaker": "TUTOR", "text": "The keystone anchor is close. Whoever disengages it loses synchronization." },
+      { "id": "bash_terminal_last", "speaker": "TUTOR", "text": "The final orbiting anchor is close. Whoever disengages it loses synchronization." },
       { "id": "bash_terminal_safe", "speaker": "TUTOR", "text": "Only a few anchors remain. A legal request is not necessarily a safe one." },
-      { "id": "bash_terminal_trace", "speaker": "TUTOR", "text": "Trace the next reply before confirming. The keystone now dominates the lattice." },
-      { "id": "bash_terminal_one", "speaker": "TUTOR", "text": "The keystone anchor is approaching. Decide who will be forced to disengage it." },
-      { "id": "bash_terminal_control", "speaker": "TUTOR", "text": "At this distance, one request determines who faces the keystone." }
+      { "id": "bash_terminal_trace", "speaker": "TUTOR", "text": "Trace the next reply before confirming. The final counted anchor now dominates the lattice." },
+      { "id": "bash_terminal_one", "speaker": "TUTOR", "text": "The final orbiting anchor is approaching. Decide who will be forced to disengage it." },
+      { "id": "bash_terminal_control", "speaker": "TUTOR", "text": "At this distance, one request determines who faces the final orbiting anchor." }
     ],
     "limit_state": [
       { "id": "limit_state_hidden", "speaker": "TUTOR", "text": "A new hidden-request lattice is active. Your staged request remains private." },
@@ -120,6 +120,9 @@
       { "id": "limit_lock_prediction", "speaker": "TUTOR", "text": "Your request is sealed. Prediction remains possible; revision does not." },
       { "id": "limit_lock_delay", "speaker": "TUTOR", "text": "I received the lock signal. Do not infer certainty from the delay." }
     ],
+    "limit_tutor_choice_revealed": [
+      { "id": "limit_reveal_tutor_choice", "speaker": "TUTOR", "text": "My sealed request is now public. Its cyan orbiting anchors show the exact quantity. Hold the comparison before execution." }
+    ],
     "limit_reveal": [
       { "id": "limit_reveal_compare", "speaker": "TUTOR", "text": "Both requests are public. Compare the new active anchor count before proceeding." },
       { "id": "limit_reveal_history", "speaker": "TUTOR", "text": "Reveal complete. This pair is now part of the current game's history." },
@@ -132,7 +135,7 @@
       { "id": "limit_terminal_total", "speaker": "TUTOR", "text": "If our requests reach the remaining anchors, the larger request destabilizes the lattice and loses." },
       { "id": "limit_terminal_history", "speaker": "TUTOR", "text": "The next reveal may settle the game. Equal requests will be resolved from this lattice's history." },
       { "id": "limit_terminal_compare", "speaker": "TUTOR", "text": "Apply the lattice stress rule now, not ordinary subtraction." },
-      { "id": "limit_terminal_larger", "speaker": "TUTOR", "text": "The keystone is within one reveal. A larger request may destabilize the lattice." },
+      { "id": "limit_terminal_larger", "speaker": "TUTOR", "text": "The final orbiting anchors are within one reveal. A larger request may destabilize the lattice." },
       { "id": "limit_terminal_tie", "speaker": "TUTOR", "text": "If the next pair matches, remember the most recent round in which our requests differed." },
       { "id": "limit_terminal_private", "speaker": "TUTOR", "text": "One private request remains between this lattice state and its final judgment." }
     ],
@@ -143,9 +146,9 @@
       { "id": "restore_observation", "speaker": "TUTOR", "text": "Your interruption was external to the protocol. Observation now continues." }
     ],
     "bash_r1_win": [
-      { "id": "bash_r1_win_terminal", "speaker": "TUTOR", "text": "Round evaluation: successful. You forced me to disengage the keystone anchor, and my synchronization link failed." },
-      { "id": "bash_r1_win_control", "speaker": "TUTOR", "text": "This round is complete. Your final safe request placed the keystone anchor on my side." },
-      { "id": "bash_r1_win_turns", "speaker": "TUTOR", "text": "Success recorded. You controlled the keystone position in {turn_count} total actions." }
+      { "id": "bash_r1_win_terminal", "speaker": "TUTOR", "text": "Round evaluation: successful. You forced me to disengage the final orbiting anchor, and my synchronization link failed." },
+      { "id": "bash_r1_win_control", "speaker": "TUTOR", "text": "This round is complete. Your final safe request placed the last orbiting anchor on my side." },
+      { "id": "bash_r1_win_turns", "speaker": "TUTOR", "text": "Success recorded. You controlled the final orbiting anchor in {turn_count} total actions." }
     ],
     "bash_r2_win": [
       { "id": "bash_r2_win_adapt", "speaker": "TUTOR", "text": "Round evaluation: successful. You adapted after my opening move." },
@@ -153,13 +156,13 @@
       { "id": "bash_r2_win_satisfied", "speaker": "TUTOR", "text": "You passed the second Bash round. I am... satisfied with this result." }
     ],
     "bash_loss_tier_1": [
-      { "id": "bash_loss_tier_1", "speaker": "TUTOR", "text": "Round evaluation: unsuccessful. You disengaged the keystone anchor and lost synchronization." }
+      { "id": "bash_loss_tier_1", "speaker": "TUTOR", "text": "Round evaluation: unsuccessful. You disengaged the final orbiting anchor and lost synchronization." }
     ],
     "bash_loss_tier_2": [
-      { "id": "bash_loss_tier_2", "speaker": "TUTOR", "text": "Your request reached the keystone anchor. The four-node structure was not secured." }
+      { "id": "bash_loss_tier_2", "speaker": "TUTOR", "text": "Your request reached the final orbiting anchor. The four-node structure was not secured." }
     ],
     "bash_loss_tier_3": [
-      { "id": "bash_loss_tier_3", "speaker": "TUTOR", "text": "You disengaged the keystone again. The next briefing will state the safe anchor sequence explicitly." }
+      { "id": "bash_loss_tier_3", "speaker": "TUTOR", "text": "You disengaged the final orbiting anchor again. The next briefing will state the safe sequence explicitly." }
     ],
     "limit_win_direct": [
       { "id": "limit_win_direct_larger", "speaker": "TUTOR", "text": "Game evaluation: successful. My larger terminal request destabilized the lattice and broke my synchronization." },

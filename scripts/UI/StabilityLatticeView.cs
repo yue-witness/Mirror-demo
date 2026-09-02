@@ -5,8 +5,9 @@ using System.Collections.Generic;
 /// <summary>
 /// Code-native visualization of the shared Stability Lattice. Ordinary anchor
 /// nodes orbit a generated energy-core texture on several inclined planes.
-/// Active nodes dim from the outside inward as the game advances, while a
-/// provisional player request is previewed without changing the rule state.
+/// The central energy core is decorative and never contributes to the rule
+/// count. Active orbiting nodes dim from the outside inward as the game
+/// advances, while a provisional request previews the counted nodes only.
 /// </summary>
 public partial class StabilityLatticeView : Control
 {
@@ -58,7 +59,8 @@ public partial class StabilityLatticeView : Control
     {
         _elapsedSeconds = (_elapsedSeconds + delta) % 3600.0;
 
-        if (_transientPresentation is TransientPresentation.TutorRemoval
+        if (_transientPresentation is TransientPresentation.PlayerRemoval
+            or TransientPresentation.TutorRemoval
             or TransientPresentation.LimitReveal)
         {
             _transientProgress = Math.Clamp(
@@ -103,6 +105,21 @@ public partial class StabilityLatticeView : Control
     }
 
     /// <summary>
+    /// Pulls the player's confirmed orbiting anchors into the decorative core
+    /// before the rule state is mutated and the Tutor begins evaluating.
+    /// </summary>
+    public void AnimatePlayerRemoval(int choice, float durationSeconds)
+    {
+        _transientPresentation = TransientPresentation.PlayerRemoval;
+        _limitPlayerCount = Math.Clamp(choice, 0, _remainingAnchors);
+        _limitTutorCount = 0;
+        _tutorActionCount = 0;
+        _transientDuration = Math.Max(0.01f, durationSeconds);
+        _transientProgress = 0.0f;
+        QueueRedraw();
+    }
+
+    /// <summary>
     /// Pulls the Tutor-marked anchors toward the core while fading them out.
     /// The controller applies the rule state only after this visual completes.
     /// </summary>
@@ -129,13 +146,29 @@ public partial class StabilityLatticeView : Control
         float durationSeconds)
     {
         _transientPresentation = TransientPresentation.LimitReveal;
-        _limitPlayerCount = Math.Clamp(playerChoice, 0, _remainingAnchors);
         _limitTutorCount = Math.Clamp(
             tutorChoice,
             0,
-            Math.Max(0, _remainingAnchors - _limitPlayerCount));
+            _remainingAnchors);
+        _limitPlayerCount = Math.Clamp(
+            playerChoice,
+            0,
+            Math.Max(0, _remainingAnchors - _limitTutorCount));
         _tutorActionCount = 0;
         _transientDuration = Math.Max(0.01f, durationSeconds);
+        _transientProgress = 0.0f;
+        QueueRedraw();
+    }
+
+    /// <summary>
+    /// Reveals the Tutor's sealed request without moving either side's nodes.
+    /// </summary>
+    public void ShowLimitTutorSelection(int tutorChoice)
+    {
+        _transientPresentation = TransientPresentation.TutorSelection;
+        _tutorActionCount = Math.Clamp(tutorChoice, 0, _remainingAnchors);
+        _limitPlayerCount = 0;
+        _limitTutorCount = 0;
         _transientProgress = 0.0f;
         QueueRedraw();
     }
@@ -150,6 +183,11 @@ public partial class StabilityLatticeView : Control
     public int GetPlayerRevealMarkedAnchorCount()
     {
         return _limitPlayerCount;
+    }
+
+    public int GetDisplayedOrbitingAnchorCount()
+    {
+        return _remainingAnchors;
     }
 
     public void ShowResult(RoundOutcome result)
@@ -174,7 +212,9 @@ public partial class StabilityLatticeView : Control
         float pulse = 0.5f
             + 0.5f * Mathf.Sin((float)_elapsedSeconds * 2.15f);
 
-        int satelliteCount = Math.Max(0, _initialAnchors - 1);
+        // Every counted anchor is now visible on an orbit. The core remains a
+        // stable visual reference and is deliberately excluded from gameplay.
+        int satelliteCount = Math.Max(0, _initialAnchors);
         int removedSatellites = Math.Clamp(
             _initialAnchors - _remainingAnchors,
             0,
@@ -217,18 +257,13 @@ public partial class StabilityLatticeView : Control
             }
         }
 
-        bool coreActive = _remainingAnchors > 0;
-        bool previewTouchesCore = coreActive
-            && previewCount >= _remainingAnchors;
-        AnchorMark coreMark = ResolveTransientMark(
-            coreActive,
-            _remainingAnchors - 1);
+        bool coreActive = !_resultMode;
         DrawEnergyCore(
             center,
             coreActive,
-            previewTouchesCore,
-            coreMark,
-            ResolveTransientAlpha(coreMark),
+            previewed: false,
+            AnchorMark.None,
+            transientAlpha: 1.0f,
             pulse);
     }
 
@@ -559,6 +594,13 @@ public partial class StabilityLatticeView : Control
             return AnchorMark.None;
         }
 
+        if (_transientPresentation == TransientPresentation.PlayerRemoval)
+        {
+            return activeIndex < _limitPlayerCount
+                ? AnchorMark.Player
+                : AnchorMark.None;
+        }
+
         if (_transientPresentation is TransientPresentation.TutorSelection
             or TransientPresentation.TutorRemoval)
         {
@@ -569,14 +611,16 @@ public partial class StabilityLatticeView : Control
 
         if (_transientPresentation == TransientPresentation.LimitReveal)
         {
-            if (activeIndex < _limitPlayerCount)
-            {
-                return AnchorMark.Player;
-            }
-
-            if (activeIndex < _limitPlayerCount + _limitTutorCount)
+            // Keep the already-revealed cyan Tutor anchors stationary when the
+            // player's gold request joins the combined extraction.
+            if (activeIndex < _limitTutorCount)
             {
                 return AnchorMark.Tutor;
+            }
+
+            if (activeIndex < _limitTutorCount + _limitPlayerCount)
+            {
+                return AnchorMark.Player;
             }
         }
 
@@ -599,7 +643,8 @@ public partial class StabilityLatticeView : Control
     {
         if (mark == AnchorMark.None
             || _transientPresentation is not (
-                TransientPresentation.TutorRemoval
+                TransientPresentation.PlayerRemoval
+                or TransientPresentation.TutorRemoval
                 or TransientPresentation.LimitReveal))
         {
             return 0.0f;
@@ -627,6 +672,7 @@ public partial class StabilityLatticeView : Control
     {
         None,
         TutorSelection,
+        PlayerRemoval,
         TutorRemoval,
         LimitReveal
     }

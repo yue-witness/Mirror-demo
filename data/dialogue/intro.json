@@ -10,11 +10,11 @@
     ],
     "BashTutorial": [
       { "id": "bash_intro", "speaker": "TUTOR", "text": "We begin with standard Bash, a Stability Lattice control test. Each turn, one side disengages 1, 2, or 3 anchor nodes." },
-      { "id": "bash_terminal_rule", "speaker": "TUTOR", "text": "The final active node is the keystone anchor. Whoever disengages it loses synchronization with the lattice and fails the round." },
-      { "id": "bash_terminal_example", "speaker": "TUTOR", "text": "Example: if 2 anchors remain, disengage 1 and your opponent faces the keystone. Disengage both and your own link is severed." },
-      { "id": "bash_safe_move", "speaker": "TUTOR", "text": "A legal action reduces the active anchors. A safe action controls who must disengage the keystone. The distinction is yours to discover." },
+      { "id": "bash_terminal_rule", "speaker": "TUTOR", "text": "The central energy core is a visual reference and is not counted. Whoever disengages the final orbiting anchor loses synchronization and fails the round." },
+      { "id": "bash_terminal_example", "speaker": "TUTOR", "text": "Example: if 2 orbiting anchors remain, disengage 1 and your opponent faces the final anchor. Disengage both and your own link is severed." },
+      { "id": "bash_safe_move", "speaker": "TUTOR", "text": "A legal action reduces the orbiting anchors. A safe action controls who must disengage the final one. The distinction is yours to discover." },
       { "id": "bash_two_rounds", "speaker": "TUTOR", "text": "You act first in round one; I act first in round two. Pass both rounds. A failure restarts only the current round." },
-      { "id": "bash_round_one_begin", "speaker": "TUTOR", "text": "The first lattice is active. Control the anchor count before the keystone determines the result for you." }
+      { "id": "bash_round_one_begin", "speaker": "TUTOR", "text": "The first lattice is active. Count only the orbiting anchors and control who must disengage the final one." }
     ],
     "BashRound2Intro": [
       { "id": "bash_round_two_initiative", "speaker": "TUTOR", "text": "The second Bash round changes initiative. I will act first; rebuild the lattice model from the anchor count I leave behind." },

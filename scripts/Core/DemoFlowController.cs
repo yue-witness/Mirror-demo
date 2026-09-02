@@ -12,6 +12,7 @@ public partial class DemoFlowController : Control
 {
     private const double TutorDelaySeconds = 0.45;
     private const double LimitTutorCommitmentPauseSeconds = 0.90;
+    private const double LimitTutorRevealExplanationSeconds = 1.35;
     private const int MaximumControlledRestarts = 3;
     private const int DialogueHistoryLimit = 2;
     private const int SelectionDialoguePercent = 35;
@@ -631,6 +632,29 @@ public partial class DemoFlowController : Control
         }
 
         _inputLocked = true;
+        RenderBash(
+            $"Player request locked: {choice} orbiting anchors moving to the core.",
+            suppressTutorDialogue: true);
+        _hud.BeginBashPlayerExtraction(choice);
+        ResolveBashPlayerTurn(_flowVersion, choice);
+    }
+
+    private async void ResolveBashPlayerTurn(int expectedVersion, int choice)
+    {
+        await ToSignal(
+            GetTree().CreateTimer(
+                FastMode ? 0.01 : GameplayHUD.BashPlayerExtractionSeconds),
+            SceneTreeTimer.SignalName.Timeout);
+
+        if (expectedVersion != _flowVersion
+            || _bash is null
+            || _bash.IsGameOver
+            || _bash.CurrentTurn != Actor.Player
+            || !_bash.CanTake(choice))
+        {
+            return;
+        }
+
         _currentGameTurns++;
         RoundOutcome outcome = _bash.ApplyTake(Actor.Player, choice);
         _selectedChoice = null;
@@ -638,16 +662,16 @@ public partial class DemoFlowController : Control
         if (outcome != RoundOutcome.Continue)
         {
             RenderBash(
-                $"Player disengaged {choice}; the keystone anchor was disengaged.",
+                $"Player disengaged {choice}; the final orbiting anchor was disengaged.",
                 suppressTutorDialogue: true);
             FinishBash(outcome);
             return;
         }
 
         RenderBash(
-            $"Player disengaged {choice}; {_bash.Remaining} anchors remain active.",
+            $"Player disengaged {choice}; {_bash.Remaining} orbiting anchors remain active.",
             TutorDialoguePool.BashPlayerConfirmed);
-        RunBashTutorTurn(_flowVersion);
+        RunBashTutorTurn(expectedVersion);
     }
 
     private async void RunBashTutorTurn(int expectedVersion)
@@ -720,7 +744,7 @@ public partial class DemoFlowController : Control
         if (outcome != RoundOutcome.Continue)
         {
             RenderBash(
-                $"Tutor disengaged {choice}; the keystone anchor was disengaged.");
+                $"Tutor disengaged {choice}; the final orbiting anchor was disengaged.");
             FinishBash(outcome);
             return;
         }
@@ -729,7 +753,7 @@ public partial class DemoFlowController : Control
         ResetTurnDialogueState();
         WriteCheckpoint();
         RenderBash(
-            $"Tutor disengaged {choice}; {_bash.Remaining} anchors remain active.",
+            $"Tutor disengaged {choice}; {_bash.Remaining} orbiting anchors remain active.",
             _bash.Remaining <= BashGame.MaximumTake + 1
                 ? TutorDialoguePool.BashTerminalApproach
                 : _bashRoundIndex == 1
@@ -859,7 +883,7 @@ public partial class DemoFlowController : Control
             dialoguePool: TutorDialoguePool.LimitState);
     }
 
-    private void ConfirmLimitBashChoice(int choice)
+    private async void ConfirmLimitBashChoice(int choice)
     {
         if (_limitBash is null
             || !_limitBash.GetLegalPlayerActions().Contains(choice))
@@ -875,8 +899,36 @@ public partial class DemoFlowController : Control
             log: "Player request locked. Waiting for the simultaneous reveal.",
             suppressTutorDialogue: true);
 
-        int tutorChoice;
+        int expectedVersion = _flowVersion;
 
+        if (FastMode)
+        {
+            // Smoke runs intentionally collapse the authored pause, but still
+            // resolve the Tutor only after the player lock has been rendered.
+            int fastTutorChoice = _outcomeDirector.ChooseAfterPlayerLock(
+                _limitBash,
+                _limitDirective);
+            RevealLimitRound(expectedVersion, choice, fastTutorChoice);
+            return;
+        }
+
+        // Hold the visible lock state before resolving the Tutor's actual
+        // response. The bounded solver is deliberately run only after this
+        // presentation pause, so the player can read the hand-off and the
+        // subsequent reveal always follows the same deterministic sequence.
+        await ToSignal(
+            GetTree().CreateTimer(
+                FastMode ? 0.01 : LimitTutorCommitmentPauseSeconds),
+            SceneTreeTimer.SignalName.Timeout);
+
+        if (expectedVersion != _flowVersion
+            || _limitBash is null
+            || !_limitBash.PlayerChoiceLocked)
+        {
+            return;
+        }
+
+        int tutorChoice;
         try
         {
             tutorChoice = _outcomeDirector.ChooseAfterPlayerLock(
@@ -890,8 +942,7 @@ public partial class DemoFlowController : Control
             return;
         }
 
-        _hud.ShowLimitTutorCommitted();
-        RevealLimitRound(_flowVersion, choice, tutorChoice);
+        RevealLimitRound(expectedVersion, choice, tutorChoice);
     }
 
     private async void RevealLimitRound(
@@ -909,8 +960,8 @@ public partial class DemoFlowController : Control
             return;
         }
 
-        ClearCurrentTutorDialogue();
-        _hud.ShowLimitReveal(
+        SetTutorDialogueById("limit_reveal_tutor_choice");
+        _hud.ShowLimitTutorChoiceRevealed(
             _limitBash,
             _limitGameIndex,
             _stats,
@@ -921,10 +972,44 @@ public partial class DemoFlowController : Control
 
         await ToSignal(
             GetTree().CreateTimer(
+                FastMode
+                    ? 0.01
+                    : Math.Max(
+                        LimitTutorRevealExplanationSeconds,
+                        _hud.CurrentTutorSpeechDurationSeconds)),
+            SceneTreeTimer.SignalName.Timeout);
+
+        if (expectedVersion != _flowVersion
+            || _limitBash is null
+            || !_limitBash.PlayerChoiceLocked)
+        {
+            return;
+        }
+
+        _hud.BeginLimitExtraction(playerChoice, tutorChoice);
+
+        await ToSignal(
+            GetTree().CreateTimer(
                 FastMode ? 0.01 : GameplayHUD.LimitRevealPresentationSeconds),
             SceneTreeTimer.SignalName.Timeout);
 
-        if (expectedVersion != _flowVersion || _limitBash is null)
+        if (expectedVersion != _flowVersion
+            || _limitBash is null
+            || !_limitBash.PlayerChoiceLocked)
+        {
+            return;
+        }
+
+        _hud.ShowLimitRevealNumbers(playerChoice, tutorChoice);
+
+        await ToSignal(
+            GetTree().CreateTimer(
+                FastMode ? 0.01 : GameplayHUD.LimitRevealNumberHoldSeconds),
+            SceneTreeTimer.SignalName.Timeout);
+
+        if (expectedVersion != _flowVersion
+            || _limitBash is null
+            || !_limitBash.PlayerChoiceLocked)
         {
             return;
         }
@@ -945,7 +1030,7 @@ public partial class DemoFlowController : Control
         RenderLimitBash(
             waiting: false,
             log: $"REVEAL: PLAYER {playerChoice} / TUTOR {tutorChoice}; "
-                + $"{_limitBash.Remaining} anchors remain active.",
+                + $"{_limitBash.Remaining} orbiting anchors remain active.",
             dialoguePool: _limitBash.Remaining <= 6
                 ? TutorDialoguePool.LimitTerminalApproach
                 : TutorDialoguePool.LimitReveal);
