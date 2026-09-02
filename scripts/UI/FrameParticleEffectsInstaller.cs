@@ -167,6 +167,13 @@ public partial class FrameParticleEffectsInstaller : Node
 
     private static StyleBoxFlat? GetVisibleBorderStyle(Control control)
     {
+        // Confirm owns a tightly bounded circular outline. The generic particle
+        // frame adds an outer margin and would make that outline exceed the button.
+        if (control is Button && control.Name.ToString() == "ConfirmButton")
+        {
+            return null;
+        }
+
         StyleBox? style = control switch
         {
             PanelContainer panel => panel.GetThemeStylebox("panel"),

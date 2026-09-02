@@ -264,7 +264,7 @@ func _ready() -> void:
 		_assert(button.get_node("ParticleFrame").material is ShaderMaterial,
 			"An original choice-button border is missing its particle dot matrix.")
 	_assert(not confirm.has_node("ParticleFrame"),
-		"Confirm still draws an idle particle frame outside hover or press.")
+		"Confirm still draws a particle frame beyond its circular boundary.")
 	var status_particle_frame := _main.get_node(
 		"GameplayHUD/SafeArea/Layout/Content/LeftColumn/LeftStatus/ParticleFrame"
 		) as ColorRect
@@ -449,14 +449,16 @@ func _ready() -> void:
 	var confirm_pressed := confirm.get_theme_stylebox("pressed") as StyleBoxFlat
 	_assert(confirm_normal.bg_color.a == 0.0
 		and confirm_disabled.bg_color.a == 0.0
-		and confirm_normal.get_border_width(SIDE_LEFT) == 0
-		and confirm_disabled.get_border_width(SIDE_LEFT) == 0,
-		"Confirm still draws a coloured frame while idle or disabled.")
+		and confirm_normal.get_border_width(SIDE_LEFT) > 0
+		and confirm_disabled.get_border_width(SIDE_LEFT) > 0
+		and confirm_normal.border_color.a > 0.0
+		and confirm_disabled.border_color.a > 0.0,
+		"Confirm idle or disabled state no longer keeps a visible unfilled ring.")
 	_assert(confirm_hover.bg_color.a > 0.0
 		and confirm_pressed.bg_color.a > 0.0
 		and confirm_hover.get_border_width(SIDE_LEFT) > 0
 		and confirm_pressed.get_border_width(SIDE_LEFT) > 0,
-		"Confirm does not reserve its coloured frame for hover and press states.")
+		"Confirm hover or pressed state no longer shows its bounded fill and ring.")
 	_assert(confirm_hover.shadow_size == 0
 		and confirm_pressed.shadow_size == 0,
 		"Confirm hover or press styling still expands beyond the button frame.")

@@ -282,6 +282,8 @@ func _complete_limit_bash() -> void:
 						and confirm.mouse_filter == Control.MOUSE_FILTER_STOP
 						and confirm.focus_mode == Control.FOCUS_ALL,
 						"Limit Confirm did not restore pointer and keyboard input after selection.")
+					_assert(int(lattice.call("GetTutorMarkedAnchorCount")) == 0,
+						"Tutor node colours appeared before the player confirmed a Limit request.")
 				if not checked_tutor_layout:
 					if DisplayServer.get_name() == "headless":
 						# Headless has no window-backed GUI hit-test target. The
@@ -322,6 +324,8 @@ func _complete_limit_bash() -> void:
 						await _frames()
 					_assert(commitment_seen,
 						"Limit Bash did not hold the private Tutor commitment before reveal.")
+					_assert(int(lattice.call("GetTutorMarkedAnchorCount")) == 0,
+						"Tutor node colours appeared while the Tutor value was still sealed.")
 					_assert(confirm.visible
 						and action_buttons[0].global_position == positions[0]
 						and action_buttons[1].global_position == positions[1]
@@ -336,6 +340,7 @@ func _complete_limit_bash() -> void:
 							and not reveal_result.visible \
 							and selection_label.text.contains("TUTOR REVEALED") \
 							and tutor_text.text.contains("sealed request") \
+							and int(lattice.call("GetPlayerRevealMarkedAnchorCount")) == index \
 							and int(lattice.call("GetTutorMarkedAnchorCount")) > 0:
 							tutor_reveal_seen = true
 							break
@@ -350,6 +355,11 @@ func _complete_limit_bash() -> void:
 						await _frames()
 					_assert(tutor_reveal_seen or presentation_progressed,
 						"Limit Bash did not pause to explain the Tutor request first.")
+					if tutor_reveal_seen:
+						_assert(int(lattice.call("GetPlayerRevealMarkedAnchorCount"))
+							+ int(lattice.call("GetTutorMarkedAnchorCount"))
+							<= int(lattice.call("GetDisplayedOrbitingAnchorCount")),
+							"Limit Bash assigned the Player and Tutor to overlapping anchors.")
 					_capture("03e-limit-tutor-revealed.png")
 					var both_moving_seen := system_status.text.contains("BOTH REQUESTS MOVING") \
 						and int(lattice.call("GetPlayerRevealMarkedAnchorCount")) > 0 \

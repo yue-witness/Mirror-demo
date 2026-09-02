@@ -146,14 +146,14 @@ public partial class StabilityLatticeView : Control
         float durationSeconds)
     {
         _transientPresentation = TransientPresentation.LimitReveal;
-        _limitTutorCount = Math.Clamp(
-            tutorChoice,
-            0,
-            _remainingAnchors);
         _limitPlayerCount = Math.Clamp(
             playerChoice,
             0,
-            Math.Max(0, _remainingAnchors - _limitTutorCount));
+            _remainingAnchors);
+        _limitTutorCount = Math.Clamp(
+            tutorChoice,
+            0,
+            Math.Max(0, _remainingAnchors - _limitPlayerCount));
         _tutorActionCount = 0;
         _transientDuration = Math.Max(0.01f, durationSeconds);
         _transientProgress = 0.0f;
@@ -165,9 +165,15 @@ public partial class StabilityLatticeView : Control
     /// </summary>
     public void ShowLimitTutorSelection(int tutorChoice)
     {
-        _transientPresentation = TransientPresentation.TutorSelection;
-        _tutorActionCount = Math.Clamp(tutorChoice, 0, _remainingAnchors);
-        _limitPlayerCount = 0;
+        _transientPresentation = TransientPresentation.LimitTutorSelection;
+        _limitPlayerCount = Math.Clamp(
+            _previewRequest ?? 0,
+            0,
+            _remainingAnchors);
+        _tutorActionCount = Math.Clamp(
+            tutorChoice,
+            0,
+            Math.Max(0, _remainingAnchors - _limitPlayerCount));
         _limitTutorCount = 0;
         _transientProgress = 0.0f;
         QueueRedraw();
@@ -461,8 +467,11 @@ public partial class StabilityLatticeView : Control
 
         if (previewed)
         {
+            // A locked player request remains gold. Red is reserved for actual
+            // danger/result states and must never imply that the player's
+            // accepted Limit Bash nodes have become invalid.
             fill = _requestLocked
-                ? WarningRed.Lerp(PreviewGold, 0.35f)
+                ? PreviewGold.Lerp(Colors.White, 0.22f)
                 : PreviewGold;
         }
 
@@ -512,7 +521,7 @@ public partial class StabilityLatticeView : Control
     {
         if (previewed)
         {
-            return _requestLocked ? WarningRed : new Color("b57900");
+            return _requestLocked ? PreviewGold : new Color("b57900");
         }
 
         return active ? ActiveGreen : GhostGreen;
@@ -609,18 +618,29 @@ public partial class StabilityLatticeView : Control
                 : AnchorMark.None;
         }
 
+        if (_transientPresentation == TransientPresentation.LimitTutorSelection)
+        {
+            // Player-marked nodes occupy the leading range. Tutor cyan starts
+            // immediately after it, so the two simultaneous requests can be
+            // read independently and never paint the same anchor.
+            return activeIndex >= _limitPlayerCount
+                && activeIndex < _limitPlayerCount + _tutorActionCount
+                    ? AnchorMark.Tutor
+                    : AnchorMark.None;
+        }
+
         if (_transientPresentation == TransientPresentation.LimitReveal)
         {
-            // Keep the already-revealed cyan Tutor anchors stationary when the
-            // player's gold request joins the combined extraction.
-            if (activeIndex < _limitTutorCount)
-            {
-                return AnchorMark.Tutor;
-            }
-
-            if (activeIndex < _limitTutorCount + _limitPlayerCount)
+            // Preserve the player's original gold range, then place the Tutor
+            // request in a separate cyan range for the combined extraction.
+            if (activeIndex < _limitPlayerCount)
             {
                 return AnchorMark.Player;
+            }
+
+            if (activeIndex < _limitPlayerCount + _limitTutorCount)
+            {
+                return AnchorMark.Tutor;
             }
         }
 
@@ -631,7 +651,8 @@ public partial class StabilityLatticeView : Control
     {
         if (mark == AnchorMark.None
             || _transientPresentation is TransientPresentation.None
-                or TransientPresentation.TutorSelection)
+                or TransientPresentation.TutorSelection
+                or TransientPresentation.LimitTutorSelection)
         {
             return 1.0f;
         }
@@ -672,6 +693,7 @@ public partial class StabilityLatticeView : Control
     {
         None,
         TutorSelection,
+        LimitTutorSelection,
         PlayerRemoval,
         TutorRemoval,
         LimitReveal
