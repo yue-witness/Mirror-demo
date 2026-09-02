@@ -12,8 +12,6 @@ func _ready() -> void:
 	var packed := load("res://scenes/main.tscn") as PackedScene
 	_main = packed.instantiate() as Control
 	_main.set("SavePath", SAVE_PATH)
-	_main.set("FastMode", true)
-	_main.set("TestSeed", 772774)
 	add_child(_main)
 	await _frames()
 	var background_music := _main.get_node(
@@ -41,9 +39,6 @@ func _ready() -> void:
 
 	await _complete_bash_tutorial_gate()
 	await _complete_rule_transition()
-	# Full-flow smoke keeps deterministic fast timings; the normal presentation
-	# timing is covered by the interactive build and dedicated voice smoke.
-	_main.set("FastMode", true)
 	await _complete_limit_bash()
 	await get_tree().create_timer(0.44).timeout
 
@@ -100,7 +95,7 @@ func _complete_bash_tutorial_gate() -> void:
 	var completed_rounds := 0
 	var guard := 0
 
-	while completed_rounds < 2 and guard < 500:
+	while completed_rounds < 2 and guard < 3000:
 		guard += 1
 		await get_tree().create_timer(0.025).timeout
 		await _frames()
@@ -208,7 +203,7 @@ func _complete_limit_bash() -> void:
 	var observed_live_log := false
 	var checked_tutor_layout := false
 
-	while guard < 800:
+	while guard < 6000:
 		guard += 1
 		await get_tree().create_timer(0.025).timeout
 		await _frames()
@@ -263,8 +258,6 @@ func _complete_limit_bash() -> void:
 					action_buttons[1].global_position,
 					action_buttons[2].global_position,
 					confirm.global_position]
-				if not checked_tutor_layout:
-					_main.set("FastMode", true)
 				var tutor_text := _main.get_node(
 					"GameplayHUD/SafeArea/Layout/Content/Center/DialoguePanel/DialogueVBox/Text") as RichTextLabel
 				var tutor_commitment := _main.get_node(
@@ -348,7 +341,7 @@ func _complete_limit_bash() -> void:
 							break
 						if system_status.text.contains("BOTH REQUESTS MOVING") \
 							or reveal_result.visible:
-							# FastMode can advance through the short reveal hold
+							# The presentation can advance through a short reveal hold
 							# between two sampled frames; retain evidence that the
 							# state machine progressed instead of failing on a race.
 							presentation_progressed = true
@@ -386,7 +379,6 @@ func _complete_limit_bash() -> void:
 						"Limit Bash showed no numeric result after both movement animations.")
 					_capture("03g-limit-quantity-result.png")
 					checked_tutor_layout = true
-					_main.set("FastMode", true)
 				break
 
 	_assert(false, "Limit Bash did not settle within the safety bound.")

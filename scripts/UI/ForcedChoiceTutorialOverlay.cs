@@ -95,6 +95,7 @@ public partial class ForcedChoiceTutorialOverlay : Control
         _focusTarget = stage == ForcedChoiceTutorialStage.SelectB
             ? _choiceB
             : _confirmButton;
+        _highlightFrame.Visible = stage == ForcedChoiceTutorialStage.SelectB;
         Visible = true;
         GrabFocus();
         CallDeferred(nameof(RefreshLayout));
@@ -104,6 +105,7 @@ public partial class ForcedChoiceTutorialOverlay : Control
     public void HideStage()
     {
         _stage = ForcedChoiceTutorialStage.Hidden;
+        _highlightFrame.Visible = false;
         Visible = false;
         StopTweens();
     }
@@ -193,16 +195,19 @@ public partial class ForcedChoiceTutorialOverlay : Control
             _rejectTween.Kill();
         }
 
-        _highlightFrame.Modulate = Colors.White;
+        CanvasItem rejectedTarget = _highlightFrame.Visible
+            ? _highlightFrame
+            : _pointer;
+        rejectedTarget.Modulate = Colors.White;
         _rejectTween = CreateTween();
         _rejectTween.TweenProperty(
-                _highlightFrame,
+                rejectedTarget,
                 "modulate",
                 new Color(1.0f, 0.32f, 0.38f, 1.0f),
                 0.08)
             .SetTrans(Tween.TransitionType.Sine);
         _rejectTween.TweenProperty(
-                _highlightFrame,
+                rejectedTarget,
                 "modulate",
                 Colors.White,
                 0.18)

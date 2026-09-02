@@ -18,8 +18,6 @@ func _ready() -> void:
 
 	_main = packed.instantiate() as Control
 	_main.set("SavePath", SAVE_PATH)
-	_main.set("FastMode", true)
-	_main.set("TestSeed", 772774)
 	add_child(_main)
 
 	await _settle_frames()
@@ -262,8 +260,11 @@ func _ready() -> void:
 		_assert(shader_text.material is ShaderMaterial
 			and disabled_cross.texture.resource_path.ends_with("dot_matrix_x.png"),
 			"A central button caption or pre-rendered dot-matrix X is missing.")
+	for button in [choice_one, choice_two, choice_three]:
 		_assert(button.get_node("ParticleFrame").material is ShaderMaterial,
-			"An original action-button border is missing its particle dot matrix.")
+			"An original choice-button border is missing its particle dot matrix.")
+	_assert(not confirm.has_node("ParticleFrame"),
+		"Confirm still draws an idle particle frame outside hover or press.")
 	var status_particle_frame := _main.get_node(
 		"GameplayHUD/SafeArea/Layout/Content/LeftColumn/LeftStatus/ParticleFrame"
 		) as ColorRect
@@ -408,7 +409,7 @@ func _ready() -> void:
 	_click_control(choice_two)
 	await _settle_frames()
 	_assert(not confirm.disabled
-		and tutorial_highlight.get_global_rect().encloses(confirm.get_global_rect()),
+		and not tutorial_highlight.visible,
 		"The transparent input gate did not route its highlighted B choice.")
 	_click_control(save_and_back)
 	await _settle_frames()
@@ -442,13 +443,30 @@ func _ready() -> void:
 	await _settle_frames()
 	_assert(not confirm.disabled,
 		"Selecting guided option B did not enable the required Confirm step.")
+	var confirm_normal := confirm.get_theme_stylebox("normal") as StyleBoxFlat
+	var confirm_disabled := confirm.get_theme_stylebox("disabled") as StyleBoxFlat
+	var confirm_hover := confirm.get_theme_stylebox("hover") as StyleBoxFlat
+	var confirm_pressed := confirm.get_theme_stylebox("pressed") as StyleBoxFlat
+	_assert(confirm_normal.bg_color.a == 0.0
+		and confirm_disabled.bg_color.a == 0.0
+		and confirm_normal.get_border_width(SIDE_LEFT) == 0
+		and confirm_disabled.get_border_width(SIDE_LEFT) == 0,
+		"Confirm still draws a coloured frame while idle or disabled.")
+	_assert(confirm_hover.bg_color.a > 0.0
+		and confirm_pressed.bg_color.a > 0.0
+		and confirm_hover.get_border_width(SIDE_LEFT) > 0
+		and confirm_pressed.get_border_width(SIDE_LEFT) > 0,
+		"Confirm does not reserve its coloured frame for hover and press states.")
+	_assert(confirm_hover.shadow_size == 0
+		and confirm_pressed.shadow_size == 0,
+		"Confirm hover or press styling still expands beyond the button frame.")
 	_assert(choice_two.text == "B\nSTAGED" and not choice_two.text.contains("✓"),
 		"The selected choice changed its fixed B heading or retained a checkmark.")
 	_assert(forced_tutorial.visible
-		and tutorial_highlight.get_global_rect().encloses(confirm.get_global_rect())
+		and not tutorial_highlight.visible
 		and gameplay_dialogue.text.contains("Now press CONFIRM")
 		and tutor_speech.playing,
-		"The guided B selection did not advance its Tutor text, voice, and arrow gate.")
+		"The guided B selection did not advance to its arrow-only Confirm gate.")
 	_assert(choice_one.scale == Vector2.ONE
 		and choice_two.scale == Vector2.ONE
 		and choice_three.scale == Vector2.ONE,
@@ -465,7 +483,6 @@ func _ready() -> void:
 		Input.warp_mouse(confirm.global_position + confirm.size / 2.0)
 		await _settle_frames()
 		_capture("03a-confirm-hover.png")
-	_main.set("FastMode", false)
 	_press("GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ConfirmButton")
 	await get_tree().process_frame
 	_assert(not forced_tutorial.visible,
@@ -529,7 +546,6 @@ func _ready() -> void:
 	_assert(FileAccess.file_exists(SAVE_PATH), "A stable session checkpoint was not written.")
 	await get_tree().create_timer(5.2).timeout
 	await _settle_frames()
-	_main.set("FastMode", true)
 	_assert(not tutor_speech.playing and tutor_speech.stream == null
 		and not gameplay_dialogue.text.is_empty(),
 		"Routine post-action guidance must remain visible but text-only.")
@@ -540,6 +556,12 @@ func _ready() -> void:
 		and confirm.mouse_filter == Control.MOUSE_FILTER_STOP
 		and confirm.focus_mode == Control.FOCUS_ALL,
 		"Confirm did not regain pointer and keyboard input after the tutorial gate ended.")
+	if DisplayServer.get_name() != "headless":
+		Input.warp_mouse(confirm.global_position + confirm.size / 2.0)
+		await _settle_frames()
+		_assert(confirm.is_hovered(),
+			"Confirm did not enter its bounded hover state under the pointer.")
+		_capture("03h-confirm-hover-normal-flow.png")
 
 	_press("GameplayHUD/SafeArea/Layout/Content/RightColumn/BackButton")
 	await _settle_frames()

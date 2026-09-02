@@ -11,8 +11,6 @@ func _ready() -> void:
 	var packed := load("res://scenes/main.tscn") as PackedScene
 	_main = packed.instantiate() as Control
 	_main.set("SavePath", SAVE_PATH)
-	_main.set("FastMode", true)
-	_main.set("TestSeed", 772774)
 	add_child(_main)
 	await _frames()
 	var background_music := _main.get_node(
@@ -74,7 +72,6 @@ func _ready() -> void:
 	var gameplay_dialogue := _main.get_node(
 		"GameplayHUD/SafeArea/Layout/Content/Center/DialoguePanel/DialogueVBox/Text"
 		) as RichTextLabel
-	_main.set("FastMode", false)
 	_press(
 		"GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ChoiceStack/ChoiceRow/Choice2")
 	await _frames()

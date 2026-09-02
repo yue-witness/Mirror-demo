@@ -75,12 +75,6 @@ public partial class DemoFlowController : Control
     [Export(PropertyHint.File, "*.json")]
     public string SavePath { get; set; } = "user://project_mirror/demo_save.json";
 
-    [Export]
-    public bool FastMode { get; set; }
-
-    [Export]
-    public int TestSeed { get; set; }
-
     public DemoPhase CurrentPhase => _phase;
 
     public override void _Ready()
@@ -190,9 +184,8 @@ public partial class DemoFlowController : Control
     {
         _saveService.DeleteActive();
         _stats = new SessionStats();
-        int seed = TestSeed != 0
-            ? TestSeed
-            : unchecked((int)(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() & int.MaxValue));
+        int seed = unchecked(
+            (int)(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() & int.MaxValue));
         _sessionRandom = new SessionRandom(seed);
         _saveId = Guid.NewGuid().ToString("N");
         _bash = null;
@@ -643,7 +636,7 @@ public partial class DemoFlowController : Control
     {
         await ToSignal(
             GetTree().CreateTimer(
-                FastMode ? 0.01 : GameplayHUD.BashPlayerExtractionSeconds),
+                GameplayHUD.BashPlayerExtractionSeconds),
             SceneTreeTimer.SignalName.Timeout);
 
         if (expectedVersion != _flowVersion
@@ -690,7 +683,7 @@ public partial class DemoFlowController : Control
         }
 
         await ToSignal(
-            GetTree().CreateTimer(FastMode ? 0.01 : TutorDelaySeconds),
+            GetTree().CreateTimer(TutorDelaySeconds),
             SceneTreeTimer.SignalName.Timeout);
 
         if (expectedVersion != _flowVersion
@@ -705,13 +698,11 @@ public partial class DemoFlowController : Control
         int choice = _strategy.ChooseBashMove(_bash, selector);
         _hud.ShowBashTutorSelection(choice);
 
-        double selectionHoldSeconds = FastMode
-            ? 0.01
-            : Math.Max(
-                0.65,
-                _hud.CurrentTutorSpeechDurationSeconds
-                    - TutorDelaySeconds
-                    - GameplayHUD.BashTutorExtractionSeconds);
+        double selectionHoldSeconds = Math.Max(
+            0.65,
+            _hud.CurrentTutorSpeechDurationSeconds
+                - TutorDelaySeconds
+                - GameplayHUD.BashTutorExtractionSeconds);
         await ToSignal(
             GetTree().CreateTimer(selectionHoldSeconds),
             SceneTreeTimer.SignalName.Timeout);
@@ -727,7 +718,7 @@ public partial class DemoFlowController : Control
         _hud.BeginBashTutorExtraction();
         await ToSignal(
             GetTree().CreateTimer(
-                FastMode ? 0.01 : GameplayHUD.BashTutorExtractionSeconds),
+                GameplayHUD.BashTutorExtractionSeconds),
             SceneTreeTimer.SignalName.Timeout);
 
         if (expectedVersion != _flowVersion
@@ -901,24 +892,13 @@ public partial class DemoFlowController : Control
 
         int expectedVersion = _flowVersion;
 
-        if (FastMode)
-        {
-            // Smoke runs intentionally collapse the authored pause, but still
-            // resolve the Tutor only after the player lock has been rendered.
-            int fastTutorChoice = _outcomeDirector.ChooseAfterPlayerLock(
-                _limitBash,
-                _limitDirective);
-            RevealLimitRound(expectedVersion, choice, fastTutorChoice);
-            return;
-        }
-
         // Hold the visible lock state before resolving the Tutor's actual
         // response. The bounded solver is deliberately run only after this
         // presentation pause, so the player can read the hand-off and the
         // subsequent reveal always follows the same deterministic sequence.
         await ToSignal(
             GetTree().CreateTimer(
-                FastMode ? 0.01 : LimitTutorCommitmentPauseSeconds),
+                LimitTutorCommitmentPauseSeconds),
             SceneTreeTimer.SignalName.Timeout);
 
         if (expectedVersion != _flowVersion
@@ -952,7 +932,7 @@ public partial class DemoFlowController : Control
     {
         await ToSignal(
             GetTree().CreateTimer(
-                FastMode ? 0.01 : LimitTutorCommitmentPauseSeconds),
+                LimitTutorCommitmentPauseSeconds),
             SceneTreeTimer.SignalName.Timeout);
 
         if (expectedVersion != _flowVersion || _limitBash is null)
@@ -972,11 +952,9 @@ public partial class DemoFlowController : Control
 
         await ToSignal(
             GetTree().CreateTimer(
-                FastMode
-                    ? 0.01
-                    : Math.Max(
-                        LimitTutorRevealExplanationSeconds,
-                        _hud.CurrentTutorSpeechDurationSeconds)),
+                Math.Max(
+                    LimitTutorRevealExplanationSeconds,
+                    _hud.CurrentTutorSpeechDurationSeconds)),
             SceneTreeTimer.SignalName.Timeout);
 
         if (expectedVersion != _flowVersion
@@ -990,7 +968,7 @@ public partial class DemoFlowController : Control
 
         await ToSignal(
             GetTree().CreateTimer(
-                FastMode ? 0.01 : GameplayHUD.LimitRevealPresentationSeconds),
+                GameplayHUD.LimitRevealPresentationSeconds),
             SceneTreeTimer.SignalName.Timeout);
 
         if (expectedVersion != _flowVersion
@@ -1004,7 +982,7 @@ public partial class DemoFlowController : Control
 
         await ToSignal(
             GetTree().CreateTimer(
-                FastMode ? 0.01 : GameplayHUD.LimitRevealNumberHoldSeconds),
+                GameplayHUD.LimitRevealNumberHoldSeconds),
             SceneTreeTimer.SignalName.Timeout);
 
         if (expectedVersion != _flowVersion

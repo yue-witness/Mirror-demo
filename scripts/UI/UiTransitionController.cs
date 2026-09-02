@@ -4,7 +4,7 @@ using System;
 /// <summary>
 /// Masks primary-screen cuts with a short phosphor veil and scanning line.
 /// The flow controller still changes state synchronously, preserving save and
-/// test semantics while the next screen is revealed smoothly.
+/// transition semantics while the next screen is revealed smoothly.
 /// </summary>
 public partial class UiTransitionController : Control
 {

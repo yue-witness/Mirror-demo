@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3]
+[gd_scene load_steps=29 format=3]
 
 [ext_resource type="Script" path="res://scripts/UI/GameplayHUD.cs" id="1_script"]
 [ext_resource type="Script" path="res://scripts/UI/StabilityLatticeView.cs" id="2_lattice"]
@@ -9,7 +9,7 @@
 [ext_resource type="Script" path="res://scripts/UI/SmoothPortraitFrame.cs" id="7_smooth_frame"]
 
 [sub_resource type="StyleBoxFlat" id="TutorialHighlight"]
-bg_color = Color(0.02, 0.2, 0.12, 0.08)
+bg_color = Color(0, 0, 0, 0)
 border_width_left = 4
 border_width_top = 4
 border_width_right = 4
@@ -19,8 +19,6 @@ corner_radius_top_left = 18
 corner_radius_top_right = 18
 corner_radius_bottom_right = 18
 corner_radius_bottom_left = 18
-shadow_color = Color(0.08, 1, 0.44, 0.58)
-shadow_size = 20
 
 [sub_resource type="StyleBoxFlat" id="ChoiceGreen"]
 content_margin_left = 18.0
@@ -277,18 +275,14 @@ content_margin_left = 14.0
 content_margin_top = 14.0
 content_margin_right = 14.0
 content_margin_bottom = 14.0
-bg_color = Color(0.02, 0.23, 0.34, 0.82)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.22, 1, 0.23, 0.92)
-corner_radius_top_left = 76
-corner_radius_top_right = 76
-corner_radius_bottom_right = 76
-corner_radius_bottom_left = 76
-shadow_color = Color(0.08, 1, 0.44, 0.3)
-shadow_size = 12
+bg_color = Color(0, 0, 0, 0)
+corner_radius_top_left = 72
+corner_radius_top_right = 72
+corner_radius_bottom_right = 72
+corner_radius_bottom_left = 72
+corner_detail = 16
+anti_aliasing = true
+anti_aliasing_size = 1.0
 
 [sub_resource type="StyleBoxFlat" id="ConfirmCircleDisabled"]
 content_margin_left = 14.0
@@ -296,15 +290,13 @@ content_margin_top = 14.0
 content_margin_right = 14.0
 content_margin_bottom = 14.0
 bg_color = Color(0, 0, 0, 0)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.22, 1, 0.23, 0.9)
-corner_radius_top_left = 76
-corner_radius_top_right = 76
-corner_radius_bottom_right = 76
-corner_radius_bottom_left = 76
+corner_radius_top_left = 72
+corner_radius_top_right = 72
+corner_radius_bottom_right = 72
+corner_radius_bottom_left = 72
+corner_detail = 16
+anti_aliasing = true
+anti_aliasing_size = 1.0
 
 [sub_resource type="StyleBoxFlat" id="ConfirmCircleHover"]
 content_margin_left = 14.0
@@ -312,17 +304,37 @@ content_margin_top = 14.0
 content_margin_right = 14.0
 content_margin_bottom = 14.0
 bg_color = Color(0.03, 0.38, 0.48, 0.94)
-border_width_left = 5
-border_width_top = 5
-border_width_right = 5
-border_width_bottom = 5
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
 border_color = Color(0.48, 1, 0.42, 1)
-corner_radius_top_left = 76
-corner_radius_top_right = 76
-corner_radius_bottom_right = 76
-corner_radius_bottom_left = 76
-shadow_color = Color(0.08, 1, 0.44, 0.5)
-shadow_size = 18
+corner_radius_top_left = 72
+corner_radius_top_right = 72
+corner_radius_bottom_right = 72
+corner_radius_bottom_left = 72
+corner_detail = 16
+anti_aliasing = true
+anti_aliasing_size = 1.0
+
+[sub_resource type="StyleBoxFlat" id="ConfirmCirclePressed"]
+content_margin_left = 14.0
+content_margin_top = 14.0
+content_margin_right = 14.0
+content_margin_bottom = 14.0
+bg_color = Color(0.02, 0.27, 0.34, 0.98)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.68, 1, 0.55, 1)
+corner_radius_top_left = 72
+corner_radius_top_right = 72
+corner_radius_bottom_right = 72
+corner_radius_bottom_left = 72
+corner_detail = 16
+anti_aliasing = true
+anti_aliasing_size = 1.0
 
 [node name="GameplayHUD" type="Control"]
 layout_mode = 3
@@ -630,7 +642,9 @@ theme_override_colors/font_disabled_color = Color(0.22, 1, 0.23, 0.72)
 theme_override_styles/disabled = SubResource("ConfirmCircleDisabled")
 theme_override_styles/normal = SubResource("ConfirmCircle")
 theme_override_styles/hover = SubResource("ConfirmCircleHover")
-theme_override_styles/pressed = SubResource("ConfirmCircle")
+theme_override_styles/pressed = SubResource("ConfirmCirclePressed")
+theme_override_styles/hover_pressed = SubResource("ConfirmCirclePressed")
+theme_override_styles/focus = SubResource("ConfirmCircle")
 text = "SELECT\nFIRST"
 
 [node name="DialoguePanel" type="PanelContainer" parent="SafeArea/Layout/Content/Center"]
