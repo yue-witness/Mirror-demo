@@ -5,9 +5,9 @@ render_mode unshaded;
 // The floor keeps small text readable while the 3 px cell creates a visible
 // scanline/dot rhythm at the project's native 1920 x 1080 viewport.
 uniform float dot_pitch : hint_range(2.0, 6.0) = 3.0;
-uniform float pattern_floor : hint_range(0.0, 1.0) = 0.46;
-uniform float brightness : hint_range(1.0, 2.0) = 1.22;
-uniform float halo_strength : hint_range(0.0, 0.5) = 0.16;
+uniform float pattern_floor : hint_range(0.0, 1.0) = 0.92;
+uniform float brightness : hint_range(1.0, 2.0) = 1.0;
+uniform float halo_strength : hint_range(0.0, 0.5) = 0.02;
 
 void fragment() {
 	vec4 glyph = texture(TEXTURE, UV);

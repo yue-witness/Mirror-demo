@@ -7,7 +7,7 @@ uniform float aspect_ratio = 1.0;
 uniform vec2 border_inset_uv = vec2(0.02);
 uniform float pixel_size_y = 0.004;
 uniform float phase_offset = 0.0;
-uniform float speed : hint_range(0.01, 1.0) = 0.16;
+uniform float speed : hint_range(0.01, 1.0) = 0.04;
 uniform float corner_radius : hint_range(0.0, 1.0) = 0.11;
 uniform float line_width : hint_range(0.001, 0.08) = 0.004;
 uniform float dot_density : hint_range(12.0, 180.0) = 72.0;
@@ -211,7 +211,7 @@ void fragment() {
     float particle_intensity = (
         first_stream
         + second_stream * 0.76
-        + third_stream * 0.64) * 0.92;
+        + third_stream * 0.64) * 0.92 * particle_color.a;
 
     vec3 rgb = matrix_color.rgb * matrix_intensity
         + particle_color.rgb * particle_intensity;

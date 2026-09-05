@@ -1,21 +1,33 @@
-[gd_scene load_steps=18 format=3 uid="uid://bgranncpwtngt"]
+[gd_scene load_steps=23 format=3 uid="uid://bgranncpwtngt"]
 
-[ext_resource type="Theme" path="res://themes/ProjectMirrorLightTheme.tres" id="1_theme"]
-[ext_resource type="Script" path="res://scripts/Core/DemoFlowController.cs" id="2_flow"]
+[ext_resource type="AudioStream" path="res://assets/audio/ui/transition.wav" id="sfx_transition"]
+
+[ext_resource type="AudioStream" path="res://assets/audio/ui/draw.wav" id="sfx_draw"]
+
+[ext_resource type="AudioStream" path="res://assets/audio/ui/failure.wav" id="sfx_failure"]
+
+[ext_resource type="AudioStream" path="res://assets/audio/ui/success.wav" id="sfx_success"]
+
+[ext_resource type="AudioStream" path="res://assets/audio/ui/submit.wav" id="sfx_submit"]
+
+[ext_resource type="AudioStream" path="res://assets/audio/ui/select.wav" id="sfx_select"]
+
+[ext_resource type="AudioStream" path="res://assets/audio/ui/hover.wav" id="sfx_hover"]
+
+[ext_resource type="Theme" path="res://themes/ProjectMirrorBlueTheme.tres" id="1_theme"]
+[ext_resource type="Script" path="res://scripts/Application/DemoFlowController.cs" id="2_flow"]
 [ext_resource type="Texture2D" path="res://assets/backgrounds/command_chamber_static_scanner.png" id="3_background"]
 [ext_resource type="PackedScene" path="res://scenes/ui/TitleScreen.tscn" id="4_title"]
 [ext_resource type="PackedScene" path="res://scenes/ui/GameplayHUD.tscn" id="5_hud"]
 [ext_resource type="PackedScene" path="res://scenes/ui/TutorDialogueUI.tscn" id="6_dialogue"]
-[ext_resource type="Script" path="res://scripts/UI/DotMatrixTextStyler.cs" id="7_text_styler"]
-[ext_resource type="Script" path="res://scripts/UI/BackgroundVfx.cs" id="8_background_vfx"]
+[ext_resource type="Script" path="res://scripts/Presentation/Effects/BackgroundVfx.cs" id="8_background_vfx"]
 [ext_resource type="Texture2D" path="res://assets/vfx/container_glow_120f.png" id="9_container_glow"]
-[ext_resource type="Script" path="res://scripts/UI/FrameParticleEffectsInstaller.cs" id="11_frame_effects"]
 [ext_resource type="Shader" path="res://shaders/background_vfx_cleanup.gdshader" id="12_vfx_cleanup"]
-[ext_resource type="Script" path="res://scripts/Audio/TutorSpeechPlayer.cs" id="13_tutor_speech"]
-[ext_resource type="Script" path="res://scripts/Audio/UiAudioController.cs" id="14_ui_audio"]
-[ext_resource type="Script" path="res://scripts/UI/UiTransitionController.cs" id="15_ui_transition"]
+[ext_resource type="Script" path="res://scripts/Presentation/Audio/TutorSpeechPlayer.cs" id="13_tutor_speech"]
+[ext_resource type="Script" path="res://scripts/Presentation/Audio/UiAudioController.cs" id="14_ui_audio"]
+[ext_resource type="Script" path="res://scripts/Presentation/Effects/UiTransitionController.cs" id="15_ui_transition"]
 [ext_resource type="AudioStream" path="res://assets/audio/bgm/exploration_theme.ogg" id="16_bgm"]
-[ext_resource type="Script" path="res://scripts/Audio/BackgroundMusicPlayer.cs" id="17_bgm_player"]
+[ext_resource type="Script" path="res://scripts/Presentation/Audio/BackgroundMusicPlayer.cs" id="17_bgm_player"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_container_cleanup"]
 shader = ExtResource("12_vfx_cleanup")
@@ -83,6 +95,8 @@ layout_mode = 1
 
 [node name="TutorSpeechPlayer" type="AudioStreamPlayer" parent="."]
 script = ExtResource("13_tutor_speech")
+volume_db = -2.0
+StandardSpeechGapSeconds = 2.5
 
 [node name="BackgroundMusicPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("16_bgm")
@@ -100,12 +114,13 @@ layout_mode = 1
 
 [node name="UiAudioController" type="Node" parent="."]
 script = ExtResource("14_ui_audio")
-
-[node name="DotMatrixTextStyler" type="Node" parent="."]
-script = ExtResource("7_text_styler")
-
-[node name="FrameParticleEffectsInstaller" type="Node" parent="."]
-script = ExtResource("11_frame_effects")
+HoverSound = ExtResource("sfx_hover")
+SelectSound = ExtResource("sfx_select")
+SubmitSound = ExtResource("sfx_submit")
+SuccessSound = ExtResource("sfx_success")
+FailureSound = ExtResource("sfx_failure")
+DrawSound = ExtResource("sfx_draw")
+TransitionSound = ExtResource("sfx_transition")
 
 [node name="UiTransitionOverlay" type="Control" parent="."]
 visible = false
@@ -137,4 +152,13 @@ offset_top = -5.0
 offset_bottom = 5.0
 grow_horizontal = 2
 mouse_filter = 2
-color = Color(0.22, 1, 0.23, 0.78)
+color = Color(0.4, 0.62, 0.79, 0.78)
+
+[node name="HoverPlayer" type="AudioStreamPlayer" parent="UiAudioController"]
+volume_db = -10.0
+
+[node name="ActionPlayer" type="AudioStreamPlayer" parent="UiAudioController"]
+volume_db = -7.0
+
+[node name="EventPlayer" type="AudioStreamPlayer" parent="UiAudioController"]
+volume_db = -5.0

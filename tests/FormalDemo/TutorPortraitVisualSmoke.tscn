@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://tests/FormalDemo/TutorPortraitVisualSmoke.gd" id="1_script"]
 [ext_resource type="PackedScene" path="res://scenes/ui/TutorDialogueUI.tscn" id="2_dialogue"]
-[ext_resource type="Script" path="res://scripts/Audio/TutorSpeechPlayer.cs" id="3_speech"]
+[ext_resource type="Script" path="res://scripts/Presentation/Audio/TutorSpeechPlayer.cs" id="3_speech"]
 
 [node name="TutorPortraitVisualSmoke" type="Control"]
 layout_mode = 3

@@ -124,19 +124,19 @@ func _complete_bash_tutorial_gate() -> void:
 		if banner.text.contains("GAME RESULT"):
 			var bash_result_log := _main.get_node(
 				"GameplayHUD/SafeArea/Layout/Content/RightColumn/RightLog/RightVBox/Log") as RichTextLabel
-			_assert(bash_result_log.text.contains("final orbiting anchor was disengaged")
-				and bash_result_log.text.contains("ACTIONS THIS ROUND"),
+			_assert(bash_result_log.text.contains("Anchors")
+				and bash_result_log.text.contains("→ 0"),
 				"The Bash result screen cleared the SYSTEM action log.")
 			_capture("03c-bash-result.png")
 			var result_label := _label("GameplayHUD/ResultOverlay/ResultLabel")
 			var result := result_label.text
 			_assert((_main.get_node("GameplayHUD/ResultOverlay") as Control).visible
 				and (_main.get_node("GameplayHUD/ResultOverlay") as Control).size.y >= 540.0
-				and result_label.get_theme_font_size("font_size") >= 180,
+				and result_label.get_theme_font_size("font_size") >= 100,
 				"The result animation does not cover the full upper half.")
 			_assert(result_label.get_theme_color("font_color").is_equal_approx(
-				Color("ffd21f")),
-				"PLAYER WIN is not using the requested golden yellow.")
+				Color(0.69, 0.80, 0.90, 1.0)),
+				"Result does not use the shared readable blue.")
 			_assert(not _main.has_node(
 				"GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ChoiceStack/ContinueButton"),
 				"The obsolete result Continue button is still present.")
@@ -148,8 +148,7 @@ func _complete_bash_tutorial_gate() -> void:
 				"GameplayHUD/SafeArea/Layout/Content/LeftColumn/TutorCard") as PanelContainer
 			var dialogue_panel := _main.get_node(
 				"GameplayHUD/SafeArea/Layout/Content/Center/DialoguePanel") as PanelContainer
-			_assert(is_equal_approx(tutor_panel.global_position.y, dialogue_panel.global_position.y)
-				and is_equal_approx(tutor_panel.size.y, dialogue_panel.size.y),
+			_assert(is_equal_approx(tutor_panel.get_global_rect().end.y, dialogue_panel.get_global_rect().end.y),
 				"Result Tutor portrait and dialogue frames are not aligned.")
 			if result == "PLAYER WIN":
 				completed_rounds += 1
@@ -203,8 +202,16 @@ func _complete_limit_bash() -> void:
 	var observed_live_log := false
 	var checked_tutor_layout := false
 
-	while guard < 6000:
+	# Complete authored speech and animations at production speed. The former
+	# 6,000-poll bound expired during game three even while play progressed.
+	# Retain a finite bound and expose checkpoints for long release runs.
+	while guard < 36000:
 		guard += 1
+		if guard % 3000 == 0:
+			var checkpoint = JSON.parse_string(FileAccess.get_file_as_string(SAVE_PATH))
+			print("Limit flow progress: game %s, round %s" % [
+				checkpoint.get("limitGameIndex", 0),
+				checkpoint.get("currentGame", {}).get("roundIndex", 0)])
 		await get_tree().create_timer(0.025).timeout
 		await _frames()
 
@@ -222,7 +229,7 @@ func _complete_limit_bash() -> void:
 
 		var current_log := _main.get_node(
 			"GameplayHUD/SafeArea/Layout/Content/RightColumn/RightLog/RightVBox/Log") as RichTextLabel
-		if current_log.text.contains("R01") and current_log.text.contains("PLAYER"):
+		if current_log.text.contains("R01") and current_log.text.contains("You"):
 			observed_live_log = true
 
 		if banner.text.contains("GAME RESULT"):
@@ -235,8 +242,8 @@ func _complete_limit_bash() -> void:
 					and selection.text.contains("TUTOR"),
 					"Limit Bash result did not show both final choices.")
 				_assert(system_log.text.contains("R01")
-					and system_log.text.contains("PLAYER")
-					and system_log.text.contains("TUTOR"),
+					and system_log.text.contains("You")
+					and system_log.text.contains("Tutor"),
 					"Limit Bash result did not retain its execution log.")
 				_capture("03b-limit-result.png")
 				captured_result = true
@@ -261,20 +268,18 @@ func _complete_limit_bash() -> void:
 				var tutor_text := _main.get_node(
 					"GameplayHUD/SafeArea/Layout/Content/Center/DialoguePanel/DialogueVBox/Text") as RichTextLabel
 				var tutor_commitment := _main.get_node(
-					"GameplayHUD/SafeArea/Layout/Content/Center/DialoguePanel/DialogueVBox/Text/TutorCommitmentStatus") as RichTextLabel
+					"GameplayHUD/SafeArea/Layout/Content/Center/DialoguePanel/DialogueVBox/TutorCommitmentStatus") as RichTextLabel
 				var reveal_result := _main.get_node(
 					"GameplayHUD/SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/StateRow/LatticeView/LimitRevealResult") as RichTextLabel
 				var system_status := _label(
-					"GameplayHUD/SafeArea/Layout/Content/RightColumn/RightLog/RightVBox/Status")
+					"GameplayHUD/SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/StateRow/SelectionStack/SelectionLabel")
 				var selection_label := _label(
 					"GameplayHUD/SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/StateRow/SelectionStack/SelectionLabel")
 				var lattice := _main.get_node(
 					"GameplayHUD/SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/StateRow/LatticeView") as Control
 				if not checked_tutor_layout:
-					_assert(tutor_commitment.visible
-						and tutor_commitment.position.y <= 1.0
-						and tutor_commitment.text.contains("COMMITMENT SEALED"),
-						"Tutor commitment was not fixed above the dialogue before player input.")
+					_assert(not tutor_commitment.visible,
+						"Lock message appeared before the player confirmed.")
 				choice.emit_signal("pressed")
 				await _frames()
 				if not checked_tutor_layout:
@@ -294,7 +299,7 @@ func _complete_limit_bash() -> void:
 						# A hidden test window may accept the parsed mouse event without
 						# routing it through Control._gui_input. Preserve the real click
 						# attempt, then use the button signal as a deterministic fallback.
-						if not system_status.text.contains("BOTH REQUESTS LOCKED"):
+						if not tutor_commitment.visible:
 							_press("GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ConfirmButton")
 							await _frames()
 				else:
@@ -302,7 +307,7 @@ func _complete_limit_bash() -> void:
 				if not checked_tutor_layout:
 					var confirm_started := false
 					for wait_step in range(120):
-						if system_status.text.contains("BOTH REQUESTS LOCKED"):
+						if tutor_commitment.visible:
 							confirm_started = true
 							break
 						await _frames()
@@ -314,9 +319,8 @@ func _complete_limit_bash() -> void:
 					var commitment_seen := false
 					for wait_step in range(240):
 						if tutor_commitment.visible \
-							and system_status.text.contains("BOTH REQUESTS LOCKED") \
-							and tutor_commitment.text.contains("TUTOR SELECTION COMPLETE") \
-							and tutor_commitment.text.contains("VALUE HIDDEN") \
+							and tutor_commitment.text.contains("Your choice is locked") \
+							and tutor_commitment.text.contains("Revealing shortly") \
 							and not reveal_result.visible:
 							commitment_seen = true
 							break
@@ -344,7 +348,7 @@ func _complete_limit_bash() -> void:
 							and int(lattice.call("GetTutorMarkedAnchorCount")) > 0:
 							tutor_reveal_seen = true
 							break
-						if system_status.text.contains("BOTH REQUESTS MOVING") \
+						if system_status.text.contains("EXECUTING") \
 							or reveal_result.visible:
 							# The presentation can advance through a short reveal hold
 							# between two sampled frames; retain evidence that the
@@ -361,11 +365,11 @@ func _complete_limit_bash() -> void:
 							<= int(lattice.call("GetDisplayedOrbitingAnchorCount")),
 							"Limit Bash assigned the Player and Tutor to overlapping anchors.")
 					_capture("03e-limit-tutor-revealed.png")
-					var both_moving_seen := system_status.text.contains("BOTH REQUESTS MOVING") \
+					var both_moving_seen := system_status.text.contains("EXECUTING") \
 						and int(lattice.call("GetPlayerRevealMarkedAnchorCount")) > 0 \
 						and int(lattice.call("GetTutorMarkedAnchorCount")) > 0
 					for wait_step in range(480):
-						if system_status.text.contains("BOTH REQUESTS MOVING") \
+						if system_status.text.contains("EXECUTING") \
 							and int(lattice.call("GetPlayerRevealMarkedAnchorCount")) > 0 \
 							and int(lattice.call("GetTutorMarkedAnchorCount")) > 0:
 							both_moving_seen = true

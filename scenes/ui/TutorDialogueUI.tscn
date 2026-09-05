@@ -1,10 +1,20 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=18 format=3]
 
-[ext_resource type="Script" path="res://scripts/UI/TutorDialogueUI.cs" id="1_script"]
+[ext_resource type="Material" path="res://themes/PortraitAnomaly.tres" id="portrait_anomaly"]
+
+[ext_resource type="Theme" path="res://themes/ProjectMirrorBlueTheme.tres" id="blue_theme"]
+
+[ext_resource type="Material" path="res://themes/DotMatrixTextMaterial.tres" id="heading_matrix"]
+
+[ext_resource type="Shader" path="res://shaders/ui_particle_frame.gdshader" id="particle_shader"]
+
+[ext_resource type="Script" path="res://scripts/Presentation/Effects/ParticleFrame.cs" id="particle_script"]
+
+[ext_resource type="Script" path="res://scripts/Presentation/Screens/TutorDialogueUI.cs" id="1_script"]
 [ext_resource type="Texture2D" path="res://assets/portraits/tutor_states.png" id="2_tutor"]
 [ext_resource type="Texture2D" path="res://assets/portraits/s17_idle.png" id="3_s17"]
-[ext_resource type="Script" path="res://scripts/UI/SpriteAtlasAnimator.cs" id="4_atlas_animator"]
-[ext_resource type="Script" path="res://scripts/UI/SmoothPortraitFrame.cs" id="5_smooth_frame"]
+[ext_resource type="Script" path="res://scripts/Presentation/Components/SpriteAtlasAnimator.cs" id="4_atlas_animator"]
+[ext_resource type="Script" path="res://scripts/Presentation/Components/SmoothPortraitFrame.cs" id="5_smooth_frame"]
 
 [sub_resource type="StyleBoxFlat" id="PortraitFrame"]
 content_margin_left = 6.0
@@ -16,7 +26,7 @@ border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.22, 1, 0.23, 0.02)
+border_color = Color(0.32, 0.51, 0.68, 0.02)
 corner_radius_top_left = 190
 corner_radius_top_right = 190
 corner_radius_bottom_right = 190
@@ -37,7 +47,7 @@ border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.22, 1, 0.23, 0.4)
+border_color = Color(0.32, 0.51, 0.68, 0.4)
 corner_radius_top_left = 26
 corner_radius_top_right = 26
 corner_radius_bottom_right = 26
@@ -53,13 +63,45 @@ border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(0.22, 1, 0.23, 0.82)
+border_color = Color(0.32, 0.51, 0.68, 0.82)
 corner_radius_top_left = 38
 corner_radius_top_right = 38
 corner_radius_bottom_right = 38
 corner_radius_bottom_left = 38
 shadow_color = Color(0, 0, 0, 0)
 shadow_size = 0
+
+[sub_resource type="ShaderMaterial" id="ParticleMaterial_1"]
+resource_local_to_scene = true
+shader = ExtResource("particle_shader")
+shader_parameter/speed = 0.04
+shader_parameter/phase_offset = 0.173
+shader_parameter/matrix_color = Color(0.25, 0.43, 0.59, 0.07)
+shader_parameter/particle_color = Color(0.35, 0.54, 0.72, 0.5)
+
+[sub_resource type="ShaderMaterial" id="ParticleMaterial_2"]
+resource_local_to_scene = true
+shader = ExtResource("particle_shader")
+shader_parameter/speed = 0.04
+shader_parameter/phase_offset = 0.346
+shader_parameter/matrix_color = Color(0.25, 0.43, 0.59, 0.07)
+shader_parameter/particle_color = Color(0.35, 0.54, 0.72, 0.5)
+
+[sub_resource type="ShaderMaterial" id="ParticleMaterial_3"]
+resource_local_to_scene = true
+shader = ExtResource("particle_shader")
+shader_parameter/speed = 0.04
+shader_parameter/phase_offset = 0.519
+shader_parameter/matrix_color = Color(0.25, 0.43, 0.59, 0.07)
+shader_parameter/particle_color = Color(0.35, 0.54, 0.72, 0.5)
+
+[sub_resource type="ShaderMaterial" id="ParticleMaterial_4"]
+resource_local_to_scene = true
+shader = ExtResource("particle_shader")
+shader_parameter/speed = 0.04
+shader_parameter/phase_offset = 0.692
+shader_parameter/matrix_color = Color(0.25, 0.43, 0.59, 0.07)
+shader_parameter/particle_color = Color(0.35, 0.54, 0.72, 0.5)
 
 [node name="TutorDialogueUI" type="Control"]
 layout_mode = 3
@@ -69,6 +111,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_script")
+theme = ExtResource("blue_theme")
+TutorPortrait = ExtResource("2_tutor")
+S17Portrait = ExtResource("3_s17")
 
 [node name="SafeArea" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -90,6 +135,21 @@ theme_override_constants/separation = 22
 custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
 
+[node name="ParticleFrame" type="ColorRect" parent="SafeArea/Layout/Header"]
+top_level = true
+material = SubResource("ParticleMaterial_1")
+layout_mode = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = -16.0
+offset_top = -16.0
+offset_right = 16.0
+offset_bottom = 16.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("particle_script")
+
 [node name="HeaderRow" type="HBoxContainer" parent="SafeArea/Layout/Header"]
 layout_mode = 2
 
@@ -99,22 +159,7 @@ size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 27
 text = "BACKGROUND / EXPLANATION"
 vertical_alignment = 1
-
-[node name="SaveLabel" type="Label" parent="SafeArea/Layout/Header/HeaderRow"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 20
-text = "SAVE · STABLE"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="PlayTimeLabel" type="Label" parent="SafeArea/Layout/Header/HeaderRow"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 18
-text = "PLAY TIME · 00:00"
-horizontal_alignment = 2
-vertical_alignment = 1
+material = ExtResource("heading_matrix")
 
 [node name="Content" type="VBoxContainer" parent="SafeArea/Layout"]
 layout_mode = 2
@@ -128,6 +173,21 @@ size_flags_horizontal = 4
 size_flags_vertical = 3
 theme_override_styles/panel = SubResource("SpeakerCard")
 
+[node name="ParticleFrame" type="ColorRect" parent="SafeArea/Layout/Content/SpeakerCard"]
+top_level = true
+material = SubResource("ParticleMaterial_2")
+layout_mode = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = -16.0
+offset_top = -16.0
+offset_right = 16.0
+offset_bottom = 16.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("particle_script")
+
 [node name="SpeakerVBox" type="VBoxContainer" parent="SafeArea/Layout/Content/SpeakerCard"]
 layout_mode = 2
 alignment = 1
@@ -140,24 +200,31 @@ layout_mode = 2
 size_flags_horizontal = 4
 theme_override_styles/panel = SubResource("PortraitFrame")
 script = ExtResource("5_smooth_frame")
-segment_count = 256
-ring_width = 3.0
-ring_color = Color(0.22, 1, 0.23, 0.95)
-glow_width = 6.0
+SegmentCount = 256
+RingWidth = 3.0
+RingColor = Color(0.40, 0.62, 0.79, 0.9)
+GlowWidth = 3.0
 
 [node name="PortraitTexture" type="TextureRect" parent="SafeArea/Layout/Content/SpeakerCard/SpeakerVBox/PortraitFrame"]
 custom_minimum_size = Vector2(368, 368)
 layout_mode = 2
 mouse_filter = 2
-texture = ExtResource("2_tutor")
 expand_mode = 1
 stretch_mode = 5
 script = ExtResource("4_atlas_animator")
-columns = 4
-rows = 3
-frames_per_second = 4.0
-hover_amplitude = 6.0
-hover_cycles_per_second = 0.32
+FramesPerSecond = 4.0
+HoverAmplitude = 6.0
+HoverCyclesPerSecond = 0.32
+RedEyeMaterial = ExtResource("portrait_anomaly")
+Columns = 4
+Rows = 3
+AtlasSource = ExtResource("2_tutor")
+
+[node name="FrameDisplay" type="TextureRect" parent="SafeArea/Layout/Content/SpeakerCard/SpeakerVBox/PortraitFrame/PortraitTexture"]
+layout_mode = 0
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
 
 [node name="SpeakerName" type="Label" parent="SafeArea/Layout/Content/SpeakerCard/SpeakerVBox"]
 layout_mode = 2
@@ -170,21 +237,36 @@ custom_minimum_size = Vector2(0, 250)
 layout_mode = 2
 theme_override_styles/panel = SubResource("DialogueCard")
 
+[node name="ParticleFrame" type="ColorRect" parent="SafeArea/Layout/Content/DialogueCard"]
+top_level = true
+material = SubResource("ParticleMaterial_3")
+layout_mode = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = -16.0
+offset_top = -16.0
+offset_right = 16.0
+offset_bottom = 16.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("particle_script")
+
 [node name="DialogueVBox" type="VBoxContainer" parent="SafeArea/Layout/Content/DialogueCard"]
 layout_mode = 2
 theme_override_constants/separation = 20
 
 [node name="Speaker" type="Label" parent="SafeArea/Layout/Content/DialogueCard/DialogueVBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.18, 0.3, 1)
-theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(0.69, 0.8, 0.9, 1)
+theme_override_font_sizes/font_size = 24
 text = "TUTOR"
 
 [node name="DialogueText" type="RichTextLabel" parent="SafeArea/Layout/Content/DialogueCard/DialogueVBox"]
 custom_minimum_size = Vector2(0, 118)
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_font_sizes/normal_font_size = 32
+theme_override_font_sizes/normal_font_size = 34
 bbcode_enabled = true
 text = "[center]Welcome to Project X.[/center]"
 fit_content = false
@@ -208,7 +290,7 @@ offset_bottom = -4.0
 grow_horizontal = 2
 grow_vertical = 0
 mouse_filter = 2
-theme_override_colors/font_color = Color(0.22, 1, 0.23, 1)
+theme_override_colors/font_color = Color(0.69, 0.8, 0.9, 1)
 theme_override_font_sizes/font_size = 26
 text = "▼"
 horizontal_alignment = 1
@@ -218,7 +300,7 @@ vertical_alignment = 1
 visible = false
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_font_sizes/normal_font_size = 21
+theme_override_font_sizes/normal_font_size = 24
 bbcode_enabled = true
 fit_content = false
 scroll_active = false
@@ -235,5 +317,19 @@ size_flags_horizontal = 3
 [node name="BackButton" type="Button" parent="SafeArea/Layout/Footer"]
 custom_minimum_size = Vector2(220, 44)
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 24
 text = "SAVE & BACK"
+[node name="ParticleFrame" type="ColorRect" parent="SafeArea/Layout/Footer/BackButton"]
+top_level = true
+material = SubResource("ParticleMaterial_4")
+layout_mode = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = -16.0
+offset_top = -16.0
+offset_right = 16.0
+offset_bottom = 16.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("particle_script")

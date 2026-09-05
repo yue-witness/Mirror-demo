@@ -4,6 +4,7 @@
     <TargetFramework Condition=" '$(GodotTargetPlatform)' == 'android' ">net9.0</TargetFramework>
     <EnableDynamicLoading>true</EnableDynamicLoading>
     <Nullable>enable</Nullable>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' Or '$(Configuration)' == 'ExportRelease' ">
@@ -13,7 +14,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- The standalone domain test runner has its own executable project. -->
-    <Compile Remove="tests/**/*.cs" />
+    <!-- Runtime code is confined to scripts; tools, archives and test runners
+         cannot accidentally become part of the game assembly. -->
+    <Compile Include="scripts/**/*.cs" />
   </ItemGroup>
 </Project>

@@ -9,18 +9,18 @@
 
   <ItemGroup>
     <Compile Include="Program.cs" />
-    <Compile Include="../../scripts/Games/GameTypes.cs" Link="Domain/GameTypes.cs" />
-    <Compile Include="../../scripts/Games/Bash/BashGame.cs" Link="Domain/BashGame.cs" />
-    <Compile Include="../../scripts/Games/LimitBash/LimitBashGame.cs" Link="Domain/LimitBashGame.cs" />
-    <Compile Include="../../scripts/AI/OutcomeDirector.cs" Link="Domain/OutcomeDirector.cs" />
-    <Compile Include="../../scripts/Core/DemoPhase.cs" Link="Domain/DemoPhase.cs" />
-    <Compile Include="../../scripts/Core/SessionRandom.cs" Link="Domain/SessionRandom.cs" />
-    <Compile Include="../../scripts/Session/SessionStats.cs" Link="Domain/SessionStats.cs" />
-    <Compile Include="../../scripts/Session/DemoSaveState.cs" Link="Domain/DemoSaveState.cs" />
-    <Compile Include="../../scripts/Data/SaveGameService.cs" Link="Domain/SaveGameService.cs" />
-    <Compile Include="../../scripts/Data/DialogueRepository.cs" Link="Domain/DialogueRepository.cs" />
-    <Compile Include="../../scripts/Data/TutorSpeechCatalog.cs" Link="Domain/TutorSpeechCatalog.cs" />
-    <Compile Include="../../scripts/Data/TutorPresentationPolicy.cs" Link="Domain/TutorPresentationPolicy.cs" />
-    <Compile Include="../../scripts/Data/RuleConfiguration.cs" Link="Domain/RuleConfiguration.cs" />
+    <Compile Include="../../scripts/Domain/GameTypes.cs" Link="Domain/GameTypes.cs" />
+    <Compile Include="../../scripts/Domain/BashGame.cs" Link="Domain/BashGame.cs" />
+    <Compile Include="../../scripts/Domain/LimitBashGame.cs" Link="Domain/LimitBashGame.cs" />
+    <Compile Include="../../scripts/Domain/OutcomeDirector.cs" Link="Domain/OutcomeDirector.cs" />
+    <Compile Include="../../scripts/Domain/DemoPhase.cs" Link="Domain/DemoPhase.cs" />
+    <Compile Include="../../scripts/Domain/SessionRandom.cs" Link="Domain/SessionRandom.cs" />
+    <Compile Include="../../scripts/Domain/SessionStats.cs" Link="Domain/SessionStats.cs" />
+    <Compile Include="../../scripts/Domain/DemoSaveState.cs" Link="Domain/DemoSaveState.cs" />
+    <Compile Include="../../scripts/Infrastructure/SaveGameService.cs" Link="Domain/SaveGameService.cs" />
+    <Compile Include="../../scripts/Narrative/DialogueRepository.cs" Link="Domain/DialogueRepository.cs" />
+    <Compile Include="../../scripts/Narrative/TutorSpeechCatalog.cs" Link="Domain/TutorSpeechCatalog.cs" />
+    <Compile Include="../../scripts/Narrative/TutorPresentationPolicy.cs" Link="Domain/TutorPresentationPolicy.cs" />
+    <Compile Include="../../scripts/Infrastructure/RuleConfiguration.cs" Link="Domain/RuleConfiguration.cs" />
   </ItemGroup>
 </Project>

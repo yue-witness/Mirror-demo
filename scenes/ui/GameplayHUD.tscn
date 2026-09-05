@@ -1,12 +1,28 @@
-[gd_scene load_steps=29 format=3]
+[gd_scene load_steps=48 format=3]
 
-[ext_resource type="Script" path="res://scripts/UI/GameplayHUD.cs" id="1_script"]
-[ext_resource type="Script" path="res://scripts/UI/StabilityLatticeView.cs" id="2_lattice"]
+[ext_resource type="Script" path="res://scripts/Presentation/Components/ActionButtonState.cs" id="action_state"]
+
+[ext_resource type="Texture2D" path="res://assets/ui/dot_matrix_x.png" id="lock_texture"]
+
+[ext_resource type="Texture2D" path="res://assets/vfx/lattice_energy_core_v2.png" id="energy_core"]
+
+[ext_resource type="Material" path="res://themes/PortraitAnomaly.tres" id="portrait_anomaly"]
+
+[ext_resource type="Theme" path="res://themes/ProjectMirrorBlueTheme.tres" id="blue_theme"]
+
+[ext_resource type="Material" path="res://themes/DotMatrixTextMaterial.tres" id="heading_matrix"]
+
+[ext_resource type="Shader" path="res://shaders/ui_particle_frame.gdshader" id="particle_shader"]
+
+[ext_resource type="Script" path="res://scripts/Presentation/Effects/ParticleFrame.cs" id="particle_script"]
+
+[ext_resource type="Script" path="res://scripts/Presentation/Screens/GameplayHUD.cs" id="1_script"]
+[ext_resource type="Script" path="res://scripts/Presentation/Components/StabilityLatticeView.cs" id="2_lattice"]
 [ext_resource type="Texture2D" path="res://assets/portraits/tutor_states.png" id="3_tutor"]
-[ext_resource type="Script" path="res://scripts/UI/SpriteAtlasAnimator.cs" id="4_atlas_animator"]
-[ext_resource type="Script" path="res://scripts/UI/ForcedChoiceTutorialOverlay.cs" id="5_forced_tutorial"]
+[ext_resource type="Script" path="res://scripts/Presentation/Components/SpriteAtlasAnimator.cs" id="4_atlas_animator"]
+[ext_resource type="Script" path="res://scripts/Presentation/Components/ForcedChoiceTutorialOverlay.cs" id="5_forced_tutorial"]
 [ext_resource type="Texture2D" path="res://assets/ui/green_laser_dot_arrow.png" id="6_tutorial_pointer"]
-[ext_resource type="Script" path="res://scripts/UI/SmoothPortraitFrame.cs" id="7_smooth_frame"]
+[ext_resource type="Script" path="res://scripts/Presentation/Components/SmoothPortraitFrame.cs" id="7_smooth_frame"]
 
 [sub_resource type="StyleBoxFlat" id="TutorialHighlight"]
 bg_color = Color(0, 0, 0, 0)
@@ -14,7 +30,7 @@ border_width_left = 4
 border_width_top = 4
 border_width_right = 4
 border_width_bottom = 4
-border_color = Color(0.3, 1, 0.48, 1)
+border_color = Color(0.32, 0.51, 0.68, 0.85)
 corner_radius_top_left = 18
 corner_radius_top_right = 18
 corner_radius_bottom_right = 18
@@ -30,7 +46,7 @@ border_width_left = 4
 border_width_top = 4
 border_width_right = 4
 border_width_bottom = 4
-border_color = Color(0.22, 1, 0.23, 1)
+border_color = Color(0.32, 0.51, 0.68, 0.85)
 corner_radius_top_left = 16
 corner_radius_top_right = 16
 corner_radius_bottom_right = 16
@@ -41,17 +57,17 @@ content_margin_left = 18.0
 content_margin_top = 14.0
 content_margin_right = 18.0
 content_margin_bottom = 14.0
-bg_color = Color(0.05, 0.5, 0.24, 0.78)
+bg_color = Color(0.055, 0.12, 0.19, 0.78)
 border_width_left = 4
 border_width_top = 4
 border_width_right = 4
 border_width_bottom = 4
-border_color = Color(0.48, 1, 0.42, 1)
+border_color = Color(0.32, 0.51, 0.68, 0.85)
 corner_radius_top_left = 16
 corner_radius_top_right = 16
 corner_radius_bottom_right = 16
 corner_radius_bottom_left = 16
-shadow_color = Color(0.08, 1, 0.44, 0.42)
+shadow_color = Color(0.22, 0.38, 0.52, 0.12)
 shadow_size = 14
 
 [sub_resource type="StyleBoxFlat" id="ChoiceYellow"]
@@ -64,7 +80,7 @@ border_width_left = 4
 border_width_top = 4
 border_width_right = 4
 border_width_bottom = 4
-border_color = Color(1, 0.76, 0.12, 1)
+border_color = Color(0.32, 0.51, 0.68, 0.85)
 corner_radius_top_left = 16
 corner_radius_top_right = 16
 corner_radius_bottom_right = 16
@@ -75,17 +91,17 @@ content_margin_left = 18.0
 content_margin_top = 14.0
 content_margin_right = 18.0
 content_margin_bottom = 14.0
-bg_color = Color(0.58, 0.43, 0.03, 0.82)
+bg_color = Color(0.055, 0.12, 0.19, 0.82)
 border_width_left = 4
 border_width_top = 4
 border_width_right = 4
 border_width_bottom = 4
-border_color = Color(1, 0.88, 0.34, 1)
+border_color = Color(0.32, 0.51, 0.68, 0.85)
 corner_radius_top_left = 16
 corner_radius_top_right = 16
 corner_radius_bottom_right = 16
 corner_radius_bottom_left = 16
-shadow_color = Color(1, 0.72, 0.12, 0.34)
+shadow_color = Color(0.22, 0.38, 0.52, 0.12)
 shadow_size = 14
 
 [sub_resource type="StyleBoxFlat" id="ChoiceRed"]
@@ -98,7 +114,7 @@ border_width_left = 4
 border_width_top = 4
 border_width_right = 4
 border_width_bottom = 4
-border_color = Color(1, 0.22, 0.38, 1)
+border_color = Color(0.32, 0.51, 0.68, 0.85)
 corner_radius_top_left = 16
 corner_radius_top_right = 16
 corner_radius_bottom_right = 16
@@ -109,17 +125,17 @@ content_margin_left = 18.0
 content_margin_top = 14.0
 content_margin_right = 18.0
 content_margin_bottom = 14.0
-bg_color = Color(0.58, 0.06, 0.16, 0.82)
+bg_color = Color(0.055, 0.12, 0.19, 0.82)
 border_width_left = 4
 border_width_top = 4
 border_width_right = 4
 border_width_bottom = 4
-border_color = Color(1, 0.42, 0.54, 1)
+border_color = Color(0.32, 0.51, 0.68, 0.85)
 corner_radius_top_left = 16
 corner_radius_top_right = 16
 corner_radius_bottom_right = 16
 corner_radius_bottom_left = 16
-shadow_color = Color(1, 0.16, 0.34, 0.34)
+shadow_color = Color(0.22, 0.38, 0.52, 0.12)
 shadow_size = 14
 
 [sub_resource type="StyleBoxFlat" id="ChoiceGreenSelected"]
@@ -127,17 +143,17 @@ content_margin_left = 18.0
 content_margin_top = 14.0
 content_margin_right = 18.0
 content_margin_bottom = 14.0
-bg_color = Color(0.04, 0.48, 0.24, 0.82)
+bg_color = Color(0.055, 0.12, 0.19, 0.82)
 border_width_left = 5
 border_width_top = 5
 border_width_right = 5
 border_width_bottom = 5
-border_color = Color(0.24, 1, 0.58, 1)
+border_color = Color(0.32, 0.51, 0.68, 0.85)
 corner_radius_top_left = 16
 corner_radius_top_right = 16
 corner_radius_bottom_right = 16
 corner_radius_bottom_left = 16
-shadow_color = Color(0.08, 1, 0.44, 0.34)
+shadow_color = Color(0.22, 0.38, 0.52, 0.12)
 shadow_size = 12
 
 [sub_resource type="StyleBoxFlat" id="ChoiceGreenDisabled"]
@@ -146,7 +162,7 @@ border_width_left = 4
 border_width_top = 4
 border_width_right = 4
 border_width_bottom = 4
-border_color = Color(0.22, 1, 0.23, 0.82)
+border_color = Color(0.32, 0.51, 0.68, 0.82)
 corner_radius_top_left = 16
 corner_radius_top_right = 16
 corner_radius_bottom_right = 16
@@ -157,17 +173,17 @@ content_margin_left = 18.0
 content_margin_top = 14.0
 content_margin_right = 18.0
 content_margin_bottom = 14.0
-bg_color = Color(0.56, 0.39, 0.02, 0.86)
+bg_color = Color(0.055, 0.12, 0.19, 0.86)
 border_width_left = 5
 border_width_top = 5
 border_width_right = 5
 border_width_bottom = 5
-border_color = Color(1, 0.84, 0.24, 1)
+border_color = Color(0.32, 0.51, 0.68, 0.85)
 corner_radius_top_left = 16
 corner_radius_top_right = 16
 corner_radius_bottom_right = 16
 corner_radius_bottom_left = 16
-shadow_color = Color(1, 0.72, 0.12, 0.26)
+shadow_color = Color(0.22, 0.38, 0.52, 0.12)
 shadow_size = 12
 
 [sub_resource type="StyleBoxFlat" id="ChoiceYellowDisabled"]
@@ -176,7 +192,7 @@ border_width_left = 4
 border_width_top = 4
 border_width_right = 4
 border_width_bottom = 4
-border_color = Color(1, 0.76, 0.12, 0.82)
+border_color = Color(0.32, 0.51, 0.68, 0.82)
 corner_radius_top_left = 16
 corner_radius_top_right = 16
 corner_radius_bottom_right = 16
@@ -187,17 +203,17 @@ content_margin_left = 18.0
 content_margin_top = 14.0
 content_margin_right = 18.0
 content_margin_bottom = 14.0
-bg_color = Color(0.58, 0.05, 0.14, 0.86)
+bg_color = Color(0.055, 0.12, 0.19, 0.86)
 border_width_left = 5
 border_width_top = 5
 border_width_right = 5
 border_width_bottom = 5
-border_color = Color(1, 0.36, 0.5, 1)
+border_color = Color(0.32, 0.51, 0.68, 0.85)
 corner_radius_top_left = 16
 corner_radius_top_right = 16
 corner_radius_bottom_right = 16
 corner_radius_bottom_left = 16
-shadow_color = Color(1, 0.16, 0.34, 0.26)
+shadow_color = Color(0.22, 0.38, 0.52, 0.12)
 shadow_size = 12
 
 [sub_resource type="StyleBoxFlat" id="ChoiceRedDisabled"]
@@ -206,7 +222,7 @@ border_width_left = 4
 border_width_top = 4
 border_width_right = 4
 border_width_bottom = 4
-border_color = Color(1, 0.22, 0.38, 0.82)
+border_color = Color(0.32, 0.51, 0.68, 0.82)
 corner_radius_top_left = 16
 corner_radius_top_right = 16
 corner_radius_bottom_right = 16
@@ -222,7 +238,7 @@ border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(0.22, 1, 0.23, 0.75)
+border_color = Color(0.32, 0.51, 0.68, 0.75)
 corner_radius_top_left = 20
 corner_radius_top_right = 20
 corner_radius_bottom_right = 20
@@ -238,7 +254,7 @@ border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(0.22, 1, 0.23, 0.85)
+border_color = Color(0.32, 0.51, 0.68, 0.85)
 corner_radius_top_left = 36
 corner_radius_top_right = 36
 corner_radius_bottom_right = 36
@@ -259,7 +275,7 @@ border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.22, 1, 0.23, 0.02)
+border_color = Color(0.32, 0.51, 0.68, 0.02)
 corner_radius_top_left = 82
 corner_radius_top_right = 82
 corner_radius_bottom_right = 82
@@ -280,7 +296,7 @@ border_width_left = 3
 border_width_top = 3
 border_width_right = 3
 border_width_bottom = 3
-border_color = Color(0.48, 1, 0.42, 0.92)
+border_color = Color(0.32, 0.51, 0.68, 0.85)
 corner_radius_top_left = 72
 corner_radius_top_right = 72
 corner_radius_bottom_right = 72
@@ -299,7 +315,7 @@ border_width_left = 3
 border_width_top = 3
 border_width_right = 3
 border_width_bottom = 3
-border_color = Color(0.48, 1, 0.42, 0.72)
+border_color = Color(0.32, 0.51, 0.68, 0.72)
 corner_radius_top_left = 72
 corner_radius_top_right = 72
 corner_radius_bottom_right = 72
@@ -313,12 +329,12 @@ content_margin_left = 14.0
 content_margin_top = 14.0
 content_margin_right = 14.0
 content_margin_bottom = 14.0
-bg_color = Color(0.03, 0.38, 0.48, 0.94)
+bg_color = Color(0.055, 0.12, 0.19, 0.94)
 border_width_left = 4
 border_width_top = 4
 border_width_right = 4
 border_width_bottom = 4
-border_color = Color(0.48, 1, 0.42, 1)
+border_color = Color(0.32, 0.51, 0.68, 0.85)
 corner_radius_top_left = 72
 corner_radius_top_right = 72
 corner_radius_bottom_right = 72
@@ -332,12 +348,12 @@ content_margin_left = 14.0
 content_margin_top = 14.0
 content_margin_right = 14.0
 content_margin_bottom = 14.0
-bg_color = Color(0.02, 0.27, 0.34, 0.98)
+bg_color = Color(0.055, 0.12, 0.19, 0.98)
 border_width_left = 4
 border_width_top = 4
 border_width_right = 4
 border_width_bottom = 4
-border_color = Color(0.68, 1, 0.55, 1)
+border_color = Color(0.32, 0.51, 0.68, 0.85)
 corner_radius_top_left = 72
 corner_radius_top_right = 72
 corner_radius_bottom_right = 72
@@ -345,6 +361,94 @@ corner_radius_bottom_left = 72
 corner_detail = 16
 anti_aliasing = true
 anti_aliasing_size = 1.0
+
+[sub_resource type="ShaderMaterial" id="ParticleMaterial_1"]
+resource_local_to_scene = true
+shader = ExtResource("particle_shader")
+shader_parameter/speed = 0.04
+shader_parameter/phase_offset = 0.173
+shader_parameter/matrix_color = Color(0.25, 0.43, 0.59, 0.07)
+shader_parameter/particle_color = Color(0.35, 0.54, 0.72, 0.5)
+
+[sub_resource type="ShaderMaterial" id="ParticleMaterial_2"]
+resource_local_to_scene = true
+shader = ExtResource("particle_shader")
+shader_parameter/speed = 0.04
+shader_parameter/phase_offset = 0.346
+shader_parameter/matrix_color = Color(0.25, 0.43, 0.59, 0.07)
+shader_parameter/particle_color = Color(0.35, 0.54, 0.72, 0.5)
+
+[sub_resource type="ShaderMaterial" id="ParticleMaterial_3"]
+resource_local_to_scene = true
+shader = ExtResource("particle_shader")
+shader_parameter/speed = 0.04
+shader_parameter/phase_offset = 0.519
+shader_parameter/matrix_color = Color(0.25, 0.43, 0.59, 0.07)
+shader_parameter/particle_color = Color(0.35, 0.54, 0.72, 0.5)
+
+[sub_resource type="ShaderMaterial" id="ParticleMaterial_4"]
+resource_local_to_scene = true
+shader = ExtResource("particle_shader")
+shader_parameter/speed = 0.04
+shader_parameter/phase_offset = 0.692
+shader_parameter/matrix_color = Color(0.25, 0.43, 0.59, 0.07)
+shader_parameter/particle_color = Color(0.35, 0.54, 0.72, 0.5)
+
+[sub_resource type="ShaderMaterial" id="ParticleMaterial_5"]
+resource_local_to_scene = true
+shader = ExtResource("particle_shader")
+shader_parameter/speed = 0.04
+shader_parameter/phase_offset = 0.865
+shader_parameter/matrix_color = Color(0.25, 0.43, 0.59, 0.07)
+shader_parameter/particle_color = Color(0.35, 0.54, 0.72, 0.5)
+
+[sub_resource type="ShaderMaterial" id="ParticleMaterial_6"]
+resource_local_to_scene = true
+shader = ExtResource("particle_shader")
+shader_parameter/speed = 0.04
+shader_parameter/phase_offset = 0.038
+shader_parameter/matrix_color = Color(0.25, 0.43, 0.59, 0.07)
+shader_parameter/particle_color = Color(0.35, 0.54, 0.72, 0.5)
+
+[sub_resource type="ShaderMaterial" id="ParticleMaterial_7"]
+resource_local_to_scene = true
+shader = ExtResource("particle_shader")
+shader_parameter/speed = 0.04
+shader_parameter/phase_offset = 0.211
+shader_parameter/matrix_color = Color(0.25, 0.43, 0.59, 0.07)
+shader_parameter/particle_color = Color(0.35, 0.54, 0.72, 0.5)
+
+[sub_resource type="ShaderMaterial" id="ParticleMaterial_8"]
+resource_local_to_scene = true
+shader = ExtResource("particle_shader")
+shader_parameter/speed = 0.04
+shader_parameter/phase_offset = 0.384
+shader_parameter/matrix_color = Color(0.25, 0.43, 0.59, 0.07)
+shader_parameter/particle_color = Color(0.35, 0.54, 0.72, 0.5)
+
+[sub_resource type="ShaderMaterial" id="ParticleMaterial_9"]
+resource_local_to_scene = true
+shader = ExtResource("particle_shader")
+shader_parameter/speed = 0.04
+shader_parameter/phase_offset = 0.557
+shader_parameter/matrix_color = Color(0.25, 0.43, 0.59, 0.07)
+shader_parameter/particle_color = Color(0.35, 0.54, 0.72, 0.5)
+
+[sub_resource type="ShaderMaterial" id="ParticleMaterial_10"]
+resource_local_to_scene = true
+shader = ExtResource("particle_shader")
+shader_parameter/speed = 0.04
+shader_parameter/phase_offset = 0.730
+shader_parameter/matrix_color = Color(0.25, 0.43, 0.59, 0.07)
+shader_parameter/particle_color = Color(0.35, 0.54, 0.72, 0.5)
+
+[sub_resource type="ShaderMaterial" id="ParticleMaterial_11"]
+resource_local_to_scene = true
+shader = ExtResource("particle_shader")
+shader_parameter/speed = 0.04
+shader_parameter/phase_offset = 0.903
+shader_parameter/matrix_color = Color(0.25, 0.43, 0.59, 0.07)
+shader_parameter/particle_color = Color(0.35, 0.54, 0.72, 0.5)
 
 [node name="GameplayHUD" type="Control"]
 layout_mode = 3
@@ -354,6 +458,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_script")
+theme = ExtResource("blue_theme")
+BashRules = "Take 1–3 anchors per turn.\n\nTaking the last anchor loses.\n\nChoose A, B or C, then confirm."
+LimitRules = "Request 1–3 together.\n\nNever repeat your last request.\n\nAt zero: smaller request wins.\nTies use earlier choices."
 
 [node name="SafeArea" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -372,9 +479,24 @@ layout_mode = 2
 theme_override_constants/separation = 14
 
 [node name="Header" type="PanelContainer" parent="SafeArea/Layout"]
-custom_minimum_size = Vector2(0, 72)
+custom_minimum_size = Vector2(0, 64)
 layout_mode = 2
 theme_override_styles/panel = SubResource("HeaderFrame")
+
+[node name="ParticleFrame" type="ColorRect" parent="SafeArea/Layout/Header"]
+top_level = true
+material = SubResource("ParticleMaterial_1")
+layout_mode = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = -16.0
+offset_top = -16.0
+offset_right = 16.0
+offset_bottom = 16.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("particle_script")
 
 [node name="HeaderRow" type="HBoxContainer" parent="SafeArea/Layout/Header"]
 layout_mode = 2
@@ -382,21 +504,10 @@ layout_mode = 2
 [node name="PhaseBanner" type="Label" parent="SafeArea/Layout/Header/HeaderRow"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 26
-text = "BACKGROUND / EXPLANATION"
+theme_override_font_sizes/font_size = 30
+text = "BASH · TAKE TURNS"
 vertical_alignment = 1
-
-[node name="HeaderSpacer" type="Control" parent="SafeArea/Layout/Header/HeaderRow"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="PlayTimeLabel" type="Label" parent="SafeArea/Layout/Header/HeaderRow"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 18
-text = "PLAY TIME · 00:00"
-horizontal_alignment = 2
-vertical_alignment = 1
+material = ExtResource("heading_matrix")
 
 [node name="Content" type="HBoxContainer" parent="SafeArea/Layout"]
 layout_mode = 2
@@ -404,13 +515,28 @@ size_flags_vertical = 3
 theme_override_constants/separation = 24
 
 [node name="LeftColumn" type="VBoxContainer" parent="SafeArea/Layout/Content"]
-custom_minimum_size = Vector2(320, 0)
+custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
 theme_override_constants/separation = 14
 
 [node name="LeftStatus" type="PanelContainer" parent="SafeArea/Layout/Content/LeftColumn"]
-custom_minimum_size = Vector2(320, 390)
+custom_minimum_size = Vector2(300, 530)
 layout_mode = 2
+
+[node name="ParticleFrame" type="ColorRect" parent="SafeArea/Layout/Content/LeftColumn/LeftStatus"]
+top_level = true
+material = SubResource("ParticleMaterial_2")
+layout_mode = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = -16.0
+offset_top = -16.0
+offset_right = 16.0
+offset_bottom = 16.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("particle_script")
 
 [node name="LeftVBox" type="VBoxContainer" parent="SafeArea/Layout/Content/LeftColumn/LeftStatus"]
 layout_mode = 2
@@ -419,31 +545,48 @@ theme_override_constants/separation = 16
 [node name="Title" type="Label" parent="SafeArea/Layout/Content/LeftColumn/LeftStatus/LeftVBox"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 26
-text = "CURRENT STATUS"
+text = "HOW TO PLAY"
+material = ExtResource("heading_matrix")
 
 [node name="Rule" type="ColorRect" parent="SafeArea/Layout/Content/LeftColumn/LeftStatus/LeftVBox"]
 custom_minimum_size = Vector2(110, 3)
 layout_mode = 2
 size_flags_horizontal = 0
-color = Color(0.22, 1, 0.23, 0.9)
+color = Color(0.4, 0.62, 0.79, 0.9)
 
 [node name="Details" type="RichTextLabel" parent="SafeArea/Layout/Content/LeftColumn/LeftStatus/LeftVBox"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/line_separation = 3
-theme_override_font_sizes/normal_font_size = 17
+theme_override_font_sizes/normal_font_size = 25
 bbcode_enabled = true
-text = "• Starting anchors: 15\n\n• Active anchors: 8\n\n• Player's turn\n\n• Disengaging the keystone loses synchronization"
+text = "Take 1–3 anchors per turn.
+
+Taking the last anchor loses.
+
+Choose A, B or C, then confirm."
 fit_content = false
 scroll_active = false
 
-[node name="LeftSpacer" type="Control" parent="SafeArea/Layout/Content/LeftColumn"]
-custom_minimum_size = Vector2(0, 150)
-layout_mode = 2
-
 [node name="TutorCard" type="PanelContainer" parent="SafeArea/Layout/Content/LeftColumn"]
-custom_minimum_size = Vector2(320, 362)
+custom_minimum_size = Vector2(300, 260)
 layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ParticleFrame" type="ColorRect" parent="SafeArea/Layout/Content/LeftColumn/TutorCard"]
+top_level = true
+material = SubResource("ParticleMaterial_3")
+layout_mode = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = -16.0
+offset_top = -16.0
+offset_right = 16.0
+offset_bottom = 16.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("particle_script")
 
 [node name="TutorVBox" type="VBoxContainer" parent="SafeArea/Layout/Content/LeftColumn/TutorCard"]
 layout_mode = 2
@@ -457,28 +600,35 @@ layout_mode = 2
 size_flags_horizontal = 4
 theme_override_styles/panel = SubResource("PortraitFrame")
 script = ExtResource("7_smooth_frame")
-segment_count = 192
-ring_width = 2.0
-ring_color = Color(0.22, 1, 0.23, 0.9)
-glow_width = 4.0
+SegmentCount = 192
+RingWidth = 2.0
+RingColor = Color(0.40, 0.62, 0.79, 0.9)
+GlowWidth = 3.0
 
 [node name="PortraitTexture" type="TextureRect" parent="SafeArea/Layout/Content/LeftColumn/TutorCard/TutorVBox/PortraitFrame"]
 custom_minimum_size = Vector2(156, 156)
 layout_mode = 2
 mouse_filter = 2
-texture = ExtResource("3_tutor")
 expand_mode = 1
 stretch_mode = 5
 script = ExtResource("4_atlas_animator")
-columns = 4
-rows = 3
-frames_per_second = 4.0
-hover_amplitude = 3.0
-hover_cycles_per_second = 0.34
+FramesPerSecond = 4.0
+HoverAmplitude = 3.0
+HoverCyclesPerSecond = 0.34
+RedEyeMaterial = ExtResource("portrait_anomaly")
+Columns = 4
+Rows = 3
+AtlasSource = ExtResource("3_tutor")
+
+[node name="FrameDisplay" type="TextureRect" parent="SafeArea/Layout/Content/LeftColumn/TutorCard/TutorVBox/PortraitFrame/PortraitTexture"]
+layout_mode = 0
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
 
 [node name="TutorName" type="Label" parent="SafeArea/Layout/Content/LeftColumn/TutorCard/TutorVBox"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 24
 text = "THE TUTOR"
 horizontal_alignment = 1
 
@@ -488,8 +638,23 @@ size_flags_horizontal = 3
 theme_override_constants/separation = 14
 
 [node name="RemainingCard" type="PanelContainer" parent="SafeArea/Layout/Content/Center"]
-custom_minimum_size = Vector2(0, 390)
+custom_minimum_size = Vector2(0, 400)
 layout_mode = 2
+
+[node name="ParticleFrame" type="ColorRect" parent="SafeArea/Layout/Content/Center/RemainingCard"]
+top_level = true
+material = SubResource("ParticleMaterial_4")
+layout_mode = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = -16.0
+offset_top = -16.0
+offset_right = 16.0
+offset_bottom = 16.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("particle_script")
 
 [node name="RemainingVBox" type="VBoxContainer" parent="SafeArea/Layout/Content/Center/RemainingCard"]
 layout_mode = 2
@@ -498,8 +663,8 @@ theme_override_constants/separation = 8
 
 [node name="RemainingCaption" type="Label" parent="SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 17
-text = "STABILITY LATTICE · ACTIVE ANCHORS"
+theme_override_font_sizes/font_size = 24
+text = "THE LATTICE"
 horizontal_alignment = 1
 
 [node name="StateRow" type="HBoxContainer" parent="SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox"]
@@ -509,15 +674,15 @@ size_flags_vertical = 3
 theme_override_constants/separation = 18
 
 [node name="ActiveStack" type="VBoxContainer" parent="SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/StateRow"]
-custom_minimum_size = Vector2(190, 0)
+custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
 alignment = 1
 theme_override_constants/separation = 10
 
 [node name="ActiveCaption" type="Label" parent="SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/StateRow/ActiveStack"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 15
-text = "ACTIVE"
+theme_override_font_sizes/font_size = 24
+text = "REMAINING"
 horizontal_alignment = 1
 
 [node name="RemainingValue" type="Label" parent="SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/StateRow/ActiveStack"]
@@ -528,11 +693,20 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="LatticeView" type="Control" parent="SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/StateRow"]
-custom_minimum_size = Vector2(360, 292)
+custom_minimum_size = Vector2(320, 292)
 layout_mode = 2
 size_flags_horizontal = 3
 mouse_filter = 2
 script = ExtResource("2_lattice")
+EnergyCoreTexture = ExtResource("energy_core")
+
+ActiveBlue = Color(0.447, 0.616, 0.741, 1)
+ActiveHighlight = Color(0.710, 0.800, 0.875, 1)
+InactiveBlue = Color(0.322, 0.447, 0.549, 0.251)
+PlayerPreview = Color(0.663, 0.749, 0.847, 1)
+TutorPreview = Color(0.424, 0.639, 0.820, 1)
+WarningColor = Color(0.765, 0.529, 0.576, 1)
+OrbitBlue = Color(0.322, 0.490, 0.620, 1)
 
 [node name="LimitRevealResult" type="RichTextLabel" parent="SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/StateRow/LatticeView"]
 visible = false
@@ -551,26 +725,26 @@ theme_override_colors/font_outline_color = Color(0, 0, 0, 0.94)
 theme_override_constants/outline_size = 8
 theme_override_font_sizes/normal_font_size = 24
 bbcode_enabled = true
-text = "[center][color=#ffcb55]PLAYER −2 ANCHORS[/color]\n[color=#66f4ff]TUTOR −3 ANCHORS[/color][/center]"
+text = "[center][color=#b1c8dd]PLAYER −2 ANCHORS[/color]\n[color=#7faed1]TUTOR −3 ANCHORS[/color][/center]"
 fit_content = false
 scroll_active = false
 vertical_alignment = 1
 
 [node name="SelectionStack" type="VBoxContainer" parent="SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/StateRow"]
-custom_minimum_size = Vector2(250, 0)
+custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
 alignment = 1
 theme_override_constants/separation = 10
 
 [node name="SelectionCaption" type="Label" parent="SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/StateRow/SelectionStack"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 15
-text = "SELECTION"
+theme_override_font_sizes/font_size = 24
+text = "YOUR CHOICE"
 horizontal_alignment = 1
 
 [node name="SelectionLabel" type="Label" parent="SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/StateRow/SelectionStack"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 24
 text = "NO SELECTION"
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -597,58 +771,169 @@ layout_mode = 2
 size_flags_horizontal = 3
 toggle_mode = true
 text = "A\nTAKE 1"
-theme_override_colors/font_disabled_color = Color(0.22, 0.62, 0.23, 0.78)
+theme_override_colors/font_disabled_color = Color(0.48, 0.59, 0.69, 0.95)
 theme_override_styles/disabled = SubResource("ChoiceGreenDisabled")
 theme_override_styles/normal = SubResource("ChoiceGreen")
 theme_override_styles/hover = SubResource("ChoiceGreenHover")
 theme_override_styles/pressed = SubResource("ChoiceGreenSelected")
 theme_override_styles/hover_pressed = SubResource("ChoiceGreenSelected")
-theme_override_colors/font_color = Color(0.22, 1, 0.23, 1)
-theme_override_colors/font_focus_color = Color(0.48, 1, 0.42, 1)
-theme_override_colors/font_hover_color = Color(0.48, 1, 0.42, 1)
-theme_override_colors/font_pressed_color = Color(0.48, 1, 0.42, 1)
-theme_override_colors/font_hover_pressed_color = Color(0.48, 1, 0.42, 1)
+theme_override_colors/font_color = Color(0.69, 0.8, 0.9, 1)
+theme_override_colors/font_focus_color = Color(0.69, 0.8, 0.9, 1)
+theme_override_colors/font_hover_color = Color(0.69, 0.8, 0.9, 1)
+theme_override_colors/font_pressed_color = Color(0.69, 0.8, 0.9, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.69, 0.8, 0.9, 1)
+script = ExtResource("action_state")
+theme_override_font_sizes/font_size = 25
+clip_contents = true
+clip_text = true
+
+[node name="DisabledCross" type="TextureRect" parent="SafeArea/Layout/Content/Center/ActionRow/ChoiceStack/ChoiceRow/Choice1"]
+visible = false
+show_behind_parent = true
+modulate = Color(0.45, 0.62, 0.78, 0.25)
+layout_mode = 1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 18.0
+offset_top = 18.0
+offset_right = -18.0
+offset_bottom = -18.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("lock_texture")
+expand_mode = 1
+stretch_mode = 0
+
+[node name="ParticleFrame" type="ColorRect" parent="SafeArea/Layout/Content/Center/ActionRow/ChoiceStack/ChoiceRow/Choice1"]
+top_level = true
+material = SubResource("ParticleMaterial_5")
+layout_mode = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = -16.0
+offset_top = -16.0
+offset_right = 16.0
+offset_bottom = 16.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("particle_script")
 
 [node name="Choice2" type="Button" parent="SafeArea/Layout/Content/Center/ActionRow/ChoiceStack/ChoiceRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 toggle_mode = true
 text = "B\nTAKE 2"
-theme_override_colors/font_disabled_color = Color(0.72, 0.55, 0.12, 0.78)
+theme_override_colors/font_disabled_color = Color(0.48, 0.59, 0.69, 0.95)
 theme_override_styles/disabled = SubResource("ChoiceYellowDisabled")
 theme_override_styles/normal = SubResource("ChoiceYellow")
 theme_override_styles/hover = SubResource("ChoiceYellowHover")
 theme_override_styles/pressed = SubResource("ChoiceYellowSelected")
 theme_override_styles/hover_pressed = SubResource("ChoiceYellowSelected")
-theme_override_colors/font_color = Color(1, 0.76, 0.12, 1)
-theme_override_colors/font_focus_color = Color(1, 0.88, 0.34, 1)
-theme_override_colors/font_hover_color = Color(1, 0.88, 0.34, 1)
-theme_override_colors/font_pressed_color = Color(1, 0.84, 0.24, 1)
-theme_override_colors/font_hover_pressed_color = Color(1, 0.88, 0.34, 1)
+theme_override_colors/font_color = Color(0.69, 0.8, 0.9, 1)
+theme_override_colors/font_focus_color = Color(0.69, 0.8, 0.9, 1)
+theme_override_colors/font_hover_color = Color(0.69, 0.8, 0.9, 1)
+theme_override_colors/font_pressed_color = Color(0.69, 0.8, 0.9, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.69, 0.8, 0.9, 1)
+script = ExtResource("action_state")
+theme_override_font_sizes/font_size = 25
+clip_contents = true
+clip_text = true
+
+[node name="DisabledCross" type="TextureRect" parent="SafeArea/Layout/Content/Center/ActionRow/ChoiceStack/ChoiceRow/Choice2"]
+visible = false
+show_behind_parent = true
+modulate = Color(0.45, 0.62, 0.78, 0.25)
+layout_mode = 1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 18.0
+offset_top = 18.0
+offset_right = -18.0
+offset_bottom = -18.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("lock_texture")
+expand_mode = 1
+stretch_mode = 0
+
+[node name="ParticleFrame" type="ColorRect" parent="SafeArea/Layout/Content/Center/ActionRow/ChoiceStack/ChoiceRow/Choice2"]
+top_level = true
+material = SubResource("ParticleMaterial_6")
+layout_mode = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = -16.0
+offset_top = -16.0
+offset_right = 16.0
+offset_bottom = 16.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("particle_script")
 
 [node name="Choice3" type="Button" parent="SafeArea/Layout/Content/Center/ActionRow/ChoiceStack/ChoiceRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 toggle_mode = true
 text = "C\nTAKE 3"
-theme_override_colors/font_disabled_color = Color(0.72, 0.16, 0.25, 0.78)
+theme_override_colors/font_disabled_color = Color(0.48, 0.59, 0.69, 0.95)
 theme_override_styles/disabled = SubResource("ChoiceRedDisabled")
 theme_override_styles/normal = SubResource("ChoiceRed")
 theme_override_styles/hover = SubResource("ChoiceRedHover")
 theme_override_styles/pressed = SubResource("ChoiceRedSelected")
 theme_override_styles/hover_pressed = SubResource("ChoiceRedSelected")
-theme_override_colors/font_color = Color(1, 0.22, 0.38, 1)
-theme_override_colors/font_focus_color = Color(1, 0.42, 0.54, 1)
-theme_override_colors/font_hover_color = Color(1, 0.42, 0.54, 1)
-theme_override_colors/font_pressed_color = Color(1, 0.36, 0.5, 1)
-theme_override_colors/font_hover_pressed_color = Color(1, 0.42, 0.54, 1)
+theme_override_colors/font_color = Color(0.69, 0.8, 0.9, 1)
+theme_override_colors/font_focus_color = Color(0.69, 0.8, 0.9, 1)
+theme_override_colors/font_hover_color = Color(0.69, 0.8, 0.9, 1)
+theme_override_colors/font_pressed_color = Color(0.69, 0.8, 0.9, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.69, 0.8, 0.9, 1)
+script = ExtResource("action_state")
+theme_override_font_sizes/font_size = 25
+clip_contents = true
+clip_text = true
+
+[node name="DisabledCross" type="TextureRect" parent="SafeArea/Layout/Content/Center/ActionRow/ChoiceStack/ChoiceRow/Choice3"]
+visible = false
+show_behind_parent = true
+modulate = Color(0.45, 0.62, 0.78, 0.25)
+layout_mode = 1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 18.0
+offset_top = 18.0
+offset_right = -18.0
+offset_bottom = -18.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("lock_texture")
+expand_mode = 1
+stretch_mode = 0
+
+[node name="ParticleFrame" type="ColorRect" parent="SafeArea/Layout/Content/Center/ActionRow/ChoiceStack/ChoiceRow/Choice3"]
+top_level = true
+material = SubResource("ParticleMaterial_7")
+layout_mode = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = -16.0
+offset_top = -16.0
+offset_right = 16.0
+offset_bottom = 16.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("particle_script")
 
 [node name="ConfirmButton" type="Button" parent="SafeArea/Layout/Content/Center/ActionRow"]
 custom_minimum_size = Vector2(150, 150)
 layout_mode = 2
 disabled = true
-theme_override_font_sizes/font_size = 17
-theme_override_colors/font_disabled_color = Color(0.22, 1, 0.23, 0.72)
+theme_override_font_sizes/font_size = 24
+theme_override_colors/font_disabled_color = Color(0.48, 0.59, 0.69, 0.95)
 theme_override_styles/disabled = SubResource("ConfirmCircleDisabled")
 theme_override_styles/normal = SubResource("ConfirmCircle")
 theme_override_styles/hover = SubResource("ConfirmCircleHover")
@@ -656,10 +941,47 @@ theme_override_styles/pressed = SubResource("ConfirmCirclePressed")
 theme_override_styles/hover_pressed = SubResource("ConfirmCirclePressed")
 theme_override_styles/focus = SubResource("ConfirmCircle")
 text = "SELECT\nFIRST"
+script = ExtResource("action_state")
+clip_contents = true
+clip_text = true
+
+[node name="DisabledCross" type="TextureRect" parent="SafeArea/Layout/Content/Center/ActionRow/ConfirmButton"]
+visible = false
+show_behind_parent = true
+modulate = Color(0.45, 0.62, 0.78, 0.25)
+layout_mode = 1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 28.0
+offset_top = 28.0
+offset_right = -28.0
+offset_bottom = -28.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("lock_texture")
+expand_mode = 1
+stretch_mode = 0
 
 [node name="DialoguePanel" type="PanelContainer" parent="SafeArea/Layout/Content/Center"]
-custom_minimum_size = Vector2(0, 362)
+custom_minimum_size = Vector2(0, 300)
 layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ParticleFrame" type="ColorRect" parent="SafeArea/Layout/Content/Center/DialoguePanel"]
+top_level = true
+material = SubResource("ParticleMaterial_8")
+layout_mode = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = -16.0
+offset_top = -16.0
+offset_right = 16.0
+offset_bottom = 16.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("particle_script")
 
 [node name="DialogueVBox" type="VBoxContainer" parent="SafeArea/Layout/Content/Center/DialoguePanel"]
 layout_mode = 2
@@ -667,40 +989,38 @@ theme_override_constants/separation = 8
 
 [node name="Speaker" type="Label" parent="SafeArea/Layout/Content/Center/DialoguePanel/DialogueVBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.18, 0.3, 1)
-theme_override_font_sizes/font_size = 20
+theme_override_colors/font_color = Color(0.69, 0.8, 0.9, 1)
+theme_override_font_sizes/font_size = 24
 text = "TUTOR"
 
 [node name="Text" type="RichTextLabel" parent="SafeArea/Layout/Content/Center/DialoguePanel/DialogueVBox"]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_font_sizes/normal_font_size = 30
+theme_override_font_sizes/normal_font_size = 32
 bbcode_enabled = true
 text = "[center]You can change your choice before confirming. After you confirm, I will act.[/center]"
 fit_content = false
 scroll_active = false
 autowrap_mode = 2
 vertical_alignment = 1
+visible_characters_behavior = 1
 
-[node name="TutorCommitmentStatus" type="RichTextLabel" parent="SafeArea/Layout/Content/Center/DialoguePanel/DialogueVBox/Text"]
+[node name="TutorCommitmentStatus" type="RichTextLabel" parent="SafeArea/Layout/Content/Center/DialoguePanel/DialogueVBox"]
 visible = false
 z_index = 4
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-grow_horizontal = 2
-offset_bottom = 82.0
+layout_mode = 2
 mouse_filter = 2
-theme_override_colors/default_color = Color(0.4, 0.96, 1, 1)
-theme_override_colors/font_outline_color = Color(0, 0.06, 0.08, 0.96)
+theme_override_colors/default_color = Color(0.69, 0.8, 0.9, 1)
+theme_override_colors/font_outline_color = Color(0.025, 0.05, 0.08, 0.9)
 theme_override_constants/outline_size = 8
 theme_override_font_sizes/normal_font_size = 24
 bbcode_enabled = true
-text = "[center][color=#66f4ff]◆ TUTOR SELECTION COMPLETE ◆[/color]\n[color=#9df9ff]COMMITMENT SEALED · VALUE HIDDEN[/color][/center]"
+text = "Your choice is locked. Revealing shortly…"
 fit_content = false
 scroll_active = false
 autowrap_mode = 2
 vertical_alignment = 0
+custom_minimum_size = Vector2(0, 40)
 
 [node name="CompletionCue" type="Label" parent="SafeArea/Layout/Content/Center/DialoguePanel/DialogueVBox/Text"]
 visible = false
@@ -717,20 +1037,36 @@ offset_bottom = -4.0
 grow_horizontal = 2
 grow_vertical = 0
 mouse_filter = 2
-theme_override_colors/font_color = Color(0.22, 1, 0.23, 1)
+theme_override_colors/font_color = Color(0.69, 0.8, 0.9, 1)
 theme_override_font_sizes/font_size = 24
 text = "▼"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="RightColumn" type="VBoxContainer" parent="SafeArea/Layout/Content"]
-custom_minimum_size = Vector2(360, 0)
+custom_minimum_size = Vector2(340, 0)
 layout_mode = 2
 theme_override_constants/separation = 14
 
 [node name="RightLog" type="PanelContainer" parent="SafeArea/Layout/Content/RightColumn"]
-custom_minimum_size = Vector2(360, 390)
+custom_minimum_size = Vector2(340, 0)
 layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ParticleFrame" type="ColorRect" parent="SafeArea/Layout/Content/RightColumn/RightLog"]
+top_level = true
+material = SubResource("ParticleMaterial_9")
+layout_mode = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = -16.0
+offset_top = -16.0
+offset_right = 16.0
+offset_bottom = 16.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("particle_script")
 
 [node name="RightVBox" type="VBoxContainer" parent="SafeArea/Layout/Content/RightColumn/RightLog"]
 layout_mode = 2
@@ -739,41 +1075,46 @@ theme_override_constants/separation = 16
 [node name="Title" type="Label" parent="SafeArea/Layout/Content/RightColumn/RightLog/RightVBox"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 26
-text = "SYSTEM"
+text = "CHOICE HISTORY"
+material = ExtResource("heading_matrix")
 
 [node name="Rule" type="ColorRect" parent="SafeArea/Layout/Content/RightColumn/RightLog/RightVBox"]
 custom_minimum_size = Vector2(110, 3)
 layout_mode = 2
 size_flags_horizontal = 0
-color = Color(0.22, 1, 0.23, 0.9)
-
-[node name="Status" type="Label" parent="SafeArea/Layout/Content/RightColumn/RightLog/RightVBox"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.32, 1, 0.28, 1)
-theme_override_font_sizes/font_size = 17
-text = "STATUS · WAITING FOR PLAYER"
-autowrap_mode = 2
+color = Color(0.4, 0.62, 0.79, 0.9)
 
 [node name="Log" type="RichTextLabel" parent="SafeArea/Layout/Content/RightColumn/RightLog/RightVBox"]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_font_sizes/normal_font_size = 18
+theme_override_font_sizes/normal_font_size = 25
 bbcode_enabled = true
-text = "[b]SYSTEM[/b]\n\nThe action log will appear here."
+text = "Your choices will appear here after each turn."
 fit_content = false
 scroll_active = true
 scroll_following = true
 autowrap_mode = 2
 
-[node name="RightSpacer" type="Control" parent="SafeArea/Layout/Content/RightColumn"]
-layout_mode = 2
-size_flags_vertical = 3
-
 [node name="BackButton" type="Button" parent="SafeArea/Layout/Content/RightColumn"]
-custom_minimum_size = Vector2(360, 52)
+custom_minimum_size = Vector2(340, 64)
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 24
 text = "SAVE & BACK"
+
+[node name="ParticleFrame" type="ColorRect" parent="SafeArea/Layout/Content/RightColumn/BackButton"]
+top_level = true
+material = SubResource("ParticleMaterial_10")
+layout_mode = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = -16.0
+offset_top = -16.0
+offset_right = 16.0
+offset_bottom = 16.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("particle_script")
 
 [node name="ResultOverlay" type="Control" parent="."]
 visible = false
@@ -793,10 +1134,10 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-theme_override_colors/font_color = Color(1, 0.82, 0.12, 1)
+theme_override_colors/font_color = Color(0.69, 0.8, 0.9, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 0.96)
 theme_override_constants/outline_size = 12
-theme_override_font_sizes/font_size = 184
+theme_override_font_sizes/font_size = 110
 text = "PLAYER WIN"
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -828,6 +1169,21 @@ offset_right = 1180.0
 offset_bottom = 952.0
 theme_override_styles/panel = SubResource("ChapterFrame")
 
+[node name="ParticleFrame" type="ColorRect" parent="ChapterOverlay/ChapterGlass"]
+top_level = true
+material = SubResource("ParticleMaterial_11")
+layout_mode = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = -16.0
+offset_top = -16.0
+offset_right = 16.0
+offset_bottom = 16.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("particle_script")
+
 [node name="ChapterVBox" type="VBoxContainer" parent="ChapterOverlay/ChapterGlass"]
 layout_mode = 2
 alignment = 1
@@ -836,17 +1192,19 @@ alignment = 1
 layout_mode = 2
 theme_override_font_sizes/font_size = 74
 text = "Chapter 0"
+material = ExtResource("heading_matrix")
 
 [node name="ChapterTitle" type="Label" parent="ChapterOverlay/ChapterGlass/ChapterVBox"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
 text = "Background"
+material = ExtResource("heading_matrix")
 
 [node name="LaserRule" type="ColorRect" parent="ChapterOverlay/ChapterGlass/ChapterVBox"]
 custom_minimum_size = Vector2(270, 4)
 layout_mode = 2
 size_flags_horizontal = 0
-color = Color(0.22, 1, 0.23, 0.9)
+color = Color(0.4, 0.62, 0.79, 0.9)
 
 [node name="ForcedChoiceTutorial" type="Control" parent="."]
 visible = false
@@ -876,3 +1234,4 @@ mouse_filter = 2
 texture = ExtResource("6_tutorial_pointer")
 expand_mode = 1
 stretch_mode = 5
+modulate = Color(0.45, 0.65, 0.85, 0.8)

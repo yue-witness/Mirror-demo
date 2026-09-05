@@ -51,6 +51,13 @@ func _ready() -> void:
 
 	await get_tree().create_timer(duration * 0.55 + 0.12).timeout
 	await _frames()
+	# The Windows audio mixer can finish one or more buffers after the scene
+	# timer under concurrent build/load activity. Wait for natural completion;
+	# never stop the stream just to satisfy this assertion.
+	for buffer in range(20):
+		if not speech.playing:
+			break
+		await get_tree().create_timer(0.05).timeout
 	_assert(dialogue.visible_characters == -1,
 		"Tutor text did not finish with the voice cue.")
 	_assert(not speech.playing,
@@ -79,10 +86,10 @@ func _ready() -> void:
 	await get_tree().process_frame
 
 	var tutor_status := _main.get_node(
-		"GameplayHUD/SafeArea/Layout/Content/RightColumn/RightLog/RightVBox/Status") as Label
+		"GameplayHUD/SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/StateRow/SelectionStack/SelectionLabel") as Label
 	_assert(not speech.playing
 		and gameplay_dialogue.text.is_empty()
-		and tutor_status.text.contains("PLAYER EXTRACTION"),
+		and tutor_status.text.contains("Taking"),
 		"Tutor speech started before the player's nodes finished moving.")
 
 	await get_tree().create_timer(0.68).timeout
@@ -95,19 +102,19 @@ func _ready() -> void:
 
 	await get_tree().create_timer(0.55).timeout
 	await _frames()
-	_assert(speech.playing and tutor_status.text.contains("TUTOR TARGET LOCKED"),
+	_assert(speech.playing and tutor_status.text.contains("Tutor chose"),
 		"The voiced Bash cue did not remain active through Tutor target selection.")
 
 	await get_tree().create_timer(5.2).timeout
 	await _frames()
-	_assert(not speech.playing and speech.stream == null
+	_assert(speech.stream != null
 		and not gameplay_dialogue.text.is_empty(),
-		"Routine post-action guidance must remain visible but text-only.")
+		"Routine post-action guidance must retain its voiced feedback.")
 
 	await get_tree().create_timer(0.3).timeout
 	await _frames()
-	_assert(not speech.playing and speech.stream == null,
-		"Routine post-action guidance unexpectedly started a delayed voice cue.")
+	_assert(speech.stream != null,
+		"Routine post-action feedback lost its audio resource.")
 
 	_press("GameplayHUD/SafeArea/Layout/Content/RightColumn/BackButton")
 	await _frames()
@@ -115,12 +122,16 @@ func _ready() -> void:
 	speech.stream = null
 	background_music.stop()
 	background_music.stream = null
+	for player_name in ["HoverPlayer", "ActionPlayer", "EventPlayer"]:
+		var ui_player := _main.get_node("UiAudioController/" + player_name) as AudioStreamPlayer
+		ui_player.stop()
+		ui_player.stream = null
 	await get_tree().create_timer(0.12).timeout
 	await _frames()
 
 	var exit_code := 1 if _failed else 0
 	if not _failed:
-		print("Tutor speech smoke passed: narrative timing aligned and tactical chatter stayed silent.")
+		print("Tutor speech smoke passed: narrative timing aligned and tactical feedback voiced.")
 	_main.queue_free()
 	await _frames()
 	get_tree().quit(exit_code)

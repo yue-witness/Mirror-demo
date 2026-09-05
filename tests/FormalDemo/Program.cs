@@ -116,8 +116,8 @@ internal static class Program
         Assert(speech.Count == 197,
             $"Tutor speech manifest must contain 197 rendered cues, got {speech.Count}.");
         Assert(TutorPresentationPolicy.ResolveSpeechMode(
-                "choice_hesitation_wait") == TutorSpeechMode.Silent,
-            "Repeated choice-time chatter must remain text-only.");
+                "choice_hesitation_wait") == TutorSpeechMode.Standard,
+            "Choice-time feedback must use non-interrupting standard speech.");
         Assert(TutorPresentationPolicy.ResolveSpeechMode(
                 "summary_complete") == TutorSpeechMode.Essential,
             "Narrative outcomes must retain Tutor speech.");
@@ -242,10 +242,11 @@ internal static class Program
         string musicController = File.ReadAllText(Path.Combine(
             root,
             "scripts",
+            "Presentation",
             "Audio",
             "BackgroundMusicPlayer.cs"));
         Assert(musicController.Contains("music.Loop = true", StringComparison.Ordinal)
-            && musicController.Contains("DuckedVolumeDb = -28.0f", StringComparison.Ordinal),
+            && musicController.Contains("DuckedVolumeDb { get; set; } = -28.0f", StringComparison.Ordinal),
             "The BGM controller no longer loops or ducks beneath Tutor speech.");
     }
 
