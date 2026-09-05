@@ -121,7 +121,7 @@
       { "id": "limit_lock_delay", "speaker": "TUTOR", "text": "I received the lock signal. Do not infer certainty from the delay." }
     ],
     "limit_tutor_choice_revealed": [
-      { "id": "limit_reveal_tutor_choice", "speaker": "TUTOR", "text": "My sealed request is now public. Its cyan orbiting anchors show the exact quantity. Hold the comparison before execution." }
+      { "id": "limit_reveal_tutor_choice", "speaker": "TUTOR", "text": "Limit Bash is active. The lattice will apply both locked requests together." }
     ],
     "limit_reveal": [
       { "id": "limit_reveal_compare", "speaker": "TUTOR", "text": "Both requests are public. Compare the new active anchor count before proceeding." },

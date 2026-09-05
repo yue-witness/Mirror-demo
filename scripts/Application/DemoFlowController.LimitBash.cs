@@ -163,7 +163,7 @@ public partial class DemoFlowController
 
         await ToSignal(
             GetTree().CreateTimer(
-                GameplayHUD.LimitRevealNumberHoldSeconds),
+                _hud.RevealNumberHoldSeconds),
             SceneTreeTimer.SignalName.Timeout);
 
         if (expectedVersion != _flowVersion

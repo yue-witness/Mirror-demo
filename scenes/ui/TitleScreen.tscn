@@ -1,14 +1,11 @@
 [gd_scene format=3 uid="uid://ct3nulc7aith0"]
 
-[ext_resource type="Theme" path="res://themes/ProjectMirrorBlueTheme.tres" id="blue_theme"]
-
-[ext_resource type="Material" path="res://themes/DotMatrixTextMaterial.tres" id="heading_matrix"]
-
-[ext_resource type="Shader" path="res://shaders/ui_particle_frame.gdshader" id="particle_shader"]
-
-[ext_resource type="Script" path="res://scripts/Presentation/Effects/ParticleFrame.cs" id="particle_script"]
-
 [ext_resource type="Script" uid="uid://b0o2qlaj428b7" path="res://scripts/Presentation/Screens/TitleScreen.cs" id="1_script"]
+[ext_resource type="Theme" uid="uid://coiciha5l3dul" path="res://themes/ProjectMirrorBlueTheme.tres" id="blue_theme"]
+[ext_resource type="Material" path="res://themes/DotMatrixTextMaterial.tres" id="heading_matrix"]
+[ext_resource type="Script" uid="uid://bkdqkqdnfo0og" path="res://scripts/Presentation/Components/MatrixButtonCaption.cs" id="matrix_caption"]
+[ext_resource type="Script" uid="uid://b7ckux2vkxvpd" path="res://scripts/Presentation/Effects/ParticleFrame.cs" id="particle_script"]
+[ext_resource type="Shader" uid="uid://dfh15wohjn34g" path="res://shaders/ui_particle_frame.gdshader" id="particle_shader"]
 
 [sub_resource type="StyleBoxFlat" id="TitleGlass"]
 content_margin_left = 64.0
@@ -26,66 +23,135 @@ corner_radius_top_right = 36
 corner_radius_bottom_right = 36
 corner_radius_bottom_left = 36
 shadow_color = Color(0, 0, 0, 0)
-shadow_size = 0
-
-[sub_resource type="StyleBoxFlat" id="ConfirmDim"]
-bg_color = Color(0, 0, 0, 0)
 
 [sub_resource type="ShaderMaterial" id="ParticleMaterial_1"]
 resource_local_to_scene = true
 shader = ExtResource("particle_shader")
-shader_parameter/speed = 0.04
-shader_parameter/phase_offset = 0.173
 shader_parameter/matrix_color = Color(0.25, 0.43, 0.59, 0.07)
 shader_parameter/particle_color = Color(0.35, 0.54, 0.72, 0.5)
+shader_parameter/aspect_ratio = 1.2798165
+shader_parameter/border_inset_uv = Vector2(0.015232975, 0.019495413)
+shader_parameter/pixel_size_y = 0.0022935779
+shader_parameter/phase_offset = 0.173
+shader_parameter/speed = 0.04
+shader_parameter/corner_radius = 0.08256881
+shader_parameter/line_width = 0.004
+shader_parameter/dot_density = 72.0
+shader_parameter/trail_length = 0.22
+shader_parameter/trail_decay = 14.0
+shader_parameter/diffusion = 3.0
+shader_parameter/particle_width_scale = 1.65
 
 [sub_resource type="ShaderMaterial" id="ParticleMaterial_2"]
 resource_local_to_scene = true
 shader = ExtResource("particle_shader")
-shader_parameter/speed = 0.04
-shader_parameter/phase_offset = 0.346
 shader_parameter/matrix_color = Color(0.25, 0.43, 0.59, 0.07)
 shader_parameter/particle_color = Color(0.35, 0.54, 0.72, 0.5)
+shader_parameter/aspect_ratio = 9.5
+shader_parameter/border_inset_uv = Vector2(0.017206477, 0.16346154)
+shader_parameter/pixel_size_y = 0.01923077
+shader_parameter/phase_offset = 0.346
+shader_parameter/speed = 0.04
+shader_parameter/corner_radius = 0.26923078
+shader_parameter/line_width = 0.004
+shader_parameter/dot_density = 72.0
+shader_parameter/trail_length = 0.22
+shader_parameter/trail_decay = 14.0
+shader_parameter/diffusion = 3.0
+shader_parameter/particle_width_scale = 1.65
 
 [sub_resource type="ShaderMaterial" id="ParticleMaterial_3"]
 resource_local_to_scene = true
 shader = ExtResource("particle_shader")
-shader_parameter/speed = 0.04
-shader_parameter/phase_offset = 0.519
 shader_parameter/matrix_color = Color(0.25, 0.43, 0.59, 0.07)
 shader_parameter/particle_color = Color(0.35, 0.54, 0.72, 0.5)
+shader_parameter/aspect_ratio = 9.5
+shader_parameter/border_inset_uv = Vector2(0.017206477, 0.16346154)
+shader_parameter/pixel_size_y = 0.01923077
+shader_parameter/phase_offset = 0.519
+shader_parameter/speed = 0.04
+shader_parameter/corner_radius = 0.26923078
+shader_parameter/line_width = 0.004
+shader_parameter/dot_density = 72.0
+shader_parameter/trail_length = 0.22
+shader_parameter/trail_decay = 14.0
+shader_parameter/diffusion = 3.0
+shader_parameter/particle_width_scale = 1.65
 
 [sub_resource type="ShaderMaterial" id="ParticleMaterial_4"]
 resource_local_to_scene = true
 shader = ExtResource("particle_shader")
-shader_parameter/speed = 0.04
-shader_parameter/phase_offset = 0.692
 shader_parameter/matrix_color = Color(0.25, 0.43, 0.59, 0.07)
 shader_parameter/particle_color = Color(0.35, 0.54, 0.72, 0.5)
+shader_parameter/aspect_ratio = 9.5
+shader_parameter/border_inset_uv = Vector2(0.017206477, 0.16346154)
+shader_parameter/pixel_size_y = 0.01923077
+shader_parameter/phase_offset = 0.692
+shader_parameter/speed = 0.04
+shader_parameter/corner_radius = 0.26923078
+shader_parameter/line_width = 0.004
+shader_parameter/dot_density = 72.0
+shader_parameter/trail_length = 0.22
+shader_parameter/trail_decay = 14.0
+shader_parameter/diffusion = 3.0
+shader_parameter/particle_width_scale = 1.65
 
 [sub_resource type="ShaderMaterial" id="ParticleMaterial_5"]
 resource_local_to_scene = true
 shader = ExtResource("particle_shader")
-shader_parameter/speed = 0.04
-shader_parameter/phase_offset = 0.865
 shader_parameter/matrix_color = Color(0.25, 0.43, 0.59, 0.07)
 shader_parameter/particle_color = Color(0.35, 0.54, 0.72, 0.5)
+shader_parameter/aspect_ratio = 9.5
+shader_parameter/border_inset_uv = Vector2(0.017206477, 0.16346154)
+shader_parameter/pixel_size_y = 0.01923077
+shader_parameter/phase_offset = 0.865
+shader_parameter/speed = 0.04
+shader_parameter/corner_radius = 0.26923078
+shader_parameter/line_width = 0.004
+shader_parameter/dot_density = 72.0
+shader_parameter/trail_length = 0.22
+shader_parameter/trail_decay = 14.0
+shader_parameter/diffusion = 3.0
+shader_parameter/particle_width_scale = 1.65
+
+[sub_resource type="StyleBoxFlat" id="ConfirmDim"]
+bg_color = Color(0, 0, 0, 0)
 
 [sub_resource type="ShaderMaterial" id="ParticleMaterial_6"]
 resource_local_to_scene = true
 shader = ExtResource("particle_shader")
-shader_parameter/speed = 0.04
-shader_parameter/phase_offset = 0.038
 shader_parameter/matrix_color = Color(0.25, 0.43, 0.59, 0.07)
 shader_parameter/particle_color = Color(0.35, 0.54, 0.72, 0.5)
+shader_parameter/aspect_ratio = 0.98270893
+shader_parameter/border_inset_uv = Vector2(0.024926687, 0.024495678)
+shader_parameter/pixel_size_y = 0.0028818443
+shader_parameter/phase_offset = 0.038
+shader_parameter/speed = 0.04
+shader_parameter/corner_radius = 0.06916427
+shader_parameter/line_width = 0.004
+shader_parameter/dot_density = 72.0
+shader_parameter/trail_length = 0.22
+shader_parameter/trail_decay = 14.0
+shader_parameter/diffusion = 3.0
+shader_parameter/particle_width_scale = 1.65
 
 [sub_resource type="ShaderMaterial" id="ParticleMaterial_7"]
 resource_local_to_scene = true
 shader = ExtResource("particle_shader")
-shader_parameter/speed = 0.04
-shader_parameter/phase_offset = 0.211
 shader_parameter/matrix_color = Color(0.25, 0.43, 0.59, 0.07)
 shader_parameter/particle_color = Color(0.35, 0.54, 0.72, 0.5)
+shader_parameter/aspect_ratio = 1.8229166
+shader_parameter/border_inset_uv = Vector2(0.09714286, 0.17708333)
+shader_parameter/pixel_size_y = 0.020833334
+shader_parameter/phase_offset = 0.211
+shader_parameter/speed = 0.04
+shader_parameter/corner_radius = 0.29166666
+shader_parameter/line_width = 0.004
+shader_parameter/dot_density = 72.0
+shader_parameter/trail_length = 0.22
+shader_parameter/trail_decay = 14.0
+shader_parameter/diffusion = 3.0
+shader_parameter/particle_width_scale = 1.65
 
 [node name="TitleScreen" type="Control" unique_id=1899964472]
 layout_mode = 3
@@ -94,8 +160,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_script")
 theme = ExtResource("blue_theme")
+script = ExtResource("1_script")
 
 [node name="MenuGlass" type="PanelContainer" parent="." unique_id=2099335832]
 layout_mode = 0
@@ -105,18 +171,10 @@ offset_right = 1180.0
 offset_bottom = 952.0
 theme_override_styles/panel = SubResource("TitleGlass")
 
-[node name="ParticleFrame" type="ColorRect" parent="MenuGlass"]
+[node name="ParticleFrame" type="ColorRect" parent="MenuGlass" unique_id=900992649]
 top_level = true
 material = SubResource("ParticleMaterial_1")
-layout_mode = 0
-anchor_right = 0.0
-anchor_bottom = 0.0
-offset_left = -16.0
-offset_top = -16.0
-offset_right = 16.0
-offset_bottom = 16.0
-grow_horizontal = 2
-grow_vertical = 2
+layout_mode = 2
 mouse_filter = 2
 script = ExtResource("particle_script")
 
@@ -125,12 +183,14 @@ layout_mode = 2
 theme_override_constants/separation = 16
 
 [node name="Eyebrow" type="Label" parent="MenuGlass/MenuVBox" unique_id=715938548]
+material = ExtResource("heading_matrix")
 layout_mode = 2
 theme_override_colors/font_color = Color(0.69, 0.8, 0.9, 1)
 theme_override_font_sizes/font_size = 24
 text = "PROJECT X · SUBJECT S-17"
 
 [node name="Brand" type="Label" parent="MenuGlass/MenuVBox" unique_id=1781019690]
+material = ExtResource("heading_matrix")
 layout_mode = 2
 theme_override_font_sizes/font_size = 58
 text = "PROJECT MIRROR"
@@ -148,19 +208,43 @@ layout_mode = 2
 [node name="NewGameButton" type="Button" parent="MenuGlass/MenuVBox" unique_id=100960780]
 custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 0)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 0)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 0)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 0)
+theme_override_colors/font_hover_pressed_color = Color(0, 0, 0, 0)
+theme_override_colors/font_disabled_color = Color(0, 0, 0, 0)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0)
 text = "NEW GAME"
-alignment = 0
 
-[node name="ParticleFrame" type="ColorRect" parent="MenuGlass/MenuVBox/NewGameButton"]
+[node name="MatrixCaption" type="Label" parent="MenuGlass/MenuVBox/NewGameButton" unique_id=1453186878]
+material = ExtResource("heading_matrix")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 4.0
+offset_right = -8.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.69, 0.8, 0.9, 1)
+theme_override_font_sizes/font_size = 34
+text = "NEW GAME"
+horizontal_alignment = 1
+vertical_alignment = 1
+clip_text = true
+script = ExtResource("matrix_caption")
+
+[node name="ParticleFrame" type="ColorRect" parent="MenuGlass/MenuVBox/NewGameButton" unique_id=605909027]
 top_level = true
 material = SubResource("ParticleMaterial_2")
 layout_mode = 0
-anchor_right = 0.0
-anchor_bottom = 0.0
-offset_left = -16.0
-offset_top = -16.0
-offset_right = 16.0
-offset_bottom = 16.0
+offset_left = 144.0
+offset_top = 362.0
+offset_right = 1132.0
+offset_bottom = 466.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
@@ -169,19 +253,43 @@ script = ExtResource("particle_script")
 [node name="ContinueButton" type="Button" parent="MenuGlass/MenuVBox" unique_id=2112249676]
 custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 0)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 0)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 0)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 0)
+theme_override_colors/font_hover_pressed_color = Color(0, 0, 0, 0)
+theme_override_colors/font_disabled_color = Color(0, 0, 0, 0)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0)
 text = "CONTINUE"
-alignment = 0
 
-[node name="ParticleFrame" type="ColorRect" parent="MenuGlass/MenuVBox/ContinueButton"]
+[node name="MatrixCaption" type="Label" parent="MenuGlass/MenuVBox/ContinueButton" unique_id=100447137]
+material = ExtResource("heading_matrix")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 4.0
+offset_right = -8.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.69, 0.8, 0.9, 1)
+theme_override_font_sizes/font_size = 34
+text = "CONTINUE"
+horizontal_alignment = 1
+vertical_alignment = 1
+clip_text = true
+script = ExtResource("matrix_caption")
+
+[node name="ParticleFrame" type="ColorRect" parent="MenuGlass/MenuVBox/ContinueButton" unique_id=1058959696]
 top_level = true
 material = SubResource("ParticleMaterial_3")
 layout_mode = 0
-anchor_right = 0.0
-anchor_bottom = 0.0
-offset_left = -16.0
-offset_top = -16.0
-offset_right = 16.0
-offset_bottom = 16.0
+offset_left = 144.0
+offset_top = 450.0
+offset_right = 1132.0
+offset_bottom = 554.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
@@ -191,20 +299,45 @@ script = ExtResource("particle_script")
 visible = false
 custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 0)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 0)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 0)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 0)
+theme_override_colors/font_hover_pressed_color = Color(0, 0, 0, 0)
+theme_override_colors/font_disabled_color = Color(0, 0, 0, 0)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0)
 disabled = true
 text = "SETTINGS"
-alignment = 0
 
-[node name="ParticleFrame" type="ColorRect" parent="MenuGlass/MenuVBox/SettingsButton"]
+[node name="MatrixCaption" type="Label" parent="MenuGlass/MenuVBox/SettingsButton" unique_id=1858313095]
+material = ExtResource("heading_matrix")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 4.0
+offset_right = -8.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.69, 0.8, 0.9, 1)
+theme_override_font_sizes/font_size = 34
+text = "SETTINGS"
+horizontal_alignment = 1
+vertical_alignment = 1
+clip_text = true
+script = ExtResource("matrix_caption")
+
+[node name="ParticleFrame" type="ColorRect" parent="MenuGlass/MenuVBox/SettingsButton" unique_id=333559013]
+visible = false
 top_level = true
 material = SubResource("ParticleMaterial_4")
 layout_mode = 0
-anchor_right = 0.0
-anchor_bottom = 0.0
-offset_left = -16.0
-offset_top = -16.0
-offset_right = 16.0
-offset_bottom = 16.0
+offset_left = 144.0
+offset_top = 538.0
+offset_right = 1132.0
+offset_bottom = 642.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
@@ -213,25 +346,50 @@ script = ExtResource("particle_script")
 [node name="QuitButton" type="Button" parent="MenuGlass/MenuVBox" unique_id=318756049]
 custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 0)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 0)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 0)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 0)
+theme_override_colors/font_hover_pressed_color = Color(0, 0, 0, 0)
+theme_override_colors/font_disabled_color = Color(0, 0, 0, 0)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0)
 text = "QUIT"
-alignment = 0
 
-[node name="ParticleFrame" type="ColorRect" parent="MenuGlass/MenuVBox/QuitButton"]
+[node name="MatrixCaption" type="Label" parent="MenuGlass/MenuVBox/QuitButton" unique_id=1748215593]
+material = ExtResource("heading_matrix")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 4.0
+offset_right = -8.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.69, 0.8, 0.9, 1)
+theme_override_font_sizes/font_size = 34
+text = "QUIT"
+horizontal_alignment = 1
+vertical_alignment = 1
+clip_text = true
+script = ExtResource("matrix_caption")
+
+[node name="ParticleFrame" type="ColorRect" parent="MenuGlass/MenuVBox/QuitButton" unique_id=2052577692]
 top_level = true
 material = SubResource("ParticleMaterial_5")
 layout_mode = 0
-anchor_right = 0.0
-anchor_bottom = 0.0
-offset_left = -16.0
-offset_top = -16.0
-offset_right = 16.0
-offset_bottom = 16.0
+offset_left = 144.0
+offset_top = 538.0
+offset_right = 1132.0
+offset_bottom = 642.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("particle_script")
 
 [node name="SaveStatus" type="Label" parent="MenuGlass/MenuVBox" unique_id=703430064]
+material = ExtResource("heading_matrix")
 custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.69, 0.8, 0.9, 1)
@@ -242,6 +400,7 @@ autowrap_mode = 2
 
 [node name="WarningLabel" type="Label" parent="MenuGlass/MenuVBox" unique_id=1629929290]
 visible = false
+material = ExtResource("heading_matrix")
 layout_mode = 2
 theme_override_colors/font_color = Color(0.69, 0.8, 0.9, 1)
 theme_override_font_sizes/font_size = 24
@@ -278,18 +437,11 @@ grow_vertical = 2
 custom_minimum_size = Vector2(650, 370)
 layout_mode = 2
 
-[node name="ParticleFrame" type="ColorRect" parent="OverwriteOverlay/Center/ConfirmGlass"]
+[node name="ParticleFrame" type="ColorRect" parent="OverwriteOverlay/Center/ConfirmGlass" unique_id=469879476]
+visible = false
 top_level = true
 material = SubResource("ParticleMaterial_6")
-layout_mode = 0
-anchor_right = 0.0
-anchor_bottom = 0.0
-offset_left = -16.0
-offset_top = -16.0
-offset_right = 16.0
-offset_bottom = 16.0
-grow_horizontal = 2
-grow_vertical = 2
+layout_mode = 2
 mouse_filter = 2
 script = ExtResource("particle_script")
 
@@ -298,12 +450,13 @@ layout_mode = 2
 theme_override_constants/separation = 18
 
 [node name="Title" type="Label" parent="OverwriteOverlay/Center/ConfirmGlass/ConfirmVBox" unique_id=932394838]
+material = ExtResource("heading_matrix")
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
 text = "REPLACE CURRENT SAVE?"
-material = ExtResource("heading_matrix")
 
 [node name="Body" type="Label" parent="OverwriteOverlay/Center/ConfirmGlass/ConfirmVBox" unique_id=2027030313]
+material = ExtResource("heading_matrix")
 layout_mode = 2
 size_flags_vertical = 3
 text = "Starting a new game will replace the current unfinished save."
@@ -312,22 +465,76 @@ autowrap_mode = 2
 [node name="ConfirmButton" type="Button" parent="OverwriteOverlay/Center/ConfirmGlass/ConfirmVBox" unique_id=926204851]
 custom_minimum_size = Vector2(0, 64)
 layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 0)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 0)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 0)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 0)
+theme_override_colors/font_hover_pressed_color = Color(0, 0, 0, 0)
+theme_override_colors/font_disabled_color = Color(0, 0, 0, 0)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0)
 text = "START NEW GAME"
+
+[node name="MatrixCaption" type="Label" parent="OverwriteOverlay/Center/ConfirmGlass/ConfirmVBox/ConfirmButton" unique_id=523317510]
+material = ExtResource("heading_matrix")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 4.0
+offset_right = -8.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.69, 0.8, 0.9, 1)
+theme_override_font_sizes/font_size = 24
+text = "START NEW GAME"
+horizontal_alignment = 1
+vertical_alignment = 1
+clip_text = true
+script = ExtResource("matrix_caption")
 
 [node name="CancelButton" type="Button" parent="OverwriteOverlay/Center/ConfirmGlass/ConfirmVBox" unique_id=223215299]
 custom_minimum_size = Vector2(0, 64)
 layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 0)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 0)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 0)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 0)
+theme_override_colors/font_hover_pressed_color = Color(0, 0, 0, 0)
+theme_override_colors/font_disabled_color = Color(0, 0, 0, 0)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0)
 text = "CANCEL"
-[node name="ParticleFrame" type="ColorRect" parent="OverwriteOverlay/Center/ConfirmGlass/ConfirmVBox/CancelButton"]
+
+[node name="MatrixCaption" type="Label" parent="OverwriteOverlay/Center/ConfirmGlass/ConfirmVBox/CancelButton" unique_id=1343817513]
+material = ExtResource("heading_matrix")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 4.0
+offset_right = -8.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.69, 0.8, 0.9, 1)
+theme_override_font_sizes/font_size = 24
+text = "CANCEL"
+horizontal_alignment = 1
+vertical_alignment = 1
+clip_text = true
+script = ExtResource("matrix_caption")
+
+[node name="ParticleFrame" type="ColorRect" parent="OverwriteOverlay/Center/ConfirmGlass/ConfirmVBox/CancelButton" unique_id=21727595]
+visible = false
 top_level = true
 material = SubResource("ParticleMaterial_7")
 layout_mode = 0
-anchor_right = 0.0
-anchor_bottom = 0.0
 offset_left = -16.0
 offset_top = -16.0
-offset_right = 16.0
-offset_bottom = 16.0
+offset_right = 159.0
+offset_bottom = 80.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2

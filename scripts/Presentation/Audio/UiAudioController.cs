@@ -13,6 +13,7 @@ public partial class UiAudioController : Node
     private AudioStreamPlayer _hoverPlayer = null!;
     private AudioStreamPlayer _actionPlayer = null!;
     private AudioStreamPlayer _eventPlayer = null!;
+    private AudioStreamPlayer _extractionPlayer = null!;
     [Export]
     public AudioStream HoverSound { get; set; } = null!;
     [Export]
@@ -27,6 +28,8 @@ public partial class UiAudioController : Node
     public AudioStream DrawSound { get; set; } = null!;
     [Export]
     public AudioStream TransitionSound { get; set; } = null!;
+    [Export]
+    public AudioStream ExtractionSound { get; set; } = null!;
     private ulong _lastHoverTick;
 
     public override void _Ready()
@@ -34,6 +37,7 @@ public partial class UiAudioController : Node
         _hoverPlayer = GetNode<AudioStreamPlayer>("HoverPlayer");
         _actionPlayer = GetNode<AudioStreamPlayer>("ActionPlayer");
         _eventPlayer = GetNode<AudioStreamPlayer>("EventPlayer");
+        _extractionPlayer = GetNode<AudioStreamPlayer>("ExtractionPlayer");
 
 
         ConnectButtons(GetTree().CurrentScene);
@@ -50,6 +54,7 @@ public partial class UiAudioController : Node
         ReleasePlayer(_hoverPlayer);
         ReleasePlayer(_actionPlayer);
         ReleasePlayer(_eventPlayer);
+        ReleasePlayer(_extractionPlayer);
     }
 
     public void PlayResult(RoundOutcome outcome)
@@ -66,7 +71,16 @@ public partial class UiAudioController : Node
 
     public void PlayTransition()
     {
+        _extractionPlayer.Stop();
         PlayOn(_eventPlayer, TransitionSound);
+    }
+
+    /// <summary>Fit one inward sweep to the actual node movement duration.</summary>
+    public void PlayExtraction(float durationSeconds)
+    {
+        _extractionPlayer.PitchScale = (float)ExtractionSound.GetLength()
+            / Math.Max(0.1f, durationSeconds);
+        PlayOn(_extractionPlayer, ExtractionSound);
     }
 
     private void ConnectNode(Node node)

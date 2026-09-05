@@ -1,4 +1,6 @@
-[gd_scene load_steps=18 format=3]
+[gd_scene load_steps=19 format=3]
+
+[ext_resource type="Script" path="res://scripts/Presentation/Components/MatrixButtonCaption.cs" id="matrix_caption"]
 
 [ext_resource type="Material" path="res://themes/PortraitAnomaly.tres" id="portrait_anomaly"]
 
@@ -231,6 +233,7 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 30
 text = "THE TUTOR"
 horizontal_alignment = 1
+material = ExtResource("heading_matrix")
 
 [node name="DialogueCard" type="PanelContainer" parent="SafeArea/Layout/Content"]
 custom_minimum_size = Vector2(0, 250)
@@ -261,6 +264,7 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.69, 0.8, 0.9, 1)
 theme_override_font_sizes/font_size = 24
 text = "TUTOR"
+material = ExtResource("heading_matrix")
 
 [node name="DialogueText" type="RichTextLabel" parent="SafeArea/Layout/Content/DialogueCard/DialogueVBox"]
 custom_minimum_size = Vector2(0, 118)
@@ -274,6 +278,7 @@ scroll_active = false
 autowrap_mode = 2
 vertical_alignment = 1
 visible_characters_behavior = 1
+material = ExtResource("heading_matrix")
 
 [node name="CompletionCue" type="Label" parent="SafeArea/Layout/Content/DialogueCard/DialogueVBox/DialogueText"]
 visible = false
@@ -295,6 +300,7 @@ theme_override_font_sizes/font_size = 26
 text = "▼"
 horizontal_alignment = 1
 vertical_alignment = 1
+material = ExtResource("heading_matrix")
 
 [node name="SupplementaryText" type="RichTextLabel" parent="SafeArea/Layout/Content/DialogueCard/DialogueVBox"]
 visible = false
@@ -305,6 +311,7 @@ bbcode_enabled = true
 fit_content = false
 scroll_active = false
 autowrap_mode = 2
+material = ExtResource("heading_matrix")
 
 [node name="Footer" type="HBoxContainer" parent="SafeArea/Layout"]
 custom_minimum_size = Vector2(0, 46)
@@ -319,6 +326,36 @@ custom_minimum_size = Vector2(220, 44)
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
 text = "SAVE & BACK"
+theme_override_colors/font_color = Color(0, 0, 0, 0)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 0)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 0)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 0)
+theme_override_colors/font_hover_pressed_color = Color(0, 0, 0, 0)
+theme_override_colors/font_disabled_color = Color(0, 0, 0, 0)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0)
+alignment = 1
+
+[node name="MatrixCaption" type="Label" parent="SafeArea/Layout/Footer/BackButton"]
+material = ExtResource("heading_matrix")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 4.0
+offset_right = -8.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.69, 0.8, 0.9, 1)
+theme_override_font_sizes/font_size = 24
+text = "SAVE & BACK"
+horizontal_alignment = 1
+vertical_alignment = 1
+clip_text = true
+script = ExtResource("matrix_caption")
+
 [node name="ParticleFrame" type="ColorRect" parent="SafeArea/Layout/Footer/BackButton"]
 top_level = true
 material = SubResource("ParticleMaterial_4")

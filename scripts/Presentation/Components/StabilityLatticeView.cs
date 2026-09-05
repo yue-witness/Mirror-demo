@@ -14,6 +14,9 @@ public partial class StabilityLatticeView : Control
     [Export]
     public Texture2D EnergyCoreTexture { get; set; } = null!;
 
+    [Export(PropertyHint.Range, "0.8,1.15,0.01")]
+    public float OrbitScale { get; set; } = 1.12f;
+
     [Export]
     public Color ActiveBlue { get; set; } = new("729dbd");
     [Export]
@@ -21,9 +24,9 @@ public partial class StabilityLatticeView : Control
     [Export]
     public Color InactiveBlue { get; set; } = new("52728c40");
     [Export]
-    public Color PlayerPreview { get; set; } = new("a9bfd8");
+    public Color PlayerPreview { get; set; } = new("efc760");
     [Export]
-    public Color TutorPreview { get; set; } = new("6ca3d1");
+    public Color TutorPreview { get; set; } = new("6edb92");
     [Export]
     public Color WarningColor { get; set; } = new("c38793");
     [Export]
@@ -217,7 +220,7 @@ public partial class StabilityLatticeView : Control
         }
 
         Vector2 center = new(Size.X * 0.5f, Size.Y * 0.48f);
-        float radius = MathF.Min(Size.X * 0.43f, Size.Y * 0.43f);
+        float radius = MathF.Min(Size.X * 0.43f, Size.Y * 0.43f) * OrbitScale;
         float pulse = 0.5f
             + 0.5f * Mathf.Sin((float)_elapsedSeconds * 2.15f);
 

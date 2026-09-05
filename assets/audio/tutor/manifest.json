@@ -893,11 +893,11 @@
     },
     {
       "line_id": "limit_reveal_tutor_choice",
-      "text": "My sealed request is now public. Its cyan orbiting anchors show the exact quantity. Hold the comparison before execution.",
-      "audio_path": "res://assets/audio/tutor/limit_reveal_tutor_choice.ogg",
-      "duration_seconds": 8.832,
-      "visible_character_count": 121,
-      "characters_per_second": 13.7002,
+      "text": "Limit Bash is active. The lattice will apply both locked requests together.",
+      "audio_path": "res://assets/audio/tutor/limit_state_protocol.ogg",
+      "duration_seconds": 5.352,
+      "visible_character_count": 75,
+      "characters_per_second": 14.0135,
       "delivery": "instructional"
     },
     {

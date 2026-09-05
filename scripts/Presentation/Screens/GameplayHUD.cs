@@ -28,7 +28,14 @@ public partial class GameplayHUD : Control
     public const float BashPlayerExtractionSeconds = 0.62f;
     public const float BashTutorExtractionSeconds = 0.72f;
     public const float LimitRevealPresentationSeconds = 1.15f;
-    public const float LimitRevealNumberHoldSeconds = 0.72f;
+    [Export(PropertyHint.Range, "1,6,0.1")]
+    public float RevealNumberHoldSeconds { get; set; } = 3.0f;
+
+    [Export(PropertyHint.MultilineText)]
+    public string TutorSealedText { get; set; } = "";
+
+    [Export(PropertyHint.MultilineText)]
+    public string BothSealedText { get; set; } = "";
 
     private Control _safeArea = null!;
     private Label _phaseBanner = null!;
@@ -292,11 +299,13 @@ public partial class GameplayHUD : Control
     {
         _selectionLabel.Text = $"Taking {choice}…";
         _latticeView.AnimatePlayerRemoval(choice, BashPlayerExtractionSeconds);
+        _uiAudio.PlayExtraction(BashPlayerExtractionSeconds);
     }
 
     public void BeginBashTutorExtraction()
     {
         _latticeView.AnimateTutorRemoval(BashTutorExtractionSeconds);
+        _uiAudio.PlayExtraction(BashTutorExtractionSeconds);
     }
 
     public void ShowLimitBash(
@@ -342,17 +351,14 @@ public partial class GameplayHUD : Control
                     ? $"CONFIRM\nREQUEST {selectedChoice.Value}"
                     : "SELECT\nFIRST");
 
-        if (waiting)
-        {
-            ShowLimitTutorCommitted();
-        }
+        _tutorCommitmentStatus.Text = waiting ? BothSealedText : TutorSealedText;
+        _tutorCommitmentStatus.Visible = true;
     }
 
     public void ShowLimitTutorCommitted()
     {
         HideLimitRevealResult();
-        _tutorCommitmentStatus.Text =
-            "Your choice is locked. Revealing shortly…";
+        _tutorCommitmentStatus.Text = BothSealedText;
         _tutorCommitmentStatus.Visible = true;
     }
 
@@ -397,6 +403,7 @@ public partial class GameplayHUD : Control
             playerTake,
             tutorTake,
             LimitRevealPresentationSeconds);
+        _uiAudio.PlayExtraction(LimitRevealPresentationSeconds);
         _selectionLabel.Text = $"EXECUTING · PLAYER {playerTake}  ·  TUTOR {tutorTake}";
         ConfigureConfirmButton(
             visible: true,
@@ -553,7 +560,7 @@ public partial class GameplayHUD : Control
             button.ZIndex = 0;
             string optionLetter = ((char)('A' + index)).ToString();
             button.Text = selected
-                ? $"{optionLetter} · {choice}\nSELECTED"
+                ? $"{optionLetter}\nSELECTED {choice}"
                 : $"{optionLetter}\n{_choiceVerb} {choice}";
         }
     }

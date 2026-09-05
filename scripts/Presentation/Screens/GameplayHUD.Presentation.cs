@@ -143,8 +143,8 @@ public partial class GameplayHUD
     {
         HideLimitRevealResult();
         _limitRevealResult.Text =
-            $"[center][color=#b1c8dd]PLAYER −{playerTake} ANCHORS[/color]\n"
-            + $"[color=#7faed1]TUTOR −{tutorTake} ANCHORS[/color][/center]";
+            $"[center][color=#{_latticeView.PlayerPreview.ToHtml()}]PLAYER −{playerTake} ANCHORS[/color]\n"
+            + $"[color=#{_latticeView.TutorPreview.ToHtml()}]TUTOR −{tutorTake} ANCHORS[/color][/center]";
         _limitRevealResult.Position = _limitRevealRestingPosition;
         _limitRevealResult.Modulate = Colors.White;
         _limitRevealResult.Visible = true;
@@ -153,16 +153,16 @@ public partial class GameplayHUD
         _limitRevealTween.TweenProperty(
                 _limitRevealResult,
                 "position:y",
-                _limitRevealRestingPosition.Y - 28.0f,
-                LimitRevealPresentationSeconds)
+                _limitRevealRestingPosition.Y - 42.0f,
+                RevealNumberHoldSeconds)
             .SetTrans(Tween.TransitionType.Cubic)
             .SetEase(Tween.EaseType.Out);
         _limitRevealTween.Parallel().TweenProperty(
                 _limitRevealResult,
                 "modulate:a",
                 0.0f,
-                LimitRevealPresentationSeconds * 0.42f)
-            .SetDelay(LimitRevealPresentationSeconds * 0.58f)
+                RevealNumberHoldSeconds * 0.30f)
+            .SetDelay(RevealNumberHoldSeconds * 0.70f)
             .SetTrans(Tween.TransitionType.Sine)
             .SetEase(Tween.EaseType.In);
     }

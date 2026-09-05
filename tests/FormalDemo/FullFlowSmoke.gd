@@ -278,8 +278,9 @@ func _complete_limit_bash() -> void:
 				var lattice := _main.get_node(
 					"GameplayHUD/SafeArea/Layout/Content/Center/RemainingCard/RemainingVBox/StateRow/LatticeView") as Control
 				if not checked_tutor_layout:
-					_assert(not tutor_commitment.visible,
-						"Lock message appeared before the player confirmed.")
+					_assert(tutor_commitment.visible
+						and tutor_commitment.text.contains("TUTOR HAS ALREADY LOCKED"),
+						"Tutor commitment was not shown before player selection.")
 				choice.emit_signal("pressed")
 				await _frames()
 				if not checked_tutor_layout:
@@ -299,7 +300,7 @@ func _complete_limit_bash() -> void:
 						# A hidden test window may accept the parsed mouse event without
 						# routing it through Control._gui_input. Preserve the real click
 						# attempt, then use the button signal as a deterministic fallback.
-						if not tutor_commitment.visible:
+						if not tutor_commitment.text.contains("BOTH CHOICES LOCKED"):
 							_press("GameplayHUD/SafeArea/Layout/Content/Center/ActionRow/ConfirmButton")
 							await _frames()
 				else:
@@ -307,7 +308,7 @@ func _complete_limit_bash() -> void:
 				if not checked_tutor_layout:
 					var confirm_started := false
 					for wait_step in range(120):
-						if tutor_commitment.visible:
+						if tutor_commitment.text.contains("BOTH CHOICES LOCKED"):
 							confirm_started = true
 							break
 						await _frames()
@@ -319,7 +320,7 @@ func _complete_limit_bash() -> void:
 					var commitment_seen := false
 					for wait_step in range(240):
 						if tutor_commitment.visible \
-							and tutor_commitment.text.contains("Your choice is locked") \
+							and tutor_commitment.text.contains("BOTH CHOICES LOCKED") \
 							and tutor_commitment.text.contains("Revealing shortly") \
 							and not reveal_result.visible:
 							commitment_seen = true
@@ -343,7 +344,7 @@ func _complete_limit_bash() -> void:
 						if not tutor_commitment.visible \
 							and not reveal_result.visible \
 							and selection_label.text.contains("TUTOR REVEALED") \
-							and tutor_text.text.contains("sealed request") \
+							and tutor_text.text.contains("locked requests") \
 							and int(lattice.call("GetPlayerRevealMarkedAnchorCount")) == index \
 							and int(lattice.call("GetTutorMarkedAnchorCount")) > 0:
 							tutor_reveal_seen = true
